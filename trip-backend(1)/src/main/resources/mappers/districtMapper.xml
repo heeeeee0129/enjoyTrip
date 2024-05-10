@@ -6,8 +6,8 @@
 		SELECT sido_code code, sido_name name FROM sido
 	</select>
 	
-	<select id="getGuguns" parameterType="int" resultType="string">
-		SELECT gugun_name
+	<select id="getGuguns" parameterType="int" resultType="sido">
+		SELECT gugun_code code, gugun_name name
 		FROM gugun
 		WHERE sido_code = #{sidoCode}
 	</select>

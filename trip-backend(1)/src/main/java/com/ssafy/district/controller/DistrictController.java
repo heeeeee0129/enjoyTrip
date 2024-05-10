@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +46,7 @@ public class DistrictController {
 	
 	@Operation(summary = "구/군 정보 얻어오기")
 	@GetMapping("/gugun/{sidoCode}")
-	public ResponseEntity<?> getGugun(@RequestParam int sidoCode){
+	public ResponseEntity<?> getGugun(@PathVariable int sidoCode){
 		try {
 			List<String> guguns = districtService.getGuguns(sidoCode);
 			if(!(guguns.isEmpty())) {

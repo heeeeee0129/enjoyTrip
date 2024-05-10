@@ -24,18 +24,18 @@ export const join = (member, success, fail) => {
   axios.post("/userapi/user", JSON.stringify(member)).then(success).catch(fail);
 };
 
-// 로그인
-// export const login = (member, success, fail) => {
-//   axios
-//     .post("/userapi/user/login", JSON.stringify(member))
-//     .then(success)
-//     .catch(fail);
-// };
+//로그인;
+export const login = (member, success, fail) => {
+  axios
+    .post("/userapi/user/login", JSON.stringify(member))
+    .then(success)
+    .catch(fail);
+};
 
-// // 로그아웃
-// export const logout = (success, fail) => {
-//   axios.post("/userapi/user/logout").then(success).catch(fail);
-// };
+// 로그아웃
+export const logout = (success, fail) => {
+  axios.post("/userapi/user/logout").then(success).catch(fail);
+};
 
 // 회원 정보 수정
 export const modify = (member, success, fail) => {
@@ -57,4 +57,8 @@ export const remove = (id, success, fail) => {
 // 시도 정보 가져오기
 export const getSidos = (success, fail) => {
   axios.get("/userapi/user/sido").then(success).catch(fail);
+};
+
+export const getGuguns = (sido, success, fail) => {
+  axios.get(`/districtapi/gugun/${sido}`).then(success).catch(fail);
 };

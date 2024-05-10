@@ -1,5 +1,50 @@
 <script setup>
 import "@/index.css";
+import { login } from "@/api/user";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+const route = useRoute();
+const queryId = route.query.id;
+const queryPwd = route.query.pwd;
+const store = useStore();
+const isLoggedIn = computed(() => store.state.isLoggedIn);
+
+const memberId = ref(queryId ? String(queryId) : "");
+const password = ref(queryPwd ? String(queryPwd) : "");
+const FindPassword = () => {
+  router.push({ name: "FindPassword" });
+};
+
+const doSignUp = () => {
+  router.push({ name: "UserJoin" });
+};
+
+const doLogin = () => {
+  const member = {
+    id: memberId.value,
+    pwd: password.value,
+    name: "",
+    emailId: "",
+    emailDomain: "",
+    sido: "",
+    gugun: "",
+  };
+
+  const success = (response) => {
+    console.log(response.data);
+    store.dispatch("doLogin", response.data);
+    console.log(isLoggedIn.value);
+    router.push({ name: "main" });
+  };
+
+  const fail = (error) => {
+    alert("로그인에 실패하였습니다. \n", error);
+  };
+
+  login(member, success, fail);
+};
 </script>
 
 <template>
@@ -15,28 +60,14 @@ import "@/index.css";
         class="font-medium self-center text-xl sm:text-2xl uppercase text-gray-800">
         Login To Your Account
       </div>
-      <button
-        class="relative mt-6 border rounded-md py-2 text-sm text-gray-800 bg-gray-100 hover:bg-gray-200">
-        <span
-          class="absolute left-0 top-0 flex items-center justify-center h-full w-10 text-blue-500"
-          ><i class="fab fa-facebook-f"></i
-        ></span>
-        <span>Login with Facebook</span>
-      </button>
-      <div class="relative mt-10 h-px bg-gray-300">
-        <div class="absolute left-0 top-0 flex justify-center w-full -mt-2">
-          <span class="bg-white px-4 text-xs text-gray-500 uppercase"
-            >Or Login With Email</span
-          >
-        </div>
-      </div>
+
       <div class="mt-10">
         <form action="#">
           <div class="flex flex-col mb-6">
             <label
               for="email"
               class="mb-1 text-xs sm:text-sm tracking-wide text-gray-600"
-              >E-Mail Address:</label
+              >member ID:</label
             >
             <div class="relative">
               <div
@@ -59,7 +90,8 @@ import "@/index.css";
                 type="email"
                 name="email"
                 class="text-sm sm:text-base placeholder-gray-500 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
-                placeholder="E-Mail Address" />
+                placeholder="member id"
+                v-model="memberId" />
             </div>
           </div>
           <div class="flex flex-col mb-6">
@@ -91,11 +123,14 @@ import "@/index.css";
                 type="password"
                 name="password"
                 class="text-sm sm:text-base placeholder-gray-500 pl-10 pr-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400"
-                placeholder="Password" />
+                placeholder="Password"
+                v-model="password" />
             </div>
           </div>
 
-          <div class="flex items-center mb-6 -mt-4">
+          <div
+            class="flex items-center mb-6 -mt-4"
+            @click.prevent="FindPassword">
             <div class="flex ml-auto">
               <a
                 href="#"
@@ -107,8 +142,9 @@ import "@/index.css";
 
           <div class="flex w-full">
             <button
-              type="submit"
+              @click.prevent="doLogin"
               class="flex items-center justify-center focus:outline-none text-white text-sm sm:text-base bg-blue-600 hover:bg-blue-700 rounded py-2 w-full transition duration-150 ease-in">
+              <!-- <router-link href="#" :to="{ name: 'LoginView' }" -->
               <span class="mr-2 uppercase">Login</span>
               <span>
                 <svg
@@ -127,7 +163,9 @@ import "@/index.css";
           </div>
         </form>
       </div>
-      <div class="flex justify-center items-center mt-6">
+      <div
+        class="flex justify-center items-center mt-6"
+        @click.prevent="doSignUp">
         <a
           href="#"
           target="_blank"

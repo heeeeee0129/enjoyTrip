@@ -10,14 +10,12 @@ const route = useRoute();
 
 const props = defineProps({ type: String });
 
-const isUseId = ref(false);
-
 const article = ref({
   articleNo: 0,
+  userId: store.state.member.id,
+  userName: "",
   subject: "",
   content: "",
-  userId: "",
-  userName: "",
   hit: 0,
   registerTime: "",
 });
@@ -33,7 +31,6 @@ if (props.type === "modify") {
     alert("문제가 발생헀습니다.", error);
   };
 
-  isUseId.value = true;
   getArticle(articleNo, success, fail);
 }
 
@@ -61,8 +58,6 @@ watch(
 );
 
 function onSubmit() {
-  // event.preventDefault();
-
   if (subjectErrMsg.value) {
     alert(subjectErrMsg.value);
   } else if (contentErrMsg.value) {
@@ -82,6 +77,7 @@ function registArticle() {
     alert("문제가 발생헀습니다.", error);
   };
 
+  console.log(article.value);
   writeArticle(article.value, success, fail);
 }
 
@@ -111,10 +107,10 @@ function moveList() {
         type="text"
         class="form-control rounded-pill"
         v-model="article.userId"
-        :disabled="isUseId"
+        disabled="true"
         :placeholder="store.state.member.id"
         style="font-weight: bold"
-        readonly />
+      />
     </div>
     <div class="mb-3">
       <label for="subject" class="form-label">제목 :</label>
@@ -122,32 +118,19 @@ function moveList() {
         type="text"
         class="form-control rounded-pill"
         v-model="article.subject"
-        placeholder="제목..." />
+        placeholder="제목..."
+      />
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 :</label>
-      <textarea
-        class="form-control rounded"
-        v-model="article.content"
-        rows="5"></textarea>
+      <textarea class="form-control rounded" v-model="article.content" rows="5"></textarea>
     </div>
     <div class="text-center">
-      <button
-        type="submit"
-        class="btn btn-primary rounded-pill px-4 me-2"
-        v-if="type === 'regist'">
+      <button type="submit" class="btn btn-primary rounded-pill px-4 me-2" v-if="type === 'regist'">
         글작성
       </button>
-      <button
-        type="submit"
-        class="btn btn-success rounded-pill px-4 me-2"
-        v-else>
-        글수정
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger rounded-pill px-4"
-        @click="moveList">
+      <button type="submit" class="btn btn-success rounded-pill px-4 me-2" v-else>글수정</button>
+      <button type="button" class="btn btn-danger rounded-pill px-4" @click="moveList">
         목록으로 이동...
       </button>
     </div>

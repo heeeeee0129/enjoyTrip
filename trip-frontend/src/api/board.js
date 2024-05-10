@@ -22,24 +22,15 @@ export const getArticle = (articleNo, success, fail) => {
 
 // 게시판의 글을 저장하는 함수입니다.
 export const writeArticle = (article, success, fail) => {
-  return axios
-    .post(`${BASE_URL}/board`, JSON.stringify(article))
-    .then(success)
-    .catch(fail);
+  return axios.post(`${BASE_URL}/board`, JSON.stringify(article)).then(success).catch(fail);
 };
 
 // 게시판의 글을 수정하는 함수입니다.
 export const modifyArticle = (article, success, fail) => {
-  return axios
-    .put(`${BASE_URL}/board`, JSON.stringify(article))
-    .then(success)
-    .catch(fail);
+  return axios.put(`${BASE_URL}/board`, JSON.stringify(article)).then(success).catch(fail);
 };
 
 // 게시판의 글을 삭제하는 함수입니다.
 export const deleteArticle = (articleno, success, fail) => {
-  return axios
-    .delete(`${BASE_URL}/board/${articleno}`)
-    .then(success)
-    .catch(fail);
+  return axios.delete(`${BASE_URL}/board/${articleno}`).then(success).catch(fail);
 };

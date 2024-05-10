@@ -81,8 +81,8 @@ public class Board {
 
 	@Override
 	public String toString() {
-		return "BoardDto [articleNo=" + articleNo + ", userId=" + userId + ", subject=" + subject + ", content="
-				+ content + ", hit=" + hit + ", registerTime=" + registerTime + "]";
+		return "Board [articleNo=" + articleNo + ", userId=" + userId + ", userName=" + userName + ", subject="
+				+ subject + ", content=" + content + ", hit=" + hit + ", registerTime=" + registerTime + "]";
 	}
 
 }

@@ -1,11 +1,11 @@
 package com.ssafy.board.dto;
 
-
-
 public class Board {
 
 	private int articleNo;
 	private String userId;
+	private String userName;
+
 	private String subject;
 	private String content;
 	private int hit;
@@ -56,6 +56,26 @@ public class Board {
 	}
 
 	public void setRegisterTime(String registerTime) {
+		this.registerTime = registerTime;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public Board(int articleNo, String userId, String userName, String subject, String content, int hit,
+			String registerTime) {
+		super();
+		this.articleNo = articleNo;
+		this.userId = userId;
+		this.userName = userName;
+		this.subject = subject;
+		this.content = content;
+		this.hit = hit;
 		this.registerTime = registerTime;
 	}
 

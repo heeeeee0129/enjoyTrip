@@ -20,6 +20,7 @@ const goDetail = (articleNo) => {
     <td class="text-start">
       {{ article.userId }}
     </td>
+    <td>{{ article.userName }}</td>
     <td>
       <a href="#" @click.prevent="goDetail(article.articleNo)">{{
         article.subject

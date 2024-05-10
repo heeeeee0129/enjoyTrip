@@ -27,7 +27,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**") // 모든 요청 주소를 허용
-			.allowedOrigins("http://localhost:5174/") // 화이트리스트 ( 요청을 허용할 서버 주소 )
+			.allowedOrigins("http://localhost:5174/", "http://localhost:5173/") // 화이트리스트 ( 요청을 허용할 서버 주소 )
 			.allowedMethods( // 허용할 Http Method
 					HttpMethod.GET.name(),
 					HttpMethod.POST.name(),

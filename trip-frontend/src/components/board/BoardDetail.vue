@@ -2,11 +2,13 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/board";
+import { useStore } from "vuex"; // Vuex store 사용
+
+const store = useStore(); // Vuex store 인스턴스 가져오기
 
 const route = useRoute();
 const router = useRouter();
 
-// const articleno = ref(route.params.articleno);
 const { articleNo } = route.params;
 
 const article = ref({});
@@ -37,7 +39,7 @@ function moveModify() {
 
 function onDeleteArticle() {
   const success = () => {
-    console.log("삭제 성공");
+    alert("글이 삭제되었습니다");
     moveList();
   };
 
@@ -53,55 +55,69 @@ function onDeleteArticle() {
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글보기</mark>
-        </h2>
-      </div>
-      <div class="col-lg-10 text-start">
-        <div class="row my-2">
-          <h2 class="text-secondary px-5">
-            {{ article.articleNo }}. {{ article.subject }}
-          </h2>
-        </div>
-        <div class="row">
-          <div class="col-md-8">
-            <div class="clearfix align-content-center">
-              <img
-                class="avatar me-2 float-md-start bg-light p-2"
-                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg" />
-              <p>
-                <span class="fw-bold">안효인</span> <br />
-                <span class="text-secondary fw-light">
-                  {{ article.registerTime }}1 조회 : {{ article.hit }}
-                </span>
-              </p>
+        <div class="card my-3 shadow">
+          <div class="card-body">
+            <div class="row my-2">
+              <h2 class="text-secondary px-3 rounded-lg">
+                {{ article.articleNo }}. {{ article.subject }}
+              </h2>
             </div>
-          </div>
-          <div class="col-md-4 align-self-center text-end">댓글 : 17</div>
-          <div class="divider mb-3"></div>
-          <div class="text-secondary">
-            {{ article.content }}
-          </div>
-          <div class="divider mt-3 mb-3"></div>
-          <div class="d-flex justify-content-end">
-            <button
-              type="button"
-              class="btn btn-outline-primary mb-3"
-              @click="moveList">
-              글목록
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-success mb-3 ms-1"
-              @click="moveModify">
-              글수정
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-danger mb-3 ms-1"
-              @click="onDeleteArticle">
-              글삭제
-            </button>
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                  <img
+                    class="avatar me-2 bg-light p-2 rounded-circle"
+                    src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
+                    style="width: 40px; height: 40px" />
+                  <div class="ms-2">
+                    <p class="mb-1">
+                      <span class="fw-bold"
+                        >{{ article.userName }}({{ article.userId }})</span
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 text-end">
+                <span class="badge bg-secondary rounded-pill p-2"
+                  >댓글 : 17</span
+                >
+                <p class="mt-3">
+                  <span class="text-secondary fw-light">
+                    {{ article.registerTime }} 조회 : {{ article.hit }}
+                  </span>
+                </p>
+              </div>
+            </div>
+            <div
+              class="bg-white rounded p-3"
+              style="min-width: 250px; min-height: 300px">
+              <div class="text-secondary">
+                {{ article.content }}
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+              <button
+                type="button"
+                class="btn btn-outline-primary me-1 rounded-pill"
+                @click="moveList">
+                글목록
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-success me-1 rounded-pill"
+                @click="moveModify"
+                v-if="store.state.member.id === article.userId">
+                글수정
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-danger rounded-pill"
+                @click="onDeleteArticle"
+                v-if="store.state.member.id === article.userId">
+                글삭제
+              </button>
+            </div>
           </div>
         </div>
       </div>

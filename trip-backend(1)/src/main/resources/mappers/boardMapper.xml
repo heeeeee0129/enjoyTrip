@@ -16,24 +16,27 @@
 	</sql>
 
 	<select id="listArticle" parameterType="map" resultType="board">
-		select article_no, user_id, subject, content, hit, register_time
-		from
-		board b
-		<where>
-			<include refid="search"></include>
-		</where>
-		order by b.article_no desc
-		limit #{start}, #{listsize}
+		SELECT b.article_no, b.user_id, m.user_name, b.subject, b.content,
+		b.hit, b.register_time
+		FROM board b, members m
+		WHERE b.user_id =
+		m.user_id
+		<include refid="search"></include>
+		ORDER BY b.article_no desc
+		LIMIT #{start}, #{listsize}
 	</select>
 
 	<select id="getArticle" parameterType="int" resultType="board">
 		SELECT
-		article_no, user_id, subject, content, hit, register_time
-		FROM board
-		WHERE article_no = #{articleNo}
+		b.article_no, b.user_id, m.user_name, b.subject, b.content, b.hit,
+		b.register_time
+		FROM board b, members m
+		WHERE b.user_id = m.user_id AND
+		article_no = #{articleNo}
 	</select>
 
-	<select id="getTotalArticleCount" parameterType="map" resultType="int">
+	<select id="getTotalArticleCount" parameterType="map"
+		resultType="int">
 		select count(article_no)
 		from board
 		<where>
@@ -42,10 +45,14 @@
 	</select>
 
 	<insert id="writeArticle" parameterType="board">
-		INSERT INTO board
-		(user_id, subject, content)
+		INSERT INTO board (user_id, subject, content)
 		VALUES (#{userId}, #{subject}, #{content})
+		<selectKey resultType="int" keyProperty="articleNo"
+			order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
 	</insert>
+
 
 	<update id="updateHit" parameterType="int">
 		UPDATE board

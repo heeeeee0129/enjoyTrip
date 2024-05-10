@@ -2,7 +2,9 @@
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { writeArticle, getArticle, modifyArticle } from "@/api/board";
+import { useStore } from "vuex"; // Vuex store 사용
 
+const store = useStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
 const route = useRoute();
 
@@ -15,6 +17,7 @@ const article = ref({
   subject: "",
   content: "",
   userId: "",
+  userName: "",
   hit: 0,
   registerTime: "",
 });
@@ -71,6 +74,7 @@ function onSubmit() {
 
 function registArticle() {
   const success = () => {
+    alert("글이 작성되었습니다");
     moveList();
   };
 
@@ -83,6 +87,7 @@ function registArticle() {
 
 function updateArticle() {
   const success = () => {
+    alert("글이 수정되었습니다");
     moveList();
   };
 
@@ -99,46 +104,51 @@ function moveList() {
 </script>
 
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="onSubmit" class="mb-4 p-4 rounded-lg shadow bg-light">
     <div class="mb-3">
-      <label for="userId" class="form-label">작성자 ID : </label>
+      <label for="userId" class="form-label">작성자 ID:</label>
       <input
         type="text"
-        class="form-control"
+        class="form-control rounded-pill"
         v-model="article.userId"
         :disabled="isUseId"
-        placeholder="작성자ID..." />
+        :placeholder="store.state.member.id"
+        style="font-weight: bold"
+        readonly />
     </div>
     <div class="mb-3">
-      <label for="subject" class="form-label">제목 : </label>
+      <label for="subject" class="form-label">제목 :</label>
       <input
         type="text"
-        class="form-control"
+        class="form-control rounded-pill"
         v-model="article.subject"
         placeholder="제목..." />
     </div>
     <div class="mb-3">
-      <label for="content" class="form-label">내용 : </label>
+      <label for="content" class="form-label">내용 :</label>
       <textarea
-        class="form-control"
+        class="form-control rounded"
         v-model="article.content"
-        rows="10"></textarea>
+        rows="5"></textarea>
     </div>
-    <div class="col-auto text-center">
+    <div class="text-center">
       <button
         type="submit"
-        class="btn btn-outline-primary mb-3"
+        class="btn btn-primary rounded-pill px-4 me-2"
         v-if="type === 'regist'">
         글작성
       </button>
-      <button type="submit" class="btn btn-outline-success mb-3" v-else>
+      <button
+        type="submit"
+        class="btn btn-success rounded-pill px-4 me-2"
+        v-else>
         글수정
       </button>
       <button
         type="button"
-        class="btn btn-outline-danger mb-3 ms-1"
+        class="btn btn-danger rounded-pill px-4"
         @click="moveList">
-        목록으로이동...
+        목록으로 이동...
       </button>
     </div>
   </form>

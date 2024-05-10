@@ -6,12 +6,12 @@ import BoardFormItem from "@/components/board/item/BoardFormItem.vue";
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <h2 class="my-3 py-3 shadow-sm bg-light text-center">
-          <mark class="sky">글수정</mark>
-        </h2>
-      </div>
-      <div class="col-lg-10 text-start">
-        <BoardFormItem type="modify" />
+        <div class="card my-3 shadow-sm">
+          <div class="card-body">
+            <h2 class="card-title py-3 text-center">글수정</h2>
+          </div>
+          <BoardFormItem type="modify" />
+        </div>
       </div>
     </div>
   </div>

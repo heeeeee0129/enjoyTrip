@@ -68,9 +68,9 @@ const isOpen = ref(false); // 모바일에서 메뉴 열고 닫기를 제어하�
             </li>
             <li>
               <router-link
-                :to="{ name: 'board' }"
+                :to="{ name: 'BoardView' }"
                 class="text-white hover:text-gray-300 no-underline"
-                >자유게시판</router-link
+                >QnA</router-link
               >
             </li>
             <li>

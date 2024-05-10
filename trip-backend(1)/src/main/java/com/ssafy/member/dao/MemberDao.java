@@ -12,5 +12,5 @@ public interface MemberDao {
 	public int modify(Member member);
 	public int expire(String id);
 	public String findPass(String id);
-	public int checkId(String id); 
+	public Member getUser(String id); 
 }

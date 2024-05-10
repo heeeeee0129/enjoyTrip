@@ -43,10 +43,10 @@ public class MemberController {
 
 	@Operation(summary = "아이디 중복 체크")
 	@GetMapping("user/checkId")
-	private ResponseEntity<?> checkId(@RequestParam(value = "id") String id) {
+	private ResponseEntity<?> getUser(@RequestParam(value = "id") String id) {
 		try {
-			int cnt = memberService.checkId(id);
-			return ResponseEntity.ok(cnt);
+			Member member = memberService.getUser(id);
+			return ResponseEntity.ok(member);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}

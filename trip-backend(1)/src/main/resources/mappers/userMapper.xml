@@ -35,8 +35,8 @@
 		WHERE user_id = #{id}
 	</select>
 	
-	<select id="checkId" parameterType="string" resultType="int">
-		SELECT COUNT(user_id)
+	<select id="getUser" parameterType="string" resultType="member">
+		SELECT user_id id, user_name name, user_password pwd, email_id, email_domain, sido, gugun
 		FROM members
 		WHERE user_id = #{id}
 	</select>

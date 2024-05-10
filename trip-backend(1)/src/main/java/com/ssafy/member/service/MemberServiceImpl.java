@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int checkId(String id) {
-		return memberDao.checkId(id);
+	public Member getUser(String id) {
+		return memberDao.getUser(id);
 	}
 }

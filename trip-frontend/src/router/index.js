@@ -1,11 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import TheMainView from "../views/TheMainView.vue";
-import LoginView from "../views/LoginView.vue";
-import MyPageView from "../views/MyPageView.vue";
-import NoticeView from "../views/NoticeView.vue";
-import SignUpView from "../views/SignUpView.vue";
-import TripPlanView from "../views/TripPlanView.vue";
-import TripSearchView from "../views/TripSearchView.vue";
+import TheMainView from "@/views/TheMainView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +9,6 @@ const router = createRouter({
       name: "main",
       component: TheMainView,
     },
-
     {
       path: "/board",
       name: "board",
@@ -44,12 +37,48 @@ const router = createRouter({
         },
       ],
     },
-    { path: "/login", name: "login", component: LoginView },
-    { path: "/signup", name: "signup", component: SignUpView },
-    { path: "/mypage", name: "mypage", component: MyPageView },
-    { path: "/notice", name: "notice", component: NoticeView },
-    { path: "/plan", name: "plan", component: TripPlanView },
-    { path: "/search", name: "search", component: TripSearchView },
+    {
+      path: "/user",
+      name: "UserView",
+      component: () => import("@/views/UserView.vue"),
+      children: [
+        {
+          path: "/user/login",
+          name: "UserLogin",
+          component: () => import("@/components/user/UserLogin.vue"),
+        },
+        {
+          path: "/user/mypage",
+          name: "UserMypage",
+          component: () => import("@/components/user/UserMypage.vue"),
+        },
+        {
+          path: "/user/modify",
+          name: "UserModify",
+          component: () => import("@/components/user/UserModify.vue"),
+        },
+        {
+          path: "/user/join",
+          name: "UserJoin",
+          component: () => import("@/components/user/UserJoin.vue"),
+        },
+      ],
+    },
+    {
+      path: "/notice",
+      name: "notice",
+      component: () => import("@/views/NoticeView.vue"),
+    },
+    {
+      path: "/plan",
+      name: "plan",
+      component: () => import("@/views/TripPlanView.vue"),
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: () => import("@/views/TripSearchView.vue"),
+    },
   ],
 });
 

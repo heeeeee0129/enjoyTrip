@@ -53,19 +53,19 @@ const isLoggedIn = computed(() => store.state.isLoggedIn); // 로그인 상태�
         <ul class="navbar-nav">
           <li class="nav-item">
             <template v-if="isLoggedIn">
-              <router-link :to="{ name: 'mypage' }" class="nav-link"
+              <router-link :to="{ name: 'UserMypage' }" class="nav-link"
                 >회원정보 수정</router-link
               >
             </template>
             <template v-else>
-              <router-link :to="{ name: 'login' }" class="nav-link"
+              <router-link :to="{ name: 'UserLogin' }" class="nav-link"
                 >로그인</router-link
               >
             </template>
           </li>
           <li class="nav-item">
             <template v-if="!isLoggedIn">
-              <router-link :to="{ name: 'signup' }" class="nav-link"
+              <router-link :to="{ name: 'UserJoin' }" class="nav-link"
                 >회원가입</router-link
               >
             </template>

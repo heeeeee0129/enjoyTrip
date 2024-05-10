@@ -4,42 +4,74 @@
 
 <mapper namespace="com.ssafy.board.dao.BoardDao">
 
-	<select id="listArticle" resultType="board">
-		SELECT article_no, user_id, subject, content, hit, register_time
-		FROM board
+	<sql id="search">
+		<if test="word != null and word != ''">
+			<if test="key == 'subject'">
+				and subject like concat('%', #{word}, '%')
+			</if>
+			<if test="key != 'subject'">
+				and ${key} = #{word}
+			</if>
+		</if>
+	</sql>
+
+	<select id="listArticle" parameterType="map" resultType="board">
+		select article_no, user_id, subject, content, hit, register_time
+		from
+		board b
+		<where>
+			<include refid="search"></include>
+		</where>
+		order by b.article_no desc
+		limit #{start}, #{listsize}
 	</select>
 
 	<select id="getArticle" parameterType="int" resultType="board">
-		SELECT article_no, user_id, subject, content, hit, register_time
+		SELECT
+		article_no, user_id, subject, content, hit, register_time
 		FROM board
 		WHERE article_no = #{articleNo}
 	</select>
 
+	<select id="getTotalArticleCount" parameterType="map" resultType="int">
+		select count(article_no)
+		from board
+		<where>
+			<include refid="search"></include>
+		</where>
+	</select>
+
 	<insert id="writeArticle" parameterType="board">
-		INSERT INTO board (user_id, subject, content)
+		INSERT INTO board
+		(user_id, subject, content)
 		VALUES (#{userId}, #{subject}, #{content})
 	</insert>
 
 	<update id="updateHit" parameterType="int">
 		UPDATE board
-		SET hit = hit +1
+		SET hit = hit
+		+1
 		WHERE article_no = #{articleNo}
 	</update>
 
 	<update id="modifyArticle" parameterType="board">
 		UPDATE board
-		SET subject=#{subject}, content=#{content}, register_time=now()
-		WHERE article_no = #{articleNo}
+		SET
+		subject=#{subject}, content=#{content}, register_time=now()
+		WHERE
+		article_no = #{articleNo}
 	</update>
-	
+
 	<delete id="deleteArticle" parameterType="int">
 		DELETE FROM board
-		WHERE article_no = #{articleNo}
+		WHERE
+		article_no = #{articleNo}
 	</delete>
-	
+
 	<delete id="deleteAll" parameterType="string">
 		DELETE FROM board
-		WHERE user_id = #{id}
+		WHERE
+		user_id = #{id}
 	</delete>
-	
+
 </mapper>

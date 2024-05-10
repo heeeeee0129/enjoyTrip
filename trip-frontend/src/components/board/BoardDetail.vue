@@ -1,54 +1,51 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { detailArticle, deleteArticle } from "@/api/board";
+import { getArticle, deleteArticle } from "@/api/board";
 
 const route = useRoute();
 const router = useRouter();
 
 // const articleno = ref(route.params.articleno);
-const { articleno } = route.params;
+const { articleNo } = route.params;
 
 const article = ref({});
 
 onMounted(() => {
-  getArticle();
+  detailArticle();
 });
 
-const getArticle = () => {
-  // const { articleno } = route.params;
-  console.log(articleno + "번글 얻으러 가자!!!");
-  detailArticle(
-    articleno,
-    ({ data }) => {
-      article.value = data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+const detailArticle = () => {
+  const success = (response) => {
+    article.value = response.data;
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  getArticle(articleNo, success, fail);
 };
 
 function moveList() {
-  router.push({ name: "article-list" });
+  router.push({ name: "BoardList" });
 }
 
 function moveModify() {
-  router.push({ name: "article-modify", params: { articleno } });
+  router.push({ name: "BoardModify", params: { articleNo } });
 }
 
 function onDeleteArticle() {
-  // const { articleno } = route.params;
-  console.log(articleno + "번글 삭제하러 가자!!!");
-  deleteArticle(
-    articleno,
-    (response) => {
-      if (response.status == 200) moveList();
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+  const success = () => {
+    console.log("삭제 성공");
+    moveList();
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  deleteArticle(articleNo, success, fail);
 }
 </script>
 
@@ -62,15 +59,16 @@ function onDeleteArticle() {
       </div>
       <div class="col-lg-10 text-start">
         <div class="row my-2">
-          <h2 class="text-secondary px-5">{{ article.articleNo }}. {{ article.subject }}</h2>
+          <h2 class="text-secondary px-5">
+            {{ article.articleNo }}. {{ article.subject }}
+          </h2>
         </div>
         <div class="row">
           <div class="col-md-8">
             <div class="clearfix align-content-center">
               <img
                 class="avatar me-2 float-md-start bg-light p-2"
-                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
-              />
+                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg" />
               <p>
                 <span class="fw-bold">안효인</span> <br />
                 <span class="text-secondary fw-light">
@@ -86,13 +84,22 @@ function onDeleteArticle() {
           </div>
           <div class="divider mt-3 mb-3"></div>
           <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-outline-primary mb-3" @click="moveList">
+            <button
+              type="button"
+              class="btn btn-outline-primary mb-3"
+              @click="moveList">
               글목록
             </button>
-            <button type="button" class="btn btn-outline-success mb-3 ms-1" @click="moveModify">
+            <button
+              type="button"
+              class="btn btn-outline-success mb-3 ms-1"
+              @click="moveModify">
               글수정
             </button>
-            <button type="button" class="btn btn-outline-danger mb-3 ms-1" @click="onDeleteArticle">
+            <button
+              type="button"
+              class="btn btn-outline-danger mb-3 ms-1"
+              @click="onDeleteArticle">
               글삭제
             </button>
           </div>

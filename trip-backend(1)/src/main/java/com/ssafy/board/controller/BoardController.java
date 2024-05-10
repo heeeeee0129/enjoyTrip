@@ -1,8 +1,12 @@
 package com.ssafy.board.controller;
 
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,12 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.board.dto.Board;
+import com.ssafy.board.dto.BoardListDto;
 import com.ssafy.board.service.BoardService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.ssafy.algorithm.service.Kmp;
 import com.ssafy.algorithm.service.KmpImpl;
@@ -25,6 +33,7 @@ import com.ssafy.algorithm.service.Sort;
 
 @RestController
 @RequestMapping("/boardapi")
+@Tag(name = "게시판 컨트롤러", description = "게시판에 글을 등록, 수정, 삭제, 목록, 상세보기등 전반적인 처리를 하는 클래스.")
 public class BoardController {
 
 	private BoardService boardService;
@@ -47,16 +56,16 @@ public class BoardController {
 		}
 	}
 
-	@Operation(summary = "등록된 모든 게시판 글 정보를 반환한다.")
+	@Operation(summary = "게시판 글목록", description = "모든 게시글의 정보를 반환한다.")
 	@GetMapping("/board")
-	public ResponseEntity<?> listArticle() {
+	public ResponseEntity<?> listArticle(
+			@RequestParam @Parameter(description = "게시글을 얻기위한 부가정보.", required = true) Map<String, String> map) {
 		try {
-			List<Board> boards = boardService.listArticle();
-			if (!boards.isEmpty()) {
-				return ResponseEntity.ok(boards);
-			} else {
-				return ResponseEntity.noContent().build();
-			}
+			BoardListDto boardListDto = boardService.listArticle(map);
+			HttpHeaders header = new HttpHeaders();
+			header.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+			System.out.println(boardListDto);
+			return ResponseEntity.ok().headers(header).body(boardListDto);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
@@ -77,28 +86,28 @@ public class BoardController {
 			return exceptionHandling(e);
 		}
 	}
-	
-	@Operation(summary = "등록된 모든 게시판 글 정보를 정렬기준에 따라 반환한다.")
-	@GetMapping("/board/sort/{sortby}")
-	public ResponseEntity<?> sortArticle(@PathVariable(value = "sortby") String sortby) {
-		try {
-			List<Board> boards = boardService.listArticle();
-			if (!boards.isEmpty()) {
-				if ("register".equals(sortby)) {
-					boards = sortService.sortByRegister(boards);
-				} else if ("popularity".equals(sortby)) {
-					boards = sortService.sortByPopularity(boards);
-				} else {
-					boards = sortService.sortByAlpha(boards);
-				}
-				return ResponseEntity.ok(boards);
-			} else {
-				return ResponseEntity.noContent().build();
-			}
-		} catch (Exception e) {
-			return exceptionHandling(e);
-		}
-	}
+
+//	@Operation(summary = "등록된 모든 게시판 글 정보를 정렬기준에 따라 반환한다.")
+//	@GetMapping("/board/sort/{sortby}")
+//	public ResponseEntity<?> sortArticle(@PathVariable(value = "sortby") String sortby) {
+//		try {
+//			List<Board> boards = boardService.listArticle();
+//			if (!boards.isEmpty()) {
+//				if ("register".equals(sortby)) {
+//					boards = sortService.sortByRegister(boards);
+//				} else if ("popularity".equals(sortby)) {
+//					boards = sortService.sortByPopularity(boards);
+//				} else {
+//					boards = sortService.sortByAlpha(boards);
+//				}
+//				return ResponseEntity.ok(boards);
+//			} else {
+//				return ResponseEntity.noContent().build();
+//			}
+//		} catch (Exception e) {
+//			return exceptionHandling(e);
+//		}
+//	}
 
 	@Operation(summary = "게시판의 글을 저장한다.")
 	@PostMapping("/board")

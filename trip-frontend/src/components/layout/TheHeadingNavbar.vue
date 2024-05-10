@@ -9,7 +9,7 @@ const isLoggedIn = computed(() => store.state.isLoggedIn); // 로그인 상태�
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
-      <router-link :to="{ name: 'main' }" class="navbar-brand">
+      <router-link :to="{ name: 'MainView' }" class="navbar-brand">
         <img
           src="@/assets/ssafy_logo.png"
           class="rounded mx-auto d-block"
@@ -40,8 +40,8 @@ const isLoggedIn = computed(() => store.state.isLoggedIn); // 로그인 상태�
             >
           </li>
           <li class="nav-item">
-            <router-link :to="{ name: 'board' }" class="nav-link"
-              >자유게시판</router-link
+            <router-link :to="{ name: 'BoardView' }" class="nav-link"
+              >QnA</router-link
             >
           </li>
           <li class="nav-item">

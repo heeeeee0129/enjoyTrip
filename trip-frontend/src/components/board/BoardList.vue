@@ -3,18 +3,18 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
 
-// import VSelect from "@/components/common/VSelect.vue";
+import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/board/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
 const router = useRouter();
 
-// const selectOption = ref([
-//   { text: "검색조건", value: "" },
-//   { text: "글번호", value: "article_no" },
-//   { text: "제목", value: "subject" },
-//   { text: "작성자아이디", value: "user_id" },
-// ]);
+const selectOption = ref([
+  { text: "검색조건", value: "" },
+  { text: "글번호", value: "article_no" },
+  { text: "제목", value: "subject" },
+  { text: "작성자아이디", value: "user_id" },
+]);
 
 const articles = ref([]);
 const currentPage = ref(1);
@@ -31,35 +31,32 @@ onMounted(() => {
   getArticleList();
 });
 
-// const changeKey = (val) => {
-//   console.log("BoarList에서 선택한 조건 : " + val);
-//   param.value.key = val;
-// };
+const changeKey = (val) => {
+  param.value.key = val;
+};
 
 const getArticleList = () => {
-  console.log("서버에서 글목록 얻어오자!!!", param.value);
-  listArticle(
-    param.value,
-    ({ data }) => {
-      articles.value = data.articles;
-      currentPage.value = data.currentPage;
-      totalPage.value = data.totalPageCount;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+  const success = (response) => {
+    articles.value = response.data.articles;
+    currentPage.value = response.data.currentPage;
+    totalPage.value = response.data.totalPageCount;
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  listArticle(param.value, success, fail);
 };
 
 const onPageChange = (val) => {
-  console.log(val + "번 페이지로 이동 준비 끝!!!");
   currentPage.value = val;
   param.value.pgno = val;
   getArticleList();
 };
 
 const moveWrite = () => {
-  router.push({ name: "article-write" });
+  router.push({ name: "BoardWrite" });
 };
 </script>
 
@@ -81,7 +78,7 @@ const moveWrite = () => {
               글쓰기
             </button>
           </div>
-          <!-- <div class="col-md-5 offset-5">
+          <div class="col-md-5 offset-5">
             <form class="d-flex">
               <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
               <div class="input-group input-group-sm">
@@ -89,19 +86,23 @@ const moveWrite = () => {
                   type="text"
                   class="form-control"
                   v-model="param.word"
-                  placeholder="검색어..."
-                />
-                <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
+                  placeholder="검색어..." />
+                <button
+                  class="btn btn-dark"
+                  type="button"
+                  @click="getArticleList">
+                  검색
+                </button>
               </div>
             </form>
-          </div> -->
+          </div>
         </div>
         <table class="table table-hover">
           <thead>
             <tr class="text-center">
               <th scope="col">글번호</th>
-              <th scope="col">제목</th>
               <th scope="col">작성자</th>
+              <th scope="col">제목</th>
               <th scope="col">조회수</th>
               <th scope="col">작성일</th>
             </tr>

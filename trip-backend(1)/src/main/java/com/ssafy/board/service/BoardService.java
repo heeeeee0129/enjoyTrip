@@ -1,15 +1,16 @@
 package com.ssafy.board.service;
 
-import java.util.List;
+import java.util.Map;
 
 import com.ssafy.board.dto.Board;
+import com.ssafy.board.dto.BoardListDto;
 
 
 public interface BoardService {
 	
 	int writeArticle(Board boardDto) throws Exception;
 	
-	List<Board> listArticle() throws Exception;
+	BoardListDto listArticle(Map<String, String> map) throws Exception;
 	
 	Board getArticle(int articleNo) throws Exception;
 	
@@ -19,5 +20,5 @@ public interface BoardService {
 	
 	int deleteArticle(int articleNo) throws Exception;
 
-	int deleteAll(String id);
+	int deleteAll(String id) throws Exception;
 }

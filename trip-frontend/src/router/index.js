@@ -1,38 +1,37 @@
 import { createRouter, createWebHistory } from "vue-router";
-import TheMainView from "@/views/TheMainView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "main",
-      component: TheMainView,
+      name: "MainView",
+      component: () => import("@/views/MainView.vue"),
     },
     {
       path: "/board",
-      name: "board",
-      component: () => import("../views/TheBoardView.vue"),
-      redirect: { name: "article-list" },
+      name: "BoardView",
+      component: () => import("@/views/BoardView.vue"),
+      redirect: { name: "BoardList" },
       children: [
         {
           path: "list",
-          name: "article-list",
+          name: "BoardList",
           component: () => import("@/components/board/BoardList.vue"),
         },
         {
-          path: "view/:articleno",
-          name: "article-view",
+          path: "detail/:articleNo",
+          name: "BoardDetail",
           component: () => import("@/components/board/BoardDetail.vue"),
         },
         {
           path: "write",
-          name: "article-write",
+          name: "BoardWrite",
           component: () => import("@/components/board/BoardWrite.vue"),
         },
         {
-          path: "modify/:articleno",
-          name: "article-modify",
+          path: "modify/:articleNo",
+          name: "BoardModify",
           component: () => import("@/components/board/BoardModify.vue"),
         },
       ],

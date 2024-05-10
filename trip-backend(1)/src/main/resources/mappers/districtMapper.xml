@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.district.dao.DistrictDao">
+	<select id="getSidos" resultType="sido">
+		SELECT sido_code code, sido_name name FROM sido
+	</select>
+	
+	<select id="getGuguns" parameterType="int" resultType="string">
+		SELECT gugun_name
+		FROM gugun
+		WHERE sido_code = #{sidoCode}
+	</select>
+</mapper>

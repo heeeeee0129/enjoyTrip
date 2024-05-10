@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.dao.TripDao">
+	
+	<insert id="addPlan" parameterType="trip">
+		INSERT INTO timeline (userId, contentId)
+		VALUES (#{userId}, #{contentId})
+	</insert>
+	
+	<delete id="deletePlan" parameterType="int">
+		DELETE FROM timeline
+		WHERE contentId = #{contentId}
+	</delete>
+	
+	<delete id="deleteAll" parameterType="string">
+		DELETE FROM timeline
+		WHERE userId = #{userId}
+	</delete>
+</mapper>

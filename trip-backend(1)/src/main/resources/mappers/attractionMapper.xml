@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.attraction.dao.AttractionDao">
+
+    <!-- getAllAttractions 메서드에 대한 SQL 정의 -->
+    <select id="getAllAttractions" parameterType="map" resultType="attraction">
+        SELECT
+            content_id, content_type_id, title, addr1, addr2, zipcode,
+            tel, first_image, first_image2, readcount, sido_code, gugun_code,
+            latitude, longitude, mlevel
+        FROM
+            attraction_info
+        WHERE
+            1=1
+        <if test="sido != null and sido != 0">
+            AND sido_code = #{sido}
+        </if>
+        <if test="gugun != null and gugun != 0">
+            AND gugun_code = #{gugun}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND title LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="contentTypeIds != null and contentTypeIds.length > 0">
+            AND content_type_id IN
+            <foreach item="item" index="index" collection="contentTypeIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY content_id DESC
+        LIMIT 10
+    </select>
+
+    <!-- getAttractionById 메서드에 대한 SQL 정의 -->
+    <select id="getAttractionById" parameterType="int" resultType="attractionWithOverview">
+        SELECT
+            ai.content_id, ai.content_type_id, ai.title, ai.addr1, ai.addr2, ai.zipcode,
+            ai.tel, ai.first_image, ai.first_image2, ai.readcount, ai.sido_code, ai.gugun_code,
+            ai.latitude, ai.longitude, ai.mlevel, ad.overview
+        FROM
+            attraction_info ai
+        LEFT JOIN
+            attraction_description ad ON ai.content_id = ad.content_id
+        WHERE
+            ai.content_id = #{contentId}
+    </select>
+
+    <!-- getUserAttraction 메서드에 대한 SQL 정의 -->
+    <select id="getUserAttraction" parameterType="string" resultType="com.ssafy.attraction.dto.Attraction">
+        SELECT
+            ai.content_id, ai.content_type_id, ai.title, ai.addr1, ai.addr2, ai.zipcode,
+            ai.tel, ai.first_image, ai.first_image2, ai.readcount, ai.sido_code, ai.gugun_code,
+            ai.latitude, ai.longitude, ai.mlevel
+        FROM
+            attraction_info ai
+        INNER JOIN
+            timeline t ON ai.content_id = t.contentId
+        WHERE
+            t.userId = #{userId}
+    </select>
+
+</mapper>

@@ -4,7 +4,10 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
     <div class="container-fluid">
       <router-link :to="{ name: 'main' }" class="navbar-brand">
-        <img src="@/assets/ssafy_logo.png" class="rounded mx-auto d-block" alt="..." />
+        <img
+          src="@/assets/ssafy_logo.png"
+          class="rounded mx-auto d-block"
+          alt="..." />
       </router-link>
       <button
         class="navbar-toggler"
@@ -13,15 +16,13 @@
         data-bs-target="#navbarScroll"
         aria-controls="navbarScroll"
         aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+        aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
-          style="--bs-scroll-height: 100px"
-        >
+          style="--bs-scroll-height: 100px">
           <li class="nav-item">
             <a class="nav-link" href="#">마이캠퍼스</a>
           </li>
@@ -37,8 +38,7 @@
               href="#"
               role="button"
               data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
+              aria-expanded="false">
               HELP DESK
             </a>
             <ul class="dropdown-menu">
@@ -49,10 +49,14 @@
             </ul>
           </li>
           <li class="nav-item">
-            <router-link :to="{ name: 'board' }" class="nav-link">게시판</router-link>
+            <router-link :to="{ name: 'board' }" class="nav-link"
+              >게시판</router-link
+            >
           </li>
           <li class="nav-item">
-            <router-link :to="{ name: 'estations' }" class="nav-link">전기차충전소</router-link>
+            <router-link :to="{ name: 'estations' }" class="nav-link"
+              >전기차충전소</router-link
+            >
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -60,8 +64,7 @@
             class="form-control me-2"
             type="search"
             placeholder="검색..."
-            aria-label="Search"
-          />
+            aria-label="Search" />
           <button class="btn btn-outline-success" type="button">search</button>
         </form>
       </div>

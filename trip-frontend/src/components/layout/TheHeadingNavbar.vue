@@ -23,63 +23,6 @@ const doLogout = () => {
             alt="SSAFY Logo" /> -->
           <span class="ml-3 text-xl font-semibold no-underline">EnjoyTrip</span>
         </router-link>
-<<<<<<< HEAD
-        <!-- 모바일용 햄버거 메뉴 -->
-        <button
-          class="text-white focus:outline-none lg:hidden"
-          @click="isOpen = !isOpen">
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              :class="[isOpen ? 'block' : 'hidden']"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-        <!-- 모바일에서 열린 메뉴 -->
-        <div
-          :class="[
-            isOpen ? 'block' : 'hidden',
-            'lg:flex lg:items-center lg:w-auto',
-          ]">
-          <!-- 왼쪽에 배치된 메뉴 항목들 -->
-          <ul class="flex items-center space-x-4 lg:space-x-8 my-auto">
-            <li>
-              <router-link
-                :to="{ name: 'search' }"
-                class="text-white hover:text-gray-300 no-underline"
-                >여행지검색</router-link
-              >
-            </li>
-            <li>
-              <router-link
-                :to="{ name: 'plan' }"
-                class="text-white hover:text-gray-300 no-underline"
-                >여행계획</router-link
-              >
-            </li>
-            <li>
-              <router-link
-                :to="{ name: 'BoardView' }"
-                class="text-white hover:text-gray-300 no-underline"
-                >QnA</router-link
-              >
-            </li>
-            <li>
-              <router-link
-                :to="{ name: 'notice' }"
-                class="text-white hover:text-gray-300 no-underline"
-                >공지사항</router-link
-              >
-            </li>
-          </ul>
-=======
       </a>
       <nav
         class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-center">
@@ -114,7 +57,6 @@ const doLogout = () => {
           </li>
         </ul>
       </nav>
->>>>>>> aaaf849fc796b4f098459c873456d678df89ad05
 
       <ul class="flex items-center space-x-2 lg:space-x-8 my-auto gap-y-4">
         <div v-if="isLoggedIn">

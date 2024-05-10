@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+import { useStore } from "vuex"; // Vuex store 사용
+import { computed } from "vue"; // 계산된 속성 사용
+
+const store = useStore(); // Vuex store 인스턴스 가져오기
+const isLoggedIn = computed(() => store.state.isLoggedIn); // 로그인 상태를 Vuex store에서 가져옴
+</script>
 
 <template>
   <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
@@ -24,49 +30,47 @@
           class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
           style="--bs-scroll-height: 100px">
           <li class="nav-item">
-            <a class="nav-link" href="#">마이캠퍼스</a>
+            <router-link :to="{ name: 'search' }" class="nav-link"
+              >여행지검색</router-link
+            >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">강의실</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">커뮤니티</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false">
-              HELP DESK
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">공지사항</a></li>
-              <li><a class="dropdown-item" href="#">FAQ</a></li>
-              <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">학사규정</a></li>
-            </ul>
+            <router-link :to="{ name: 'plan' }" class="nav-link"
+              >여행계획</router-link
+            >
           </li>
           <li class="nav-item">
             <router-link :to="{ name: 'board' }" class="nav-link"
-              >게시판</router-link
+              >자유게시판</router-link
             >
           </li>
           <li class="nav-item">
-            <router-link :to="{ name: 'estations' }" class="nav-link"
-              >전기차충전소</router-link
+            <router-link :to="{ name: 'notice' }" class="nav-link"
+              >공지사항</router-link
             >
           </li>
         </ul>
-        <form class="d-flex" role="search">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="검색..."
-            aria-label="Search" />
-          <button class="btn btn-outline-success" type="button">search</button>
-        </form>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <template v-if="isLoggedIn">
+              <router-link :to="{ name: 'mypage' }" class="nav-link"
+                >회원정보 수정</router-link
+              >
+            </template>
+            <template v-else>
+              <router-link :to="{ name: 'login' }" class="nav-link"
+                >로그인</router-link
+              >
+            </template>
+          </li>
+          <li class="nav-item">
+            <template v-if="!isLoggedIn">
+              <router-link :to="{ name: 'signup' }" class="nav-link"
+                >회원가입</router-link
+              >
+            </template>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>

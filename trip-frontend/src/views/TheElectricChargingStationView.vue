@@ -1,17 +1,17 @@
 <script setup>
-import { ref, onMounted } from "vue"
-import axios from "axios"
+import { ref, onMounted } from "vue";
+import axios from "axios";
 
 // const url = import.meta.env.VITE_ELECTRIC_CHARGING_STATION_URL;
 // const serviceKey = import.meta.env.VITE_OPEN_API_SERVICE_KEY;
-const { VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env
-const { VITE_OPEN_API_SERVICE_KEY } = import.meta.env
+const { VITE_ELECTRIC_CHARGING_STATION_URL } = import.meta.env;
+const { VITE_OPEN_API_SERVICE_KEY } = import.meta.env;
 
-const chargingStations = ref([])
+const chargingStations = ref([]);
 
 onMounted(() => {
-  getChargingStations()
-})
+  getChargingStations();
+});
 
 const getChargingStations = () => {
   axios
@@ -25,12 +25,12 @@ const getChargingStations = () => {
     })
     .then(({ data }) => {
       //   console.log(data.items[0].item);
-      chargingStations.value = data.items[0].item
+      chargingStations.value = data.items[0].item;
     })
     .catch((err) => {
-      console.log(err)
-    })
-}
+      console.log(err);
+    });
+};
 </script>
 
 <template>
@@ -48,7 +48,10 @@ const getChargingStations = () => {
         </tr>
       </thead>
       <tbody>
-        <tr class="text-center" v-for="station in chargingStations" :key="station.statId">
+        <tr
+          class="text-center"
+          v-for="station in chargingStations"
+          :key="station.statId">
           <th>{{ station.statNm }}</th>
           <td>{{ station.statId }}</td>
           <td>{{ station.stat }}</td>

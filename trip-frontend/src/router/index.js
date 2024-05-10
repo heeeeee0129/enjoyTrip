@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TheMainView from "../views/TheMainView.vue";
-import TheElectricChargingStationView from "@/views/TheElectricChargingStationView.vue";
-// import TheBoardView from "../views/TheBoardView.vue";
+import LoginView from "../views/LoginView.vue";
+import MyPageView from "../views/MyPageView.vue";
+import NoticeView from "../views/NoticeView.vue";
+import SignUpView from "../views/SignUpView.vue";
+import TripPlanView from "../views/TripPlanView.vue";
+import TripSearchView from "../views/TripSearchView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,18 +15,10 @@ const router = createRouter({
       name: "main",
       component: TheMainView,
     },
-    {
-      path: "/estations",
-      name: "estations",
-      component: TheElectricChargingStationView,
-    },
+
     {
       path: "/board",
       name: "board",
-      // component: TheBoardView,
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/TheBoardView.vue"),
       redirect: { name: "article-list" },
       children: [
@@ -48,6 +44,12 @@ const router = createRouter({
         },
       ],
     },
+    { path: "/login", name: "login", component: LoginView },
+    { path: "/signup", name: "signup", component: SignUpView },
+    { path: "/mypage", name: "mypage", component: MyPageView },
+    { path: "/notice", name: "notice", component: NoticeView },
+    { path: "/plan", name: "plan", component: TripPlanView },
+    { path: "/search", name: "search", component: TripSearchView },
   ],
 });
 

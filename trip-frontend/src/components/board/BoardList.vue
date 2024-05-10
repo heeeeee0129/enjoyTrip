@@ -3,18 +3,18 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listArticle } from "@/api/board.js";
 
-import VSelect from "@/components/common/VSelect.vue";
+// import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/board/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
 const router = useRouter();
 
-const selectOption = ref([
-  { text: "검색조건", value: "" },
-  { text: "글번호", value: "article_no" },
-  { text: "제목", value: "subject" },
-  { text: "작성자아이디", value: "user_id" },
-]);
+// const selectOption = ref([
+//   { text: "검색조건", value: "" },
+//   { text: "글번호", value: "article_no" },
+//   { text: "제목", value: "subject" },
+//   { text: "작성자아이디", value: "user_id" },
+// ]);
 
 const articles = ref([]);
 const currentPage = ref(1);
@@ -31,10 +31,10 @@ onMounted(() => {
   getArticleList();
 });
 
-const changeKey = (val) => {
-  console.log("BoarList에서 선택한 조건 : " + val);
-  param.value.key = val;
-};
+// const changeKey = (val) => {
+//   console.log("BoarList에서 선택한 조건 : " + val);
+//   param.value.key = val;
+// };
 
 const getArticleList = () => {
   console.log("서버에서 글목록 얻어오자!!!", param.value);
@@ -74,11 +74,14 @@ const moveWrite = () => {
       <div class="col-lg-10">
         <div class="row align-self-center mb-2">
           <div class="col-md-2 text-start">
-            <button type="button" class="btn btn-outline-primary btn-sm" @click="moveWrite">
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              @click="moveWrite">
               글쓰기
             </button>
           </div>
-          <div class="col-md-5 offset-5">
+          <!-- <div class="col-md-5 offset-5">
             <form class="d-flex">
               <VSelect :selectOption="selectOption" @onKeySelect="changeKey" />
               <div class="input-group input-group-sm">
@@ -91,7 +94,7 @@ const moveWrite = () => {
                 <button class="btn btn-dark" type="button" @click="getArticleList">검색</button>
               </div>
             </form>
-          </div>
+          </div> -->
         </div>
         <table class="table table-hover">
           <thead>
@@ -107,16 +110,14 @@ const moveWrite = () => {
             <BoardListItem
               v-for="article in articles"
               :key="article.articleNo"
-              :article="article"
-            ></BoardListItem>
+              :article="article"></BoardListItem>
           </tbody>
         </table>
       </div>
       <PageNavigation
         :current-page="currentPage"
         :total-page="totalPage"
-        @pageChange="onPageChange"
-      ></PageNavigation>
+        @pageChange="onPageChange"></PageNavigation>
     </div>
   </div>
 </template>

@@ -1,44 +1,54 @@
-<script setup></script>
+<script setup>
+import {onMounted} from "vue";
+import AOS from 'aos';
+import "aos/dist/aos.css";
+
+onMounted(() => {
+  AOS.init();
+});
+</script>
 
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-cover bg-center"
-    style="background-image: url('/bg_trip.jpg')">
-    <!-- Header Section -->
-    <header
-      class="bg-gradient-to-r from-blue-500 to-purple-500 py-6 text-center rounded-t-lg">
-      <h1 class="text-4xl font-semibold text-white">여행을 떠나세요</h1>
-      <p class="text-lg text-white mt-2">
-        새로운 모험을 찾아떠나는 여정으로 떠나세요.
-      </p>
-    </header>
+  class="py-[20%] bg-cover bg-center"
+  style="background-image: url('/bg_trip.jpg'); height: 300vh;" >
 
-    <!-- Main Content Section -->
-    <main class="py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Feature 1 -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-semibold mb-2">다양한 여행지</h2>
-          <p>세계 각지의 아름다운 여행지를 탐험해보세요.</p>
-        </div>
-        <!-- Feature 2 -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-semibold mb-2">편리한 예약</h2>
-          <p>간편한 예약 시스템으로 여행 일정을 계획하세요.</p>
-        </div>
-        <!-- Feature 3 -->
-        <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-semibold mb-2">여행 가이드</h2>
-          <p>전문적인 여행 가이드와 함께하는 특별한 여행 경험을 즐기세요.</p>
-        </div>
-      </div>
-    </main>
+  <div class="flex flex-col items-center w-full mb-[20%]">
+    <div class=" font-extrabold text-7xl text-white" data-aos="fade-down"
+     data-aos-easing="ease-in" 
+     data-aos-duration="1000">특별한 여행을 떠나세요</div>
+  </div>
+
+<div class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] left-0 ml-[10%]" 
+  data-aos="fade-right" data-aos-duration="1000" >
+    <h3 class="text-white font-extrabold text-3xl mb-3">다양한 여행지</h3>
+    <h4 class="text-gray-100">국내의 다양한 여행지를 탐험해보세요</h4>
+</div>
+
+<div class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[20%]" 
+  data-aos="fade-right" data-aos-duration="1000" >
+    <h3 class="text-white font-extrabold text-3xl mb-3">편리한 일정 계획</h3>
+    <h4 class="text-gray-100">지도 정보를 통해 편리하게 일정을 계획해보세요</h4>
+</div>
+
+<div class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[30%]" 
+  data-aos="fade-right" data-aos-duration="1000" >
+    <h3 class="text-white font-extrabold text-3xl mb-3">나만의 관광지</h3>
+    <h4 class="text-gray-100">나만의 특별한 관광지를 공유해보세요</h4>
+</div>
+
 
     <!-- Footer Section -->
-    <footer class="bg-gray-200 py-4 text-center rounded-b-lg">
+    <footer
+      class="py-4 text-center rounded-b-lg text-lg font-extrabold text-white fixed bottom-0 w-full"
+      data-aos="fade-up"
+      data-aos-duration="1000" data-aos-delay="1500"
+    >
+    
       <p>여행을 떠나는 여러분을 응원합니다. 즐거운 여정 되세요!</p>
     </footer>
   </div>
+  
 </template>
 
 <style scoped></style>

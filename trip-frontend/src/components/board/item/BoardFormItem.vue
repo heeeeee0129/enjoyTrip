@@ -86,9 +86,13 @@ function registArticle() {
 }
 
 function updateArticle() {
-  const success = () => {
-    alert("글이 수정되었습니다");
-    moveList();
+  const success = (response) => {
+    if (response.data === 1) {
+      alert("글이 수정되었습니다");
+      moveDetail();
+    } else {
+      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+    }
   };
 
   const fail = (error) => {
@@ -100,6 +104,15 @@ function updateArticle() {
 
 function moveList() {
   router.replace({ name: "BoardList" });
+}
+
+function moveDetail() {
+  router.replace({
+    name: "BoardDetail",
+    params: {
+      articleNo: article.value.articleNo,
+    },
+  });
 }
 </script>
 

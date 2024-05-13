@@ -1,5 +1,5 @@
 <script setup>
-defineProps({ article: Object });
+defineProps({ article: Object, index: Number });
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -16,7 +16,7 @@ const goDetail = (articleNo) => {
 
 <template>
   <tr class="text-center">
-    <th scope="row">{{ article.articleNo }}</th>
+    <th scope="row">{{ index + 1 }}</th>
     <td class="text-start">
       {{ article.userId }}
     </td>

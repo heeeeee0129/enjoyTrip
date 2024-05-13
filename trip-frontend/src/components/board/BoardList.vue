@@ -137,8 +137,9 @@ const moveWrite = () => {
                 </thead>
                 <tbody>
                   <BoardListItem
-                    v-for="article in articles"
+                    v-for="(article, index) in articles"
                     :key="article.articleNo"
+                    :index="index + (currentPage - 1) * 20"
                     :article="article"></BoardListItem>
                 </tbody>
               </table>

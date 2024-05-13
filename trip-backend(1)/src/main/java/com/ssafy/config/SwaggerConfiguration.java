@@ -79,4 +79,13 @@ public class SwaggerConfiguration {
 				.pathsToMatch("/tripapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
 				.build();
 	}
+	
+	@Bean
+	public GroupedOpenApi coomentApi() {
+		return GroupedOpenApi
+				.builder()
+				.group("comment")  // 그룹 이름 ( 원하는 이름으로 작성 )
+				.pathsToMatch("/commentapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
+				.build();
+	}
 }

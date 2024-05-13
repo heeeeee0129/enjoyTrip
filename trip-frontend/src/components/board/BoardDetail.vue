@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/board";
 import { useUserStore } from "@/stores";
-// import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
+import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
 
 const store = useUserStore();
 
@@ -119,7 +119,7 @@ function onDeleteArticle() {
                 글삭제
               </button>
             </div>
-            <!-- <BoardCommentItem /> -->
+            <BoardCommentItem />
           </div>
         </div>
       </div>

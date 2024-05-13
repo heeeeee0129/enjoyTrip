@@ -7,9 +7,9 @@ import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/board/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
-import { useStore } from "vuex"; // Vuex store 사용
-const store = useStore(); // Vuex store 인스턴스 가져오기
-const isLoggedIn = computed(() => store.state.isLoggedIn); // 로그인 상태를 Vuex store에서 가져옴
+import { useUserStore } from "@/stores";
+const store = useUserStore();
+const isLoggedIn = computed(() => store.isLoggedIn);
 
 const router = useRouter();
 

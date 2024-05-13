@@ -1,25 +1,26 @@
 <script setup>
-import { ref, onMounted, watch } from "vue"; // 반응형 변수 사용
-import { modify, getSidos, getGuguns } from "@/api/user.js"; // ���원 가입 API
+import { ref, onMounted, watch } from "vue";
+import { modify, getSidos, getGuguns } from "@/api/user.js";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-const store = useStore();
-const userData = store.state.member;
-console.log("userData : ", userData);
+import { useUserStore } from "@/stores";
+
+const store = useUserStore();
+const userData = store.member;
 
 const router = useRouter();
 
-// 반응형 변수 생성
-const memberId = ref(userData.id); // 멤버 ID
-const password = ref(userData.pwd); // 비밀번호
-const name = ref(userData.name); // 이름
-const emailId = ref(userData.emailId); // 이���일 ID
-const emailDomain = ref(userData.emailDomain); // 이���일 도��인
+// Define reactive variables
+const memberId = ref(userData.id);
+const password = ref(userData.pwd);
+const name = ref(userData.name);
+const emailId = ref(userData.emailId);
+const emailDomain = ref(userData.emailDomain);
 const selectedSidoCode = ref(userData.sido);
 const selectedGugunCode = ref(userData.gugun);
 const selectSidos = ref([]);
 const selectGuguns = ref([]);
 
+// Fetch Sidos and Guguns
 const fetchSidos = async () => {
   try {
     getSidos(
@@ -50,21 +51,22 @@ const fetchGuguns = async () => {
     console.log(error);
   }
 };
+
 watch(selectedSidoCode, () => {
   selectedGugunCode.value = 0;
   fetchGuguns();
 });
-// 회원 가입 버튼 클릭 시 실행되는 함수
+
+// Modify user information
 const doModify = () => {
-  // 입력된 정보를 member 객체에 저장
   const member = {
-    id: memberId.value, // 멤버 ID
-    pwd: password.value, // 비밀번호
-    name: name.value, // 이름
-    emailId: emailId.value, // 이메일 아이디
-    emailDomain: emailDomain.value, // 이메일 도메인
-    sido: selectedSidoCode.value, // 시도
-    gugun: selectedGugunCode.value, // 구군
+    id: memberId.value,
+    pwd: password.value,
+    name: name.value,
+    emailId: emailId.value,
+    emailDomain: emailDomain.value,
+    sido: selectedSidoCode.value,
+    gugun: selectedGugunCode.value,
   };
 
   modify(
@@ -72,27 +74,23 @@ const doModify = () => {
     (response) => {
       if (response.data === 1) {
         alert("회원 정보 수정이 완료되었습니다.");
-        store.dispatch("doLogin", member);
-        router.push({
-          name: "main",
-        });
+        store.login(member);
+        router.push({ name: "main" });
       }
     },
     (error) => {
       alert(error);
     }
   );
-  console.log(member);
-
-  // 여기에 회원 가입 로직 추가 가능
 };
+
+// Fetch initial data on component mount
 onMounted(() => {
   fetchSidos();
   fetchGuguns();
-  selectedSidoCode.value = userData.sido;
-  selectedGugunCode.value = userData.gugun;
 });
 </script>
+
 <template>
   <div
     class="min-h-screen flex flex-col items-center justify-center bg-gray-300">

@@ -2,17 +2,21 @@
 import "@/index.css";
 import { login } from "@/api/user";
 import { ref, computed } from "vue";
-import { useStore } from "vuex";
+import { useUserStore } from "@/stores"; // Import the Pinia store
 import { useRouter, useRoute } from "vue-router";
+
 const router = useRouter();
 const route = useRoute();
 const queryId = route.query.id;
 const queryPwd = route.query.pwd;
-const store = useStore();
-const isLoggedIn = computed(() => store.state.isLoggedIn);
+
+const store = useUserStore(); // Use the Pinia store
+
+const isLoggedIn = computed(() => store.isLoggedIn);
 
 const memberId = ref(queryId ? String(queryId) : "");
 const password = ref(queryPwd ? String(queryPwd) : "");
+
 const FindPassword = () => {
   router.push({ name: "FindPassword" });
 };
@@ -34,7 +38,7 @@ const doLogin = () => {
 
   const success = (response) => {
     console.log(response.data);
-    store.dispatch("doLogin", response.data);
+    store.login(response.data); // Call the login method from the Pinia store
     console.log(isLoggedIn.value);
     router.push({ name: "main" });
   };

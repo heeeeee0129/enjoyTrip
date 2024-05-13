@@ -68,9 +68,13 @@ function onSubmit() {
 }
 
 function registArticle() {
-  const success = () => {
-    alert("글이 작성되었습니다");
-    moveList();
+  const success = (response) => {
+    if (response.data === 1) {
+      alert("글이 작성되었습니다");
+      moveList();
+    } else {
+      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+    }
   };
 
   const fail = (error) => {

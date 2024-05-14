@@ -79,7 +79,6 @@ public class CommentController {
 		try {
 			boolean flag = false;
 			int cnt = 0;
-			System.out.println(comment);
 			for(String str : slangList) {
 				flag = kmp.check(comment.getContent(), str);
 				if(flag) break;

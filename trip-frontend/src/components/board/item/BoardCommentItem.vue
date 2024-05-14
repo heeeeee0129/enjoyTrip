@@ -4,13 +4,11 @@
     <div class="mt-3">
       <div class="bg-light rounded p-2 my-2 d-flex align-items-center">
         <div>
-          <div class="fw-bold">{{ comment.userName }}</div>
+          <div class="fw-bold">{{ comment.userName }}({{ comment.userId }})</div>
           <div class="mt-2">
             <!-- 수정 가능한 입력 필드 -->
             <div v-if="isEditing">
-              <textarea
-                v-model="editedComment.content"
-                class="form-control"></textarea>
+              <textarea v-model="editedComment.content" class="form-control"></textarea>
             </div>
             <!-- 댓글 내용 -->
             <div v-else>
@@ -26,21 +24,24 @@
           <button
             v-if="!isEditing && userStore.member.id === comment.userId"
             class="btn btn-outline-success btn-sm me-2"
-            @click="isEditing = true">
+            @click="isEditing = true"
+          >
             수정
           </button>
           <!-- 저장 버튼 -->
           <button
             v-if="isEditing && userStore.member.id === comment.userId"
             class="btn btn-outline-primary btn-sm me-2"
-            @click="saveEdit">
+            @click="saveEdit"
+          >
             저장
           </button>
           <!-- 삭제 버튼 -->
           <button
             class="btn btn-outline-danger btn-sm"
             @click="onDeleteComment"
-            v-if="userStore.member.id === comment.userId">
+            v-if="userStore.member.id === comment.userId"
+          >
             삭제
           </button>
         </div>

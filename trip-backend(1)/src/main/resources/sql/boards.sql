@@ -50,16 +50,16 @@ AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
---Board테이블의 외래키 제약 조건 변경
---ALTER TABLE `mh`.`board`
---DROP FOREIGN KEY `board_to_members_userid_fk`;
---
---ALTER TABLE `mh`.`board`
---ADD CONSTRAINT `board_to_members_userid_fk`
---FOREIGN KEY (`user_id`)
---REFERENCES `mh`.`members` (`user_id`)
---ON DELETE CASCADE
---ON UPDATE NO ACTION;
+-- Board테이블의 외래키 제약 조건 변경
+-- ALTER TABLE `mh`.`board`
+-- DROP FOREIGN KEY `board_to_members_userid_fk`; 
+-- 
+-- ALTER TABLE `mh`.`board`
+-- ADD CONSTRAINT `board_to_members_userid_fk`
+-- FOREIGN KEY (`user_id`)
+-- REFERENCES `mh`.`members` (`user_id`)
+-- ON DELETE CASCADE
+-- ON UPDATE NO ACTION;
 
 
 INSERT INTO board (user_id, subject, content, hit, register_time)

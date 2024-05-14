@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/stores";
 import { getArticle, writeArticle, modifyArticle } from "@/api/notice.js";
@@ -20,7 +20,13 @@ const notice = ref({
   registerTime: "",
 });
 
-if (props.type === "modify") {
+onMounted(() => {
+  if (props.type === "modify") {
+    setArticle();
+  }
+});
+
+const setArticle = async () => {
   let { articleNo } = route.params;
 
   const success = (response) => {
@@ -32,7 +38,7 @@ if (props.type === "modify") {
   };
 
   await getArticle(articleNo, success, fail);
-}
+};
 
 const subjectErrMsg = ref("");
 const contentErrMsg = ref("");
@@ -117,7 +123,8 @@ function moveDetail() {
         v-model="notice.userId"
         disabled="true"
         :placeholder="store.member.id"
-        style="font-weight: bold" />
+        style="font-weight: bold"
+      />
     </div>
     <div class="mb-3">
       <label for="subject" class="form-label">제목 :</label>
@@ -125,32 +132,19 @@ function moveDetail() {
         type="text"
         class="form-control rounded-pill"
         v-model="notice.subject"
-        placeholder="제목..." />
+        placeholder="제목..."
+      />
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 :</label>
-      <textarea
-        class="form-control rounded"
-        v-model="notice.content"
-        rows="5"></textarea>
+      <textarea class="form-control rounded" v-model="notice.content" rows="5"></textarea>
     </div>
     <div class="text-center">
-      <button
-        type="submit"
-        class="btn btn-primary rounded-pill px-4 me-2"
-        v-if="type === 'regist'">
+      <button type="submit" class="btn btn-primary rounded-pill px-4 me-2" v-if="type === 'regist'">
         글작성
       </button>
-      <button
-        type="submit"
-        class="btn btn-success rounded-pill px-4 me-2"
-        v-else>
-        글수정
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger rounded-pill px-4"
-        @click="moveList">
+      <button type="submit" class="btn btn-success rounded-pill px-4 me-2" v-else>글수정</button>
+      <button type="button" class="btn btn-danger rounded-pill px-4" @click="moveList">
         목록으로 이동...
       </button>
     </div>

@@ -77,7 +77,7 @@ const router = createRouter({
     {
       path: "/search",
       name: "search",
-      component: () => import("@/views/TripSearchView.vue"),
+      component: () => import("@/components/tripSearch/TripSearchView.vue"),
     },
   ],
 });

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from "vue"; // 반응형 변수 사용
-import { join, getSidos, getGuguns } from "@/api/user.js"; // ���원 가입 API
+import { join } from "@/api/user.js"; // ���원 가입 API
 import { useRouter } from "vue-router";
+import { fetchSidos, fetchGuguns } from "@/api/getDistricts.js";
 
 const router = useRouter();
 
@@ -16,41 +17,15 @@ const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref("");
 
-const fetchSidos = async () => {
-  try {
-    getSidos(
-      (response) => {
-        selectSidos.value = response.data;
-      },
-      (error) => alert(error)
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
-onMounted(fetchSidos);
-
-const fetchGuguns = async () => {
-  try {
-    if (selectedSidoCode.value) {
-      getGuguns(
-        selectedSidoCode.value,
-        (response) => {
-          selectGuguns.value = response.data;
-        },
-        (error) => alert(error)
-      );
-    } else {
-      selectGuguns.value = [];
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-watch(selectedSidoCode, () => {
-  selectedGugunCode.value = 0;
-  fetchGuguns();
+onMounted(async () => {
+  selectSidos.value = await fetchSidos();
 });
+
+watch(selectedSidoCode, async () => {
+  selectedGugunCode.value = 0;
+  selectGuguns.value = await fetchGuguns(selectedSidoCode.value);
+});
+
 // 회원 가입 버튼 클릭 시 실행되는 함수
 const doSignUp = () => {
   // 입력된 정보를 member 객체에 저장

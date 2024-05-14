@@ -38,7 +38,7 @@ const doLogin = () => {
 
   const success = (response) => {
     console.log(response.data);
-    store.login(response.data); // Call the login method from the Pinia store
+    store.login(response.data);
     console.log(isLoggedIn.value);
     router.push({ name: "main" });
   };

@@ -17,10 +17,6 @@ const doLogout = () => {
       class="container mx-auto flex flex-wrap flex-col md:flex-row items-center">
       <a class="flex title-font font-medium items-center text-gray-900">
         <router-link :to="{ name: 'main' }" class="font-bold text-xl">
-          <!-- <img
-            src="@/assets/ssafy_logo.png"
-            class="w-12 h-12"
-            alt="SSAFY Logo" /> -->
           <span class="ml-3 text-xl font-semibold no-underline">EnjoyTrip</span>
         </router-link>
       </a>

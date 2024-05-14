@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { modify, getSidos, getGuguns } from "@/api/user.js";
+import { modify } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores";
+import { fetchSidos, fetchGuguns } from "@/api/getDistricts.js";
 
 const store = useUserStore();
 const userData = store.member;
@@ -20,41 +21,14 @@ const selectedGugunCode = ref(userData.gugun);
 const selectSidos = ref([]);
 const selectGuguns = ref([]);
 
-// Fetch Sidos and Guguns
-const fetchSidos = async () => {
-  try {
-    getSidos(
-      (response) => {
-        selectSidos.value = response.data;
-      },
-      (error) => alert(error)
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
+onMounted(async () => {
+  selectSidos.value = await fetchSidos();
+  selectGuguns.value = await fetchGuguns(selectedSidoCode.value);
+});
 
-const fetchGuguns = async () => {
-  try {
-    if (selectedSidoCode.value) {
-      getGuguns(
-        selectedSidoCode.value,
-        (response) => {
-          selectGuguns.value = response.data;
-        },
-        (error) => alert(error)
-      );
-    } else {
-      selectGuguns.value = [];
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-watch(selectedSidoCode, () => {
+watch(selectedSidoCode, async () => {
   selectedGugunCode.value = 0;
-  fetchGuguns();
+  selectGuguns.value = await fetchGuguns(selectedSidoCode.value);
 });
 
 // Modify user information

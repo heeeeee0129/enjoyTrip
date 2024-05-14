@@ -11,7 +11,6 @@ import "bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const app = createApp(App);
-
 const pinia = createPinia();
 app.use(pinia);
 

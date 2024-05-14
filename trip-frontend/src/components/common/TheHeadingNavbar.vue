@@ -43,6 +43,13 @@ const doLogout = () => {
           </li>
           <li>
             <router-link
+              :to="{ name: 'HotPlaceView' }"
+              class="hover:text-gray-300 no-underline"
+              >핫플레이스</router-link
+            >
+          </li>
+          <li>
+            <router-link
               :to="{ name: 'BoardView' }"
               class="hover:text-gray-300 no-underline"
               >자유게시판</router-link
@@ -50,7 +57,7 @@ const doLogout = () => {
           </li>
           <li>
             <router-link
-              :to="{ name: 'notice' }"
+              :to="{ name: 'NoticeView' }"
               class="hover:text-gray-300 no-underline"
               >공지사항</router-link
             >

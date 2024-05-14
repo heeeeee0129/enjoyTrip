@@ -1,8 +1,27 @@
 <script setup>
-defineProps({ article: Object, index: Number });
+const props = defineProps({ article: Object, index: Number });
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { listComment } from "@/api/comment";
 
 const router = useRouter();
+const comments = ref([]);
+
+onMounted(() => {
+  getComments();
+});
+
+const getComments = async () => {
+  const success = (response) => {
+    comments.value = response.data;
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  await listComment(props.article.articleNo, success, fail);
+};
 
 const goDetail = (articleNo) => {
   router.push({
@@ -17,7 +36,7 @@ const goDetail = (articleNo) => {
 <template>
   <tr class="text-center">
     <th scope="row">{{ index + 1 }}</th>
-    <td class="text-start">
+    <td>
       {{ article.userId }}
     </td>
     <td>{{ article.userName }}</td>
@@ -25,6 +44,7 @@ const goDetail = (articleNo) => {
       <a href="#" @click.prevent="goDetail(article.articleNo)">{{
         article.subject
       }}</a>
+      <span v-if="comments.length > 0">({{ comments.length }})</span>
     </td>
     <td>{{ article.hit }}</td>
     <td>{{ article.registerTime }}</td>

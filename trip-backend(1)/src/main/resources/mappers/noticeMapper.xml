@@ -5,13 +5,15 @@
 <mapper namespace="com.ssafy.notice.dao.NoticeDao">
 
 	<select id="listArticle" resultType="notice">
-		SELECT article_no, user_id, subject, content, hit, register_time
-		FROM notice
+		SELECT n.article_no, n.user_id, m.user_name, n.subject, n.content, n.hit, n.register_time
+		FROM notice n
+		JOIN members m ON n.user_id = m.user_id 
 	</select>
 
 	<select id="getArticle" parameterType="int" resultType="notice">
-		SELECT article_no, user_id, subject, content, hit, register_time
-		FROM notice
+		SELECT n.article_no, n.user_id, m.user_name, n.subject, n.content, n.hit, n.register_time
+		FROM notice n
+		JOIN members m ON n.user_id = m.user_id 
 		WHERE article_no = #{articleNo}
 	</select>
 

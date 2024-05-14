@@ -7,9 +7,12 @@ import VSelect from "@/components/common/VSelect.vue";
 import BoardListItem from "@/components/board/item/BoardListItem.vue";
 import PageNavigation from "@/components/common/PageNavigation.vue";
 
-import { useUserStore } from "@/stores";
-const store = useUserStore();
-const isLoggedIn = computed(() => store.isLoggedIn);
+import { useUserStore } from "@/stores/index";
+import { useBoardStore } from "@/stores/board";
+import { storeToRefs } from "pinia";
+const userStore = useUserStore();
+const boardStore = useBoardStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 
 const router = useRouter();
 
@@ -21,7 +24,7 @@ const selectOption = ref([
 ]);
 
 const articles = ref([]);
-const currentPage = ref(1);
+const { currentPage } = storeToRefs(boardStore);
 const totalPage = ref(0);
 const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
 const param = ref({
@@ -39,7 +42,7 @@ const changeKey = (val) => {
   param.value.key = val;
 };
 
-const getArticleList = () => {
+const getArticleList = async () => {
   const success = (response) => {
     articles.value = response.data.articles;
     currentPage.value = response.data.currentPage;
@@ -50,13 +53,13 @@ const getArticleList = () => {
     alert("문제가 발생헀습니다.", error);
   };
 
-  listArticle(param.value, success, fail);
+  await listArticle(param.value, success, fail);
 };
 
-const onPageChange = (val) => {
+const onPageChange = async (val) => {
   currentPage.value = val;
   param.value.pgno = val;
-  getArticleList();
+  await getArticleList();
 };
 
 const moveWrite = () => {

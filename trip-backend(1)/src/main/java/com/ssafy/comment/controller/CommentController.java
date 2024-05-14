@@ -4,10 +4,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import com.ssafy.algorithm.service.Kmp;
 import com.ssafy.algorithm.service.KmpImpl;
@@ -38,16 +43,89 @@ public class CommentController {
 		}
 	}
 	
-	@Operation(summary = "해당 게시글의 댓글을 저장한다.")
-	@GetMapping("/comment/{articleNo}")
-	public ResponseEntity<?> listComment(@PathVariable(value = "articleno") int articleno) {
+	@Operation(summary = "해당 게시글의 댓글목록을 가져온다.")
+	@GetMapping("/comment/list/{articleNo}")
+	public ResponseEntity<?> listComment(@PathVariable(value = "articleNo") int articleNo) {
 		try {
-			List<Comment> listComment = commentService.listComment(articleno);
+			List<Comment> listComment = commentService.listComment(articleNo);
 			if (!listComment.isEmpty()) {
 				return ResponseEntity.ok(listComment);
 			} else {
 				return ResponseEntity.noContent().build();
 			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "해당 댓글을 가져온다.")
+	@GetMapping("/comment/{replyNo}")
+	public ResponseEntity<?> getComment(@PathVariable(value = "replyNo") int replyNo) {
+		try {
+			Comment comment = commentService.getComment(replyNo);
+			if (comment != null) {
+				return ResponseEntity.ok(comment);
+			} else {
+				return ResponseEntity.noContent().build();
+			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "해당 게시글의 댓글을 저장한다.")
+	@PostMapping("/comment")
+	public ResponseEntity<?> writeComment(@RequestBody Comment comment) {
+		try {
+			boolean flag = false;
+			int cnt = 0;
+			System.out.println(comment);
+			for(String str : slangList) {
+				flag = kmp.check(comment.getContent(), str);
+				if(flag) break;
+			}
+			
+			if(!flag) {
+				cnt = commentService.writeComment(comment);
+				return ResponseEntity.ok(cnt);
+			} else {
+				cnt = -1;
+				return ResponseEntity.ok(cnt);
+			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "해당 댓글을 수정한다.")
+	@PutMapping("/comment")
+	public ResponseEntity<?> modifyComment(@RequestBody Comment comment) {
+		try {
+			boolean flag = false;
+			int cnt = 0;
+			for(String str : slangList) {
+				flag = kmp.check(comment.getContent(), str);
+				if(flag) break;
+			}
+			
+			if(!flag) {
+				cnt = commentService.modifyComment(comment);
+				return ResponseEntity.ok(cnt);
+			} else {
+				cnt = -1;
+				return ResponseEntity.ok(cnt);
+			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary ="해당 댓글을 삭제한다.")
+	@DeleteMapping("/comment/{replyNo}")
+	public ResponseEntity<?> deleteComment(@PathVariable(value = "replyNo") int replyNo) {
+		try {
+			int cnt = commentService.deleteComment(replyNo);
+			return ResponseEntity.ok(cnt);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}

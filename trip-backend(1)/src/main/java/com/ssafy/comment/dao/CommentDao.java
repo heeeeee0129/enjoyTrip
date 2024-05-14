@@ -10,14 +10,13 @@ import com.ssafy.comment.dto.Comment;
 @Mapper
 public interface CommentDao {
 
-	List<Comment> listComment(int articleNo) throws SQLException ;
+	List<Comment> listComment(int articleNo) throws SQLException;
+	
+	Comment getComment(int replyNo) throws SQLException;
 
-	int writeComment(Comment comment) throws SQLException ;
+	int writeComment(Comment comment) throws SQLException;
 
-	int modifyComment(int replyNo) throws SQLException ;
+	int modifyComment(Comment comment) throws SQLException;
 
-	int deleteComment(int replyNo) throws SQLException ;
-
-	int deleteAll(String userId) throws SQLException ;
-
+	int deleteComment(int replyNo) throws SQLException;
 }

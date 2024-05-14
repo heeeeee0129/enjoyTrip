@@ -1,40 +1,25 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getArticle, deleteArticle } from "@/api/board";
-import { listComment, writeComment } from "@/api/comment";
+import { getArticle, deleteArticle } from "@/api/notice.js";
 import { useUserStore } from "@/stores/index";
-import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
 
 const userStore = useUserStore();
-const isLoggedIn = computed(() => userStore.isLoggedIn);
 
 const route = useRoute();
 const router = useRouter();
 
 const { articleNo } = route.params;
 
-const article = ref({});
-
-const newComment = ref({
-  articleNo,
-  replyNo: 0,
-  userId: userStore.member.id,
-  userName: "",
-  content: "",
-  registerTime: "",
-});
-
-const comments = ref([]);
+const notice = ref({});
 
 onMounted(() => {
   detailArticle();
-  getComments();
 });
 
 const detailArticle = async () => {
   const success = (response) => {
-    article.value = response.data;
+    notice.value = response.data;
   };
 
   const fail = (error) => {
@@ -44,24 +29,12 @@ const detailArticle = async () => {
   await getArticle(articleNo, success, fail);
 };
 
-const getComments = async () => {
-  const success = (response) => {
-    comments.value = response.data;
-  };
-
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
-  };
-
-  await listComment(articleNo, success, fail);
-};
-
 function moveList() {
-  router.push({ name: "BoardList" });
+  router.push({ name: "NoticeList" });
 }
 
 function moveModify() {
-  router.push({ name: "BoardModify", params: { articleNo } });
+  router.push({ name: "NoticeModify", params: { articleNo } });
 }
 
 const onDeleteArticle = async () => {
@@ -76,23 +49,6 @@ const onDeleteArticle = async () => {
 
   await deleteArticle(articleNo, success, fail);
 };
-
-const registComment = async () => {
-  const success = (response) => {
-    if (response.data === 1) {
-      alert("댓글이 작성되었습니다");
-      router.go(0);
-    } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
-    }
-  };
-
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
-  };
-
-  await writeComment(newComment.value, success, fail);
-};
 </script>
 
 <template>
@@ -103,7 +59,7 @@ const registComment = async () => {
           <div class="card-body">
             <div class="row my-2">
               <h2 class="text-secondary px-3 rounded-lg">
-                {{ article.subject }}
+                {{ notice.subject }}
               </h2>
             </div>
             <div class="row align-items-center">
@@ -115,25 +71,19 @@ const registComment = async () => {
                     style="width: 40px; height: 40px" />
                   <div class="ms-2">
                     <p class="mb-1">
-                      <span class="fw-bold"
-                        >{{ article.userName }}({{ article.userId }})</span
-                      >
+                      <span class="fw-bold">{{ notice.userName }}</span>
                     </p>
                   </div>
                 </div>
               </div>
               <div class="col-md-4 text-end">
                 <span
-                  class="badge bg-first rounded-pill p-2 border border-secondary">
-                  <span class="text-dark">댓글 : {{ comments.length }}</span>
-                </span>
-                <span
                   class="badge bg-first rounded-pill p-2 border border-secondary ms-2">
-                  <span class="text-dark">조회수: {{ article.hit }}</span>
+                  <span class="text-dark">조회수: {{ notice.hit }}</span>
                 </span>
                 <p class="mt-3">
                   <span class="text-secondary fw-light">
-                    {{ article.registerTime }}
+                    {{ notice.registerTime }}
                   </span>
                 </p>
               </div>
@@ -142,7 +92,7 @@ const registComment = async () => {
               class="bg-white rounded p-3"
               style="min-width: 250px; min-height: 300px">
               <div class="text-secondary">
-                {{ article.content }}
+                {{ notice.content }}
               </div>
             </div>
             <div class="d-flex justify-content-end mt-3">
@@ -156,37 +106,16 @@ const registComment = async () => {
                 type="button"
                 class="btn btn-outline-success me-1 rounded-pill"
                 @click="moveModify"
-                v-if="userStore.member.id === article.userId">
+                v-if="userStore.member.id === notice.userId">
                 글수정
               </button>
               <button
                 type="button"
                 class="btn btn-outline-danger rounded-pill"
                 @click="onDeleteArticle"
-                v-if="userStore.member.id === article.userId">
+                v-if="userStore.member.id === notice.userId">
                 글삭제
               </button>
-            </div>
-            <BoardCommentItem
-              v-for="comment in comments"
-              :key="comment.replyNo"
-              :comment="comment" />
-            <!-- 댓글 작성 폼 -->
-            <div class="mt-3">
-              <textarea
-                v-model="newComment.content"
-                class="form-control rounded"
-                rows="3"
-                placeholder="댓글을 입력하세요..."></textarea>
-              <div class="d-flex justify-content-end mt-2">
-                <button
-                  type="button"
-                  class="btn btn-outline-primary me-1 rounded-pill"
-                  @click="registComment"
-                  v-if="isLoggedIn">
-                  작성
-                </button>
-              </div>
             </div>
           </div>
         </div>

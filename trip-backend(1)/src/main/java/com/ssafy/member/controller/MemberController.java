@@ -28,17 +28,12 @@ import jakarta.servlet.http.HttpSession;
 public class MemberController {
 
 	private MemberService memberService;
-	private BoardService boardService;
-	private TripService tripService;
 	private DistrictServiceImpl districtService;
 
-	public MemberController(MemberService memberService, DistrictServiceImpl districtService, BoardService boardService,
-			TripService tripService) {
+	public MemberController(MemberService memberService, DistrictServiceImpl districtService) {
 		super();
 		this.memberService = memberService;
 		this.districtService = districtService;
-		this.boardService = boardService;
-		this.tripService = tripService;
 	}
 
 	@Operation(summary = "아이디 중복 체크")
@@ -89,9 +84,7 @@ public class MemberController {
 	@DeleteMapping("/user/remove")
 	public ResponseEntity<?> deleteArticle(@RequestParam(value = "id") String id, HttpSession httpSession) {
 		try {
-			int cnt = boardService.deleteAll(id); // 해당 작성자가 쓴 글 다 삭제하기
-			cnt = tripService.deleteAll(id);
-			cnt = memberService.expire(id);
+			int cnt = memberService.expire(id);
 			httpSession.removeAttribute("loginUser");
 			return ResponseEntity.ok(cnt);
 		} catch (Exception e) {

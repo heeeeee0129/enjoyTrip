@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { writeArticle, getArticle, modifyArticle } from "@/api/board";
 import { useUserStore } from "@/stores";
+import { getArticle, writeArticle, modifyArticle } from "@/api/notice.js";
 
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
@@ -10,7 +10,7 @@ const route = useRoute();
 
 const props = defineProps({ type: String });
 
-const article = ref({
+const notice = ref({
   articleNo: 0,
   userId: store.member.id,
   userName: "",
@@ -24,7 +24,7 @@ if (props.type === "modify") {
   let { articleNo } = route.params;
 
   const success = (response) => {
-    article.value = response.data;
+    notice.value = response.data;
   };
 
   const fail = (error) => {
@@ -37,7 +37,7 @@ if (props.type === "modify") {
 const subjectErrMsg = ref("");
 const contentErrMsg = ref("");
 watch(
-  () => article.value.subject,
+  () => notice.value.subject,
   (value) => {
     let len = value.length;
     if (len == 0 || len > 30) {
@@ -47,7 +47,7 @@ watch(
   { immediate: true }
 );
 watch(
-  () => article.value.content,
+  () => notice.value.content,
   (value) => {
     let len = value.length;
     if (len == 0 || len > 500) {
@@ -68,48 +68,40 @@ function onSubmit() {
 }
 
 const registArticle = async () => {
-  const success = (response) => {
-    if (response.data === 1) {
-      alert("글이 작성되었습니다");
-      moveList();
-    } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
-    }
+  const success = () => {
+    alert("글이 작성되었습니다");
+    moveList();
   };
 
   const fail = (error) => {
     alert("문제가 발생헀습니다.", error);
   };
 
-  await writeArticle(article.value, success, fail);
+  await writeArticle(notice.value, success, fail);
 };
 
 const updateArticle = async () => {
-  const success = (response) => {
-    if (response.data === 1) {
-      alert("글이 수정되었습니다");
-      moveDetail();
-    } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
-    }
+  const success = () => {
+    alert("글이 수정되었습니다");
+    moveDetail();
   };
 
   const fail = (error) => {
     alert("문제가 발생헀습니다.", error);
   };
 
-  await modifyArticle(article.value, success, fail);
+  await modifyArticle(notice.value, success, fail);
 };
 
 function moveList() {
-  router.replace({ name: "BoardList" });
+  router.replace({ name: "NoticeList" });
 }
 
 function moveDetail() {
   router.replace({
-    name: "BoardDetail",
+    name: "NoticeDetail",
     params: {
-      articleNo: article.value.articleNo,
+      articleNo: notice.value.articleNo,
     },
   });
 }
@@ -122,7 +114,7 @@ function moveDetail() {
       <input
         type="text"
         class="form-control rounded-pill"
-        v-model="article.userId"
+        v-model="notice.userId"
         disabled="true"
         :placeholder="store.member.id"
         style="font-weight: bold" />
@@ -132,14 +124,14 @@ function moveDetail() {
       <input
         type="text"
         class="form-control rounded-pill"
-        v-model="article.subject"
+        v-model="notice.subject"
         placeholder="제목..." />
     </div>
     <div class="mb-3">
       <label for="content" class="form-label">내용 :</label>
       <textarea
         class="form-control rounded"
-        v-model="article.content"
+        v-model="notice.content"
         rows="5"></textarea>
     </div>
     <div class="text-center">

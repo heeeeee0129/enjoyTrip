@@ -28,8 +28,8 @@ public class CommentServcieImpl implements CommentService {
 	}
 
 	@Override
-	public int modifyComment(int replyNo) throws Exception {
-		return commentDao.modifyComment(replyNo);
+	public int modifyComment(Comment comment) throws Exception {
+		return commentDao.modifyComment(comment);
 	}
 
 	@Override
@@ -38,8 +38,8 @@ public class CommentServcieImpl implements CommentService {
 	}
 
 	@Override
-	public int deleteAll(String userId) throws Exception {
-		return commentDao.deleteAll(userId);
+	public Comment getComment(int replyNo) throws Exception {
+		return commentDao.getComment(replyNo);
 	}
 
 }

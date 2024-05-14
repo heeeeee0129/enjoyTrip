@@ -1,11 +1,10 @@
 package com.ssafy.notice.dto;
 
-
-
 public class Notice {
 
 	private int articleNo;
 	private String userId;
+	private String userName;
 	private String subject;
 	private String content;
 	private int hit;
@@ -59,10 +58,18 @@ public class Notice {
 		this.registerTime = registerTime;
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	@Override
 	public String toString() {
-		return "BoardDto [articleNo=" + articleNo + ", userId=" + userId + ", subject=" + subject + ", content="
-				+ content + ", hit=" + hit + ", registerTime=" + registerTime + "]";
+		return "Notice [articleNo=" + articleNo + ", userId=" + userId + ", userName=" + userName + ", subject="
+				+ subject + ", content=" + content + ", hit=" + hit + ", registerTime=" + registerTime + "]";
 	}
 
 }

@@ -1,0 +1,256 @@
+<script setup>
+import { ref, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from "@/stores";
+import { getArticle, writeArticle, modifyArticle } from "@/api/hotplace.js";
+
+const store = useUserStore(); // Vuex store 인스턴스 가져오기
+const router = useRouter();
+const route = useRoute();
+
+const props = defineProps({ type: String });
+
+const hotplace = ref({
+  hotNo: 0,
+  userId: store.member.id,
+  userName: "",
+  placeName: "",
+  category: "",
+  content: "",
+  hit: 0,
+  registerTime: "",
+  latitude: 0,
+  longitude: 0,
+  fileInfo: null,
+});
+
+onMounted(() => {
+  if (props.type === "modify") {
+    setHotPlace();
+  }
+});
+
+const setHotPlace = async () => {
+  let { hotNo } = route.params;
+
+  const success = (response) => {
+    hotplace.value = response.data;
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  await getArticle(hotNo, success, fail);
+};
+
+const handleFileChange = (event) => {
+  const files = event.target.files;
+  if (files.length > 0) {
+    hotplace.value.fileInfo = files[0];
+  }
+};
+
+const subjectErrMsg = ref("");
+const contentErrMsg = ref("");
+const dateErrMsg = ref("");
+const categoryErrMsg = ref("");
+const fileErrMsg = ref("");
+watch(
+  () => hotplace.value.placeName,
+  (value) => {
+    let len = value.length;
+    if (len == 0 || len > 30) {
+      subjectErrMsg.value = "장소 이름을 확인해 주세요!!!";
+    } else subjectErrMsg.value = "";
+  },
+  { immediate: true }
+);
+watch(
+  () => hotplace.value.content,
+  (value) => {
+    let len = value.length;
+    if (len == 0 || len > 500) {
+      contentErrMsg.value = "핫플레이스 소개를 확인해 주세요!!!";
+    } else contentErrMsg.value = "";
+  },
+  { immediate: true }
+);
+watch(
+  () => hotplace.value.registerTime,
+  (value) => {
+    if (!value) {
+      dateErrMsg.value = "날짜를 선택해 주세요!!!";
+    } else {
+      dateErrMsg.value = "";
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => hotplace.value.category,
+  (value) => {
+    if (!value) {
+      categoryErrMsg.value = "카테고리를 선택해 주세요!!!";
+    } else {
+      categoryErrMsg.value = "";
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => hotplace.value.fileInfo,
+  (value) => {
+    if (!value) {
+      fileErrMsg.value = "파일을 선택해 주세요!!!";
+    } else {
+      fileErrMsg.value = "";
+    }
+  },
+  { immediate: true }
+);
+
+function onSubmit() {
+  if (subjectErrMsg.value) {
+    alert(subjectErrMsg.value);
+  } else if (contentErrMsg.value) {
+    alert(contentErrMsg.value);
+  } else if (dateErrMsg.value) {
+    alert(dateErrMsg.value);
+  } else if (categoryErrMsg.value) {
+    alert(categoryErrMsg.value);
+  } else if (fileErrMsg.value) {
+    alert(fileErrMsg.value);
+  } else {
+    props.type === "regist" ? registArticle() : updateArticle();
+  }
+}
+
+const registArticle = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      alert("글이 작성되었습니다");
+      moveList();
+    } else if (response.data === 2) {
+      alert("파일형식이 잘못되었습니다.");
+    } else {
+      alert("비속어가 포함되어있습니다. 다시 확인해주세요.");
+    }
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생했습니다: ", error);
+  };
+
+  await writeArticle(hotplace.value, success, fail);
+};
+
+const updateArticle = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      alert("글이 수정되었습니다");
+      moveDetail();
+    } else if (response.data === 2) {
+      alert("파일형식이 잘못되었습니다.");
+    } else {
+      alert("비속어가 포함되어있습니다. 다시 확인해주세요.");
+    }
+  };
+
+  const fail = (error) => {
+    alert("문제가 발생헀습니다.", error);
+  };
+
+  await modifyArticle(hotplace.value, success, fail);
+};
+
+function moveList() {
+  router.replace({ name: "HotPlaceList" });
+}
+
+function moveDetail() {
+  router.replace({
+    name: "HotPlaceDetail",
+    params: {
+      hotNo: hotplace.value.hotNo,
+    },
+  });
+}
+</script>
+
+<template>
+  <div class="container mt-5">
+    <div class="row">
+      <!-- 왼쪽 반은 지도 -->
+      <div class="col-md-6 mb-4">
+        <!-- 여기에 지도를 표시할 컴포넌트를 넣으세요 -->
+      </div>
+
+      <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
+      <div class="col-md-6 mb-4">
+        <form
+          @submit.prevent="onSubmit"
+          class="p-4 rounded-lg shadow bg-light"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label for="placeImage" class="form-label"
+              >사진 등록(jpg, jpeg, png 파일만 가능):</label
+            >
+            <input type="file" class="form-control" @change="handleFileChange" accept="image/*" />
+          </div>
+          <div class="mb-3">
+            <label for="placeName" class="form-label">장소 이름:</label>
+            <input
+              type="text"
+              class="form-control"
+              v-model="hotplace.placeName"
+              placeholder="장소 이름을 입력하세요"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="visitedDate" class="form-label">다녀온 날짜:</label>
+            <input type="date" class="form-control" v-model="hotplace.registerTime" />
+          </div>
+          <div class="mb-3">
+            <label for="graveType" class="form-label">장소 유형:</label>
+            <select class="form-select" v-model="hotplace.category">
+              <option value="" disabled selected hidden>유형 선택</option>
+              <option value="관광지">관광지</option>
+              <option value="문화시설">문화시설</option>
+              <option value="행사/공연/축제">행사/공연/축제</option>
+              <option value="여행코스">여행코스</option>
+              <option value="레포츠">레포츠</option>
+              <option value="숙박">숙박</option>
+              <option value="쇼핑">쇼핑</option>
+              <option value="음식점">음식점</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="introduction" class="form-label">핫플레이스 소개:</label>
+            <textarea
+              class="form-control"
+              v-model="hotplace.content"
+              rows="5"
+              placeholder="핫플레이스를 소개하세요"
+            ></textarea>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2">
+              {{ type === "regist" ? "글작성" : "글수정" }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success rounded-pill px-4"
+              @click="moveList"
+            >
+              목록으로 이동...
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped></style>

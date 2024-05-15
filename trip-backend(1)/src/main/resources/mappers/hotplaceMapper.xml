@@ -3,6 +3,82 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.hotplace.dao.HotPlaceDao">
-	
 
+	<resultMap id="hotPlace" type="HotPlace">
+	    <id property="hotNo" column="hot_no"/>
+	    <result property="userId" column="user_id"/>
+	    <result property="userName" column="user_name"/>
+	    <result property="placeName" column="place_name"/>
+	    <result property="category" column="category"/>
+	    <result property="content" column="content"/>
+	    <result property="hit" column="hit"/>
+	    <result property="registerTime" column="register_time"/>
+	    <result property="latitude" column="latitude"/>
+	    <result property="longitude" column="longitude"/>
+	    <association property="fileInfo" resultMap="fileInfo"/>
+	</resultMap>
+
+	<resultMap id="fileInfo" type="FileInfo">
+	    <result property="saveFolder" column="save_folder"/>
+	    <result property="originalFile" column="original_file"/>
+	    <result property="saveFile" column="save_file"/>
+	</resultMap>
+
+	<insert id="writeArticle" parameterType="hotPlace">
+		insert into hotplace (user_id, place_name, category, content, register_time, latitude, longitude)
+		values (#{userId}, #{placeName}, #{category}, #{content}, #{registerTime}, #{latitude}, #{longitude} )
+		<selectKey resultType="int" keyProperty="hotNo"
+			order="AFTER">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<insert id="registerFile" parameterType="hotPlace">
+		insert into file_info (hot_no, save_folder, original_file, save_file)
+		values(#{hotNo}, #{fileInfo.saveFolder}, #{fileInfo.originalFile}, #{fileInfo.saveFile})
+	</insert>
+
+	<select id="listArticle" parameterType="map" resultMap="hotPlace">
+    	SELECT h.hot_no, h.user_id, m.user_name, h.place_name, h.category, h.content, h.hit, h.register_time, h.latitude, h.longitude, f.save_folder, f.original_file, f.save_file
+   	 	FROM hotplace h
+    	JOIN members m ON h.user_id = m.user_id
+    	LEFT JOIN file_info f ON h.hot_no = f.hot_no
+		ORDER BY h.hot_no DESC
+	</select>
+
+
+	<select id="getArticle" parameterType="int" resultMap="hotPlace">
+    	SELECT h.hot_no, h.user_id, m.user_name, h.place_name, h.category, h.content, h.hit, h.register_time, h.latitude, h.longitude, f.save_folder, f.original_file, f.save_file
+   	 	FROM hotplace h
+    	JOIN members m ON h.user_id = m.user_id
+    	LEFT JOIN file_info f ON h.hot_no = f.hot_no
+    	WHERE h.hot_no = #{hotNo}
+	</select>
+
+	<update id="updateHit" parameterType="int">
+		update hotplace
+		set hit = hit + 1
+		where hot_no = #{articleNo}
+	</update>
+
+	<update id="modifyArticle" parameterType="hotPlace">
+		update hotplace
+		set place_name = #{placeName}, category = #{category}, content = #{content}, register_time = #{registerTime}, latitude = #{latitude}, longitude = #{longitude}
+		where hot_no = #{hotNo}
+	</update>
+	
+	
+	<update id="modifyFile" parameterType="hotPlace">
+		update file_info
+		set save_folder = #{fileInfo.saveFolder}, original_file = #{fileInfo.originalFile}, save_file = #{fileInfo.saveFile}
+		where hot_no = #{hotNo}
+	</update>
+
+
+	<delete id="deleteArticle" parameterType="int">
+		delete from hotplace
+		where hot_no = #{hotNo}
+	</delete>
+	
+	
 </mapper>

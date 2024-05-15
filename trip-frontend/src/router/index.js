@@ -103,6 +103,21 @@ const router = createRouter({
           name: "HotPlaceList",
           component: () => import("@/components/hotplace/HotPlaceList.vue"),
         },
+        {
+          path: "write",
+          name: "HotPlaceWrite",
+          component: () => import("@/components/hotplace/HotPlaceWrite.vue"),
+        },
+        {
+          path: "modify/:hotNo",
+          name: "HotPlaceModify",
+          component: () => import("@/components/hotplace/HotPlaceModify.vue"),
+        },
+        {
+          path: "detail/:hotNo",
+          name: "HotPlaceDetail",
+          component: () => import("@/components/hotplace/HotPlaceDetail.vue"),
+        },
       ],
     },
     {

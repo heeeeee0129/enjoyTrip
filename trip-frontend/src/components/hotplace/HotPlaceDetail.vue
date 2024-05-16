@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 const userStore = useUserStore();
+const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
 
 const route = useRoute();
 const router = useRouter();
@@ -15,12 +16,35 @@ const { hotNo } = route.params;
 
 const hotplace = ref({});
 const ImgPath = ref("");
+const map = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
   // console.log("애가 왜 호출돼 1?");
+  await loadKakaoMapScript();
+  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+    center: new window.kakao.maps.LatLng(37.500613, 127.036431),
+    level: 5,
+  });
   detailArticle();
 });
+const loadKakaoMapScript = () => {
+  return new Promise((resolve, reject) => {
+    if (typeof window.kakao !== "undefined") {
+      resolve();
+      return;
+    }
 
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${VITE_KAKAO_API_KEY}&libraries=services,clusterer,drawing`;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        resolve();
+      });
+    };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+};
 function getImageUrl(folder, name) {
   return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
 }
@@ -115,16 +139,19 @@ const formatDate = (dateString) => {
             <h2 class="card-title py-3 text-center">핫플레이스 상세보기</h2>
           </div>
           <img :src="ImgPath" alt="이미지가 없음" />
-          <div class="container mt-5">
+          <div class="container-fluid mt-5">
             <div class="row">
+              <p class="text-end">조회수: {{ hotplace.hit }}</p>
               <!-- 왼쪽 반은 지도 -->
-              <div class="col-md-6 mb-4">
-                <!-- 여기에 지도를 표시할 컴포넌트를 넣으세요 -->
+              <div class="col-md-6 mb-4 h-[90%] rounded shadow p-3">
+                <div
+                  id="map"
+                  class="mt-3"
+                  style="width: 100%; height: 550px"></div>
               </div>
 
               <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
               <div class="col-md-6 mb-4">
-                <p class="text-end">조회수: {{ hotplace.hit }}</p>
                 <form class="p-4 rounded-lg shadow bg-light">
                   <div class="mb-3">
                     <label for="userName" class="form-label">작성자:</label>

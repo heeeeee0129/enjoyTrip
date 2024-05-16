@@ -129,6 +129,13 @@ const router = createRouter({
       path: "/search",
       name: "search",
       component: () => import("@/components/trip/TripSearchView.vue"),
+      children: [
+        {
+          path: "detail/:id",
+          name: "TripDetail",
+          component: () => import("@/components/trip/TripDetailView.vue"),
+        },
+      ],
     },
   ],
 });

@@ -1,13 +1,13 @@
 <script setup>
 import { watch, ref, onMounted } from "vue";
 import { getAttractions } from "@/api/attraction";
+import { useRouter } from "vue-router";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import searchBar from "@/components/trip/item/TripSearchBar.vue";
 
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
-const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
-
+import { loadKakaoMapScript } from "@/utils/load-map";
 const attractions = ref([]);
 const selectedSidoCode = ref(0); // 시도
 const selectSidos = ref([]);
@@ -15,12 +15,12 @@ const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
 const map = ref(null);
+const router = useRouter();
 
 // 카카오 맵 API 로드
 onMounted(async () => {
   await loadKakaoMapScript();
   AOS.init();
-  // Fetch sidos and set them
   selectSidos.value = await fetchSidos();
 
   // Initialize the map
@@ -36,31 +36,15 @@ watch(selectedSidoCode, async () => {
 });
 
 // 카카오 맵 API 스크립트 로드
-const loadKakaoMapScript = () => {
-  return new Promise((resolve, reject) => {
-    if (typeof window.kakao !== "undefined") {
-      resolve();
-      return;
-    }
 
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${VITE_KAKAO_API_KEY}&libraries=services,clusterer,drawing`;
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        resolve();
-      });
-    };
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-};
 const handleSearch = async (queryString) => {
   try {
     const response = await getAttractions(queryString);
     console.log("Response Data: ", response);
 
-    if (response && response.response && response.response.body) {
+    if (response) {
       attractions.value = response;
+      console.log(attractions.value);
       updateMapMarkers(attractions.value);
     } else {
       console.error("Unexpected response structure:", response);
@@ -74,13 +58,43 @@ const updateMapMarkers = (trips) => {
   positions.value = trips.map((trip) => ({
     title: trip.title,
     addr: `${trip.addr1} ${trip.addr2}`,
-    img: trip.firstimage || "default.png",
-    latlng: new window.kakao.maps.LatLng(trip.mapy, trip.mapx),
+    img: trip.firstImage || "./default.png",
+    latlng: new window.kakao.maps.LatLng(trip.latitude, trip.longitude),
+    contentId: trip.contentId,
   }));
 
   displayMarker();
-};
+  let minDistance = Number.MAX_VALUE;
+  let nearestMarker = null;
 
+  // 평균 Lat, Lng 계산
+  let totalLat = 0;
+  let totalLng = 0;
+  positions.value.forEach((position) => {
+    totalLat += position.latlng.getLat();
+    totalLng += position.latlng.getLng();
+  });
+  const avgLat = totalLat / positions.value.length;
+  const avgLng = totalLng / positions.value.length;
+
+  // 가장 가까운 마커 찾기
+  positions.value.forEach((position) => {
+    const distance = getDistance(position.latlng, avgLat, avgLng);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestMarker = position.latlng;
+    }
+  });
+
+  // 가장 가까운 마커를 중심으로 지도 설정
+  map.value.setCenter(nearestMarker);
+  map.value.setLevel(7);
+};
+const getDistance = (latlng, avgLat, avgLng) => {
+  const latDiff = latlng.getLat() - avgLat;
+  const lngDiff = latlng.getLng() - avgLng;
+  return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+};
 const displayMarker = () => {
   const imageSrc = "./marker1.png";
   const imageSize = new window.kakao.maps.Size(24, 35);
@@ -93,37 +107,47 @@ const displayMarker = () => {
       image: markerImage,
       clickable: true,
     });
-
-    window.kakao.maps.event.addListener(marker, "click", function () {
-      displayMarkerInfo(position);
-    });
-
     marker.setMap(map.value);
+    const content = `<div class="flex items-center justify-between relative bottom-8 border border-solid
+     border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60" onClick="console.log(position.title)">
+    <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
+    <span class=" py-auto ml-2">
+      <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </span>
+</div>`;
+    const goToTripDetail = (contentId) => {
+      // Vue Router를 이용하여 TripDetail 페이지로 이동하는 메소드
+      this.$router.push({
+        name: "TripDetail",
+        params: { contentId: contentId },
+      });
+    };
+    const customoverlay = new window.kakao.maps.CustomOverlay({
+      map: map.value,
+      position: position.latlng,
+      content: content,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      range: 300,
+    });
   });
-
-  map.value.setCenter(positions.value[0].latlng);
-};
-
-const displayMarkerInfo = (position) => {
-  // Implement the info display logic here
-  console.log("Display marker info:", position);
 };
 </script>
 
 <template>
-  <div class="p-10 mt-6">
+  <div class="p-10 mt-3">
     <div class="row px-10">
-      <div id="temp"></div>
       <div class="mt-3 text-center fw-bolder" id="search-header">
-        <h2 class="mb-3">여행지 검색</h2>
+        <h2 class="">여행지 검색</h2>
       </div>
       <searchBar @search="handleSearch" />
 
       <div
         id="map"
-        class="mt-3"
-        style="width: 100%; height: 500px"
-        data-aos="fade-up"></div>
+        class="mt-3 rounded shadow-sm p-10"
+        style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
@@ -143,13 +167,13 @@ const displayMarkerInfo = (position) => {
               @click="redirectToDetail(attraction.contentId)">
               <td>
                 <img
-                  :src="attraction.firstimage || 'default.png'"
+                  :src="attraction.firstImage || 'default.png'"
                   width="100px" />
               </td>
               <td>{{ attraction.title }}</td>
               <td>{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
-              <td>{{ attraction.mapy }}</td>
-              <td>{{ attraction.mapx }}</td>
+              <td>{{ attraction.latitude }}</td>
+              <td>{{ attraction.longitude }}</td>
             </tr>
           </tbody>
         </table>
@@ -187,8 +211,49 @@ const displayMarkerInfo = (position) => {
 #search-header {
   margin: 40px 0;
 }
-
-#temp {
-  height: 60px;
+#customoverlay {
+  position: relative;
+  bottom: 85px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #ddd;
+  float: left;
+}
+#customoverlay:nth-of-type(n) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+#customoverlay a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  background: #d95050;
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+    no-repeat right 14px center;
+}
+#customoverlay .title {
+  display: block;
+  text-align: center;
+  background: #fff;
+  margin-right: 35px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+#customoverlay:after {
+  content: "";
+  position: absolute;
+  margin-left: -12px;
+  left: 50%;
+  bottom: -12px;
+  width: 22px;
+  height: 12px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
 }
 </style>

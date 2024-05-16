@@ -38,24 +38,38 @@ onMounted(() => {
     </router-link>
     <router-link :to="{ name: 'plan' }" class="no-underline">
       <div
-        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[20%]"
+        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[20%] relative flex items-center"
         data-aos="fade-right"
         data-aos-duration="1000">
-        <h3 class="text-white font-extrabold text-3xl mb-3">
-          편리한 일정 계획
-        </h3>
-        <h4 class="text-gray-100">
-          지도 정보를 통해 편리하게 일정을 계획해보세요
-        </h4>
+        <div class="flex-grow">
+          <h3 class="text-white font-extrabold text-3xl mb-3">
+            편리한 일정 계획
+          </h3>
+          <h4 class="text-gray-100">
+            지도 정보를 통해 편리하게 일정을 계획해보세요
+          </h4>
+        </div>
+        <h1
+          class="text-black text-opacity-50 font-bold text-4xl text-right flex-none">
+          >
+        </h1>
       </div>
     </router-link>
     <router-link :to="{ name: 'BoardView' }" class="no-underline">
       <div
-        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[30%]"
+        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[30%] relative flex items-center"
         data-aos="fade-right"
         data-aos-duration="1000">
-        <h3 class="text-white font-extrabold text-3xl mb-3">나만의 관광지</h3>
-        <h4 class="text-gray-100">나만의 특별한 관광지를 공유해보세요</h4>
+        <div class="flex-grow">
+          <h3 class="text-white font-extrabold text-3xl mb-3">
+            나만의 핫플레이스
+          </h3>
+          <h4 class="text-gray-100">나만의 특별한 핫플레이스를 공유해보세요</h4>
+        </div>
+        <h1
+          class="text-black text-opacity-50 font-bold text-4xl text-right flex-none">
+          >
+        </h1>
       </div>
     </router-link>
 

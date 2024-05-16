@@ -34,28 +34,30 @@
         검색
       </button>
     </form>
-    <div class="text-center">
-      <div class="form-check form-check-inline">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          id="select-all"
-          @change="selectAll($event.target)" />
-        <label class="form-check-label" for="select-all">모두</label>
-      </div>
-      <div
-        class="form-check form-check-inline"
-        v-for="type in tourismTypes"
-        :key="type.value">
-        <input
-          class="form-check-input"
-          type="checkbox"
-          :id="`tourism-type-${type.value}`"
-          name="tourism-type"
-          :value="type.value" />
-        <label class="form-check-label" :for="`tourism-type-${type.value}`">{{
-          type.label
-        }}</label>
+    <div>
+      <div class="text-center" data-aos="fade-up">
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="select-all"
+            @change="selectAll($event.target)" />
+          <label class="form-check-label" for="select-all">모두</label>
+        </div>
+        <div
+          class="form-check form-check-inline"
+          v-for="type in tourismTypes"
+          :key="type.value">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            :id="`tourism-type-${type.value}`"
+            name="tourism-type"
+            :value="type.value" />
+          <label class="form-check-label" :for="`tourism-type-${type.value}`">{{
+            type.label
+          }}</label>
+        </div>
       </div>
     </div>
   </div>
@@ -101,12 +103,8 @@ export default {
       ).map((input) => input.value);
       const keyword = encodeURIComponent(searchKeyword.value);
       let queryString = ``;
-      if (areaCode) {
-        queryString += `&sido=${areaCode}`;
-      }
-      if (sigunguCode) {
-        queryString += `&gugun=${sigunguCode}`;
-      }
+
+      queryString += `&sido=${areaCode}&gugun=${sigunguCode}`;
 
       if (keyword) {
         queryString += `&keyword=${keyword}`;

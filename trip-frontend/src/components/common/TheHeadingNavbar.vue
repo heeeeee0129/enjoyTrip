@@ -21,8 +21,8 @@ const doLogout = () => {
         </router-link>
       </a>
       <nav
-        class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap items-center text-base justify-center">
-        <ul class="flex items-center space-x-4 lg:space-x-8 my-auto">
+        class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-400 flex flex-wrap text-base justify-around">
+        <ul class="flex items-center space-x-4 lg:space-x-10 my-auto">
           <li>
             <router-link
               :to="{ name: 'search' }"
@@ -61,14 +61,13 @@ const doLogout = () => {
         </ul>
       </nav>
 
-      <ul class="flex items-center space-x-2 lg:space-x-8 my-auto gap-y-4">
+      <ul class="flex space-x-2 lg:space-x-8 my-auto gap-4">
         <div v-if="isLoggedIn">
           <div class="flex items-center">
             <router-link
               :to="{ name: 'UserMypage' }"
-              class="hover:text-gray-300 pr-6 no-underline flex items-center text-sm">
-              <span class="text-gray-900 mx-2"
-                >[ {{ store.member.name }}]님</span
+              class="hover:text-gray-300 pr-6 no-underline flex items-center text-sm mx-6">
+              <span class="text-gray-900 mx-2">[{{ store.member.name }}]님</span
               ><span class="text-gray-900">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +81,7 @@ const doLogout = () => {
             </router-link>
             <button
               @click.prevent="doLogout"
-              class="shadow-sm inline-flex items-center bg-gray-200 border-0 py-2 px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900">
+              class="shadow-sm inline-flex items-center bg-gray-200 border-0 py-2 px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mx-6">
               로그아웃
             </button>
           </div>
@@ -90,12 +89,12 @@ const doLogout = () => {
         <div v-else>
           <router-link
             :to="{ name: 'UserLogin' }"
-            class="inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
+            class="mx-6 inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
             로그인
           </router-link>
           <router-link
             :to="{ name: 'UserJoin' }"
-            class="inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
+            class="mx-6 inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
             회원가입
           </router-link>
         </div>

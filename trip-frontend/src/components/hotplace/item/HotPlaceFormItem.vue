@@ -3,16 +3,16 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/stores";
 import { getArticle, writeArticle, modifyArticle } from "@/api/hotplace.js";
+import { loadKakaoMapScript } from "@/utils/load-map";
 import Swal from "sweetalert2";
 
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
 const route = useRoute();
-const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
 
 const props = defineProps({ type: String });
 
-const map = ref(null);
+var map = null;
 
 const hotplace = ref({
   hotNo: 0,
@@ -28,41 +28,25 @@ const hotplace = ref({
   fileInfo: null,
 });
 
-const loadKakaoMapScript = () => {
-  return new Promise((resolve, reject) => {
-    if (typeof window.kakao !== "undefined") {
-      resolve();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${VITE_KAKAO_API_KEY}&libraries=services,clusterer,drawing`;
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        resolve();
-      });
-    };
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-};
-
 const initmap = (lat, lng) => {
   // 지도 세팅
-  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+  map = new window.kakao.maps.Map(document.getElementById("map"), {
     center: new window.kakao.maps.LatLng(lat, lng),
     level: 5,
   });
   const markerPosition = new window.kakao.maps.LatLng(lat, lng);
+  // 마커 이미지를 못가져오네..
+  // const imageSrc = "./marker1.png";
+  // const imageSize = new window.kakao.maps.Size(24, 35);
+  // const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
   const marker = new window.kakao.maps.Marker({
+    map: map,
     position: markerPosition,
+    // image: markerImage,
   });
-  marker.setMap(map.value);
 
   // 지도 클릭 이벤트
-  new window.kakao.maps.event.addListener(map.value, "click", function (
-    mouseEvent
-  ) {
+  new window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
     // 클릭한 위도, 경도 정보를 가져옵니다
     let latlng = mouseEvent.latLng;
     marker.setPosition(latlng);
@@ -116,6 +100,7 @@ const contentErrMsg = ref("");
 const dateErrMsg = ref("");
 const categoryErrMsg = ref("");
 const fileErrMsg = ref("");
+const latlngErrmsg = ref("");
 watch(
   () => hotplace.value.placeName,
   (value) => {
@@ -161,10 +146,21 @@ watch(
 watch(
   () => hotplace.value.fileInfo,
   (value) => {
-    if (!value) {
+    if (value === 0) {
       fileErrMsg.value = "파일을 선택해 주세요!!!";
     } else {
       fileErrMsg.value = "";
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => hotplace.value.latitude,
+  (value) => {
+    if (!value) {
+      latlngErrmsg.value = "마커를 찍어주세요";
+    } else {
+      latlngErrmsg.value = "";
     }
   },
   { immediate: true }
@@ -203,6 +199,13 @@ function onSubmit() {
     Swal.fire({
       title: "실패!",
       text: fileErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+  } else if (latlngErrmsg.value) {
+    Swal.fire({
+      title: "실패!",
+      text: latlngErrmsg.value,
       icon: "warning",
       confirmButtonText: "OK",
     });
@@ -320,16 +323,13 @@ const updateArticle = async () => {
         <form
           @submit.prevent="onSubmit"
           class="p-4 rounded-lg shadow bg-light"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+        >
           <div class="mb-3">
             <label for="placeImage" class="form-label"
               >사진 등록(jpg, jpeg, png 파일만 가능):</label
             >
-            <input
-              type="file"
-              class="form-control"
-              @change="handleFileChange"
-              accept="image/*" />
+            <input type="file" class="form-control" @change="handleFileChange" accept="image/*" />
           </div>
           <div class="mb-3">
             <label for="placeName" class="form-label">장소 이름:</label>
@@ -337,14 +337,12 @@ const updateArticle = async () => {
               type="text"
               class="form-control"
               v-model="hotplace.placeName"
-              placeholder="장소 이름을 입력하세요" />
+              placeholder="장소 이름을 입력하세요"
+            />
           </div>
           <div class="mb-3">
             <label for="visitedDate" class="form-label">다녀온 날짜:</label>
-            <input
-              type="date"
-              class="form-control"
-              v-model="hotplace.registerTime" />
+            <input type="date" class="form-control" v-model="hotplace.registerTime" />
           </div>
           <div class="mb-3">
             <label for="graveType" class="form-label">장소 유형:</label>
@@ -361,25 +359,23 @@ const updateArticle = async () => {
             </select>
           </div>
           <div class="mb-3">
-            <label for="introduction" class="form-label"
-              >핫플레이스 소개:</label
-            >
+            <label for="introduction" class="form-label">핫플레이스 소개:</label>
             <textarea
               class="form-control"
               v-model="hotplace.content"
               rows="5"
-              placeholder="핫플레이스를 소개하세요"></textarea>
+              placeholder="핫플레이스를 소개하세요"
+            ></textarea>
           </div>
           <div class="text-center">
-            <button
-              type="submit"
-              class="btn btn-outline-primary rounded-pill px-4 me-2">
+            <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2">
               {{ type === "regist" ? "글작성" : "글수정" }}
             </button>
             <button
               type="button"
               class="btn btn-outline-success rounded-pill px-4"
-              @click="moveList">
+              @click="moveList"
+            >
               목록으로 이동...
             </button>
           </div>

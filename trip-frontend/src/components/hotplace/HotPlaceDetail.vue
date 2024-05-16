@@ -3,12 +3,11 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/hotplace.js";
 import { useUserStore } from "@/stores/index";
+import { loadKakaoMapScript } from "@/utils/load-map";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
 const userStore = useUserStore();
-const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
-
 const route = useRoute();
 const router = useRouter();
 
@@ -16,33 +15,13 @@ const { hotNo } = route.params;
 
 const hotplace = ref({}); //글정보
 const ImgPath = ref(""); //이미지경로
-const map = ref(null); //지도
-// const address = ref(""); //주소값
+var map = null; //지도
 
 onMounted(async () => {
   // console.log("애가 왜 호출돼 1?");
   await loadKakaoMapScript();
   detailArticle();
 });
-
-const loadKakaoMapScript = () => {
-  return new Promise((resolve, reject) => {
-    if (typeof window.kakao !== "undefined") {
-      resolve();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${VITE_KAKAO_API_KEY}&libraries=services,clusterer,drawing`;
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        resolve();
-      });
-    };
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-};
 
 function getImageUrl(folder, name) {
   return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
@@ -57,46 +36,78 @@ function moveModify() {
 }
 
 const initmap = (lat, lng) => {
-  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+  // 지도 초기상태 설정
+  map = new window.kakao.maps.Map(document.getElementById("map"), {
     center: new window.kakao.maps.LatLng(lat, lng),
     level: 5,
   });
 
+  //마커 생성
   const markerPosition = new window.kakao.maps.LatLng(lat, lng);
-  const marker = new window.kakao.maps.Marker({
+  // 마커 이미지를 못가져오네..
+  // const imageSrc = "./marker1.png";
+  // const imageSize = new window.kakao.maps.Size(24, 35);
+  // const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+  new window.kakao.maps.Marker({
+    map: map,
     position: markerPosition,
+    // image: markerImage,
   });
-  marker.setMap(map.value);
 
   // 지오코딩
   // 좌표를 주소로 변환하는 함수
-  // const reverseGeocoding = async (res, status) => {
-  //   // 통신 상태 확인
-  //   if (status === window.kakao.maps.services.Status.OK) {
-  //     // 주소값 상태변경
-  //     for (var i = 0; i < res.length; i++) {
-  //       // 행정동의 region_type 값은 'H' 이므로
-  //       if (res[i].region_type === "H") {
-  //         address.value = res[i].address_name;
-  //         break;
-  //       }
-  //     }
-  //   } else {
-  //     console.error("주소 변환 실패!");
-  //   }
-  // };
-  // const geocoder = new window.kakao.maps.services.Geocoder();
-  // geocoder.coords2Address(lat, lng, reverseGeocoding);
+  const reverseGeocoding = (res, status) => {
+    // 통신 상태 확인
+    let content = "";
+    if (status === window.kakao.maps.services.Status.OK) {
+      // 지번 주소 가져오기
+      content = `<div class="flex items-center justify-between relative bottom-12 border border-solid border-gray-300 rounded-lg shadow-md px-3 py-1 bg-white bg-opacity-60"">
+                    <div class="flex items-center">
+                        <img src="${getImageUrl(
+                          hotplace.value.fileInfo.saveFolder,
+                          hotplace.value.fileInfo.saveFile
+                        )}" alt="" class="w-10 h-10 mr-2">
+                        <span class="block text-center text-black font-bold text-base py-1">지번 주소: ${
+                          res[0].address.address_name
+                        }</span>
+                        <span class="py-auto ml-2">
+                            <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </div>`;
+    } else if (status == window.kakao.maps.services.Status.ZERO_RESULT) {
+      // 반환된 주소값이 없는 경우
+      content = `<div class="flex items-center justify-between relative bottom-12 border border-solid border-gray-300 rounded-lg shadow-md px-3 py-1 bg-white bg-opacity-60" onClick="console.log(position.title)">
+                    <div class="flex items-center">
+                        <img src="${getImageUrl(
+                          hotplace.value.fileInfo.saveFolder,
+                          hotplace.value.fileInfo.saveFile
+                        )}" alt="" class="w-10 h-10 mr-2">
+                        <span class="block text-center text-black font-bold text-base py-1">지번 주소: 데이터없음</span>
+                        <span class="py-auto ml-2">
+                            <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </div>`;
+    } else {
+      // 에러
+      console.error("주소 변환 실패!");
+    }
 
-  const infowindow = new window.kakao.maps.InfoWindow({
-    content: "InfoWindow",
-  });
-
-  // 마커에 마우스오버 이벤트를 등록합니다
-  window.kakao.maps.event.addListener(marker, "click", function () {
-    // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
-    infowindow.open(map.value, marker);
-  });
+    // 커스텀 오버레이를 생성합니다
+    new window.kakao.maps.CustomOverlay({
+      map: map,
+      position: markerPosition,
+      content: content,
+      yAnchor: 1,
+    });
+  };
+  const geocoder = new window.kakao.maps.services.Geocoder();
+  geocoder.coord2Address(lng, lat, reverseGeocoding);
 };
 
 const detailArticle = async () => {
@@ -109,13 +120,14 @@ const detailArticle = async () => {
     initmap(hotplace.value.latitude, hotplace.value.longitude);
   };
 
-  const fail = () => {
+  const fail = (error) => {
     Swal.fire({
       title: "실패!",
       text: "문제가 발생헀습니다.",
       icon: "error",
       confirmButtonText: "OK",
     });
+    console.log(error);
   };
 
   await getArticle(hotNo, success, fail);
@@ -187,10 +199,7 @@ const formatDate = (dateString) => {
               <p class="text-end">조회수: {{ hotplace.hit }}</p>
               <!-- 왼쪽 반은 지도 -->
               <div class="col-md-6 mb-4 h-[90%] rounded shadow p-3">
-                <div
-                  id="map"
-                  class="mt-3"
-                  style="width: 100%; height: 550px"></div>
+                <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
               </div>
 
               <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
@@ -202,7 +211,8 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.userName"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="placeName" class="form-label">장소 이름:</label>
@@ -210,17 +220,17 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.placeName"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
-                    <label for="visitedDate" class="form-label"
-                      >다녀온 날짜:</label
-                    >
+                    <label for="visitedDate" class="form-label">다녀온 날짜:</label>
                     <input
                       type="text"
                       class="form-control"
                       :placeholder="formatDate(hotplace.registerTime)"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="graveType" class="form-label">장소 유형:</label>
@@ -228,37 +238,40 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.category"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
-                    <label for="introduction" class="form-label"
-                      >핫플레이스 소개:</label
-                    >
+                    <label for="introduction" class="form-label">핫플레이스 소개:</label>
                     <textarea
                       class="form-control"
                       :placeholder="hotplace.content"
                       rows="5"
-                      readonly></textarea>
+                      readonly
+                    ></textarea>
                   </div>
                   <div class="text-center">
                     <button
                       type="button"
                       class="btn btn-outline-primary rounded-pill px-4"
                       @click="moveModify"
-                      v-if="userStore.member.id === hotplace.userId">
+                      v-if="userStore.member.id === hotplace.userId"
+                    >
                       수정
                     </button>
                     <button
                       type="button"
                       class="btn btn-outline-danger rounded-pill px-4"
                       @click="confirmDelete"
-                      v-if="userStore.member.id === hotplace.userId">
+                      v-if="userStore.member.id === hotplace.userId"
+                    >
                       삭제
                     </button>
                     <button
                       type="button"
                       class="btn btn-outline-success rounded-pill px-4"
-                      @click="moveList">
+                      @click="moveList"
+                    >
                       목록으로 이동...
                     </button>
                   </div>

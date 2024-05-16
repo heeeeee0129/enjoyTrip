@@ -10,11 +10,7 @@ import searchBar from "@/components/trip/item/TripSearchBar.vue";
       </div>
       <searchBar @search="handleSearch" />
 
-      <div
-        id="map"
-        class="mt-3"
-        style="width: 100%; height: 500px"
-        data-aos="fade-up"></div>
+      <div id="map" class="mt-3" style="width: 100%; height: 500px" data-aos="fade-up"></div>
       <!-- //map 영역 위에까지 -->
     </div>
   </div>

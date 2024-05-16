@@ -14,8 +14,10 @@ const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
-const map = ref(null);
 const router = useRouter();
+
+var map = null; // 지도는 ref사용하면 안됨
+var cluster = null;
 
 // 카카오 맵 API 로드
 onMounted(async () => {
@@ -24,9 +26,9 @@ onMounted(async () => {
   selectSidos.value = await fetchSidos();
 
   // Initialize the map
-  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+  map = new window.kakao.maps.Map(document.getElementById("map"), {
     center: new window.kakao.maps.LatLng(37.500613, 127.036431),
-    level: 5,
+    level: 7,
   });
 });
 
@@ -40,11 +42,11 @@ watch(selectedSidoCode, async () => {
 const handleSearch = async (queryString) => {
   try {
     const response = await getAttractions(queryString);
-    console.log("Response Data: ", response);
+    // console.log("Response Data: ", response);
 
     if (response) {
       attractions.value = response;
-      console.log(attractions.value);
+      // console.log(attractions.value);
       updateMapMarkers(attractions.value);
     } else {
       console.error("Unexpected response structure:", response);
@@ -87,36 +89,57 @@ const updateMapMarkers = (trips) => {
   });
 
   // 가장 가까운 마커를 중심으로 지도 설정
-  map.value.setCenter(nearestMarker);
-  map.value.setLevel(7);
+  map.setCenter(nearestMarker);
+  map.setLevel(7);
 };
 const getDistance = (latlng, avgLat, avgLng) => {
   const latDiff = latlng.getLat() - avgLat;
   const lngDiff = latlng.getLng() - avgLng;
   return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
 };
+
 const displayMarker = () => {
   const imageSrc = "./marker1.png";
   const imageSize = new window.kakao.maps.Size(24, 35);
+
+  const markers = [];
+  const overlays = [];
+
   positions.value.forEach((position) => {
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
     const marker = new window.kakao.maps.Marker({
-      map: map.value,
       position: position.latlng,
       title: position.title,
       image: markerImage,
       clickable: true,
     });
-    marker.setMap(map.value);
+    // 마커에 클릭이벤트를 등록합니다
+    // 클릭 이벤트가 됐다 안됐다 한다...
+    new window.kakao.maps.event.addListener(marker, "click", function () {
+      map.panTo(position.latlng);
+    });
+    markers.push(marker);
+
     const content = `<div class="flex items-center justify-between relative bottom-8 border border-solid
-     border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60" onClick="console.log(position.title)">
-    <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
-    <span class=" py-auto ml-2">
-      <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-      </svg>
-    </span>
-</div>`;
+                        border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60" onClick="console.log(position.title)">
+                        <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
+                        <span class=" py-auto ml-2">
+                          <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </span>
+                    </div>`;
+
+    const customoverlay = new window.kakao.maps.CustomOverlay({
+      map: map,
+      position: position.latlng,
+      content: content,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      range: 300,
+    });
+    overlays.push(customoverlay);
+
     const goToTripDetail = (contentId) => {
       // Vue Router를 이용하여 TripDetail 페이지로 이동하는 메소드
       this.$router.push({
@@ -124,15 +147,20 @@ const displayMarker = () => {
         params: { contentId: contentId },
       });
     };
-    const customoverlay = new window.kakao.maps.CustomOverlay({
-      map: map.value,
-      position: position.latlng,
-      content: content,
-      yAnchor: 1,
-      xAnchor: 0.5,
-      range: 300,
-    });
   });
+
+  addCluster(markers);
+  addCluster(overlays);
+};
+
+// 클러스터링
+const addCluster = (markers) => {
+  cluster = new window.kakao.maps.MarkerClusterer({
+    map: map,
+    averageCenter: true,
+    minLevel: 3,
+  });
+  cluster.addMarkers(markers);
 };
 </script>
 
@@ -144,10 +172,7 @@ const displayMarker = () => {
       </div>
       <searchBar @search="handleSearch" />
 
-      <div
-        id="map"
-        class="mt-3 rounded shadow-sm p-10"
-        style="width: 100%; height: 550px"></div>
+      <div id="map" class="mt-3 rounded shadow-sm p-10" style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
@@ -164,11 +189,10 @@ const displayMarker = () => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="redirectToDetail(attraction.contentId)">
+              @click="redirectToDetail(attraction.contentId)"
+            >
               <td>
-                <img
-                  :src="attraction.firstImage || 'default.png'"
-                  width="100px" />
+                <img :src="attraction.firstImage || 'default.png'" width="100px" />
               </td>
               <td>{{ attraction.title }}</td>
               <td>{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
@@ -233,8 +257,7 @@ const displayMarker = () => {
   font-weight: bold;
   overflow: hidden;
   background: #d95050;
-  background: #d95050
-    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
     no-repeat right 14px center;
 }
 #customoverlay .title {

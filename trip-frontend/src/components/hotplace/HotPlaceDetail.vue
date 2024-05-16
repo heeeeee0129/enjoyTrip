@@ -22,8 +22,10 @@ onMounted(() => {
 });
 
 function getImageUrl(folder, name) {
-  return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
+  console.log(new URL(`./upload/${folder}/${name}`, import.meta.url))
+  return new URL(`./upload/${folder}/${name}`, import.meta.url);
 }
+
 
 function moveList() {
   router.push({ name: "HotPlaceList" });
@@ -36,10 +38,18 @@ function moveModify() {
 const detailArticle = async () => {
   const success = (response) => {
     hotplace.value = response.data;
+<<<<<<< Updated upstream
     ImgPath.value = getImageUrl(
       hotplace.value.fileInfo.saveFolder,
       hotplace.value.fileInfo.saveFile
     );
+=======
+    ImgPath.value = `/upload/${hotplace.value.fileInfo.saveFolder}/${hotplace.value.fileInfo.saveFile}`;
+   
+    console.log(ImgPath.value)
+    
+    initmap(hotplace.value.latitude, hotplace.value.longitude);
+>>>>>>> Stashed changes
   };
 
   const fail = () => {

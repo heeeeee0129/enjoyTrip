@@ -93,6 +93,7 @@ const displayMarker = () => {
       image: markerImage,
       clickable: true,
     });
+<<<<<<< Updated upstream
 
     window.kakao.maps.event.addListener(marker, "click", function () {
       displayMarkerInfo(position);
@@ -107,6 +108,35 @@ const displayMarker = () => {
 const displayMarkerInfo = (position) => {
   // Implement the info display logic here
   console.log("Display marker info:", position);
+=======
+    marker.setMap(map.value);
+    const content = `<div onClick="goDetail()" class="flex items-center justify-between relative bottom-8 border border-solid
+                        border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60">
+                        <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
+                        <span class="py-auto ml-2">
+                          <svg class="w-5 h-5 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                          </svg>
+                        </span>
+                    </div>`;
+
+    
+    const customoverlay = new window.kakao.maps.CustomOverlay({
+      map: map.value,
+      position: position.latlng,
+      content: content,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      range: 300,
+    });
+    function goDetail() {
+      customoverlay.setMap(null);
+    }
+    customoverlay.setMap(map.value);
+    
+  });
+  
+>>>>>>> Stashed changes
 };
 </script>
 

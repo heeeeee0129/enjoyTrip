@@ -19,10 +19,9 @@
 		SELECT b.article_no, b.user_id, m.user_name, b.subject, b.content,
 		b.hit, b.register_time
 		FROM board b, members m
-		WHERE b.user_id =
-		m.user_id
+		WHERE b.user_id = m.user_id
 		<include refid="search"></include>
-		ORDER BY b.article_no desc
+		ORDER BY b.article_no DESC
 		LIMIT #{start}, #{listsize}
 	</select>
 
@@ -30,9 +29,9 @@
 		SELECT
 		b.article_no, b.user_id, m.user_name, b.subject, b.content, b.hit,
 		b.register_time
-		FROM board b, members m
-		WHERE b.user_id = m.user_id AND
-		article_no = #{articleNo}
+		FROM board b
+		JOIN members m ON b.user_id = m.user_id 
+		WHERE article_no = #{articleNo}
 	</select>
 
 	<select id="getTotalArticleCount" parameterType="map"
@@ -73,12 +72,6 @@
 		DELETE FROM board
 		WHERE
 		article_no = #{articleNo}
-	</delete>
-
-	<delete id="deleteAll" parameterType="string">
-		DELETE FROM board
-		WHERE
-		user_id = #{id}
 	</delete>
 
 </mapper>

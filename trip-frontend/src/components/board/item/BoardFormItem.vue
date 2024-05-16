@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { writeArticle, getArticle, modifyArticle } from "@/api/board";
 import { useUserStore } from "@/stores";
+import Swal from "sweetalert2";
 
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
@@ -20,19 +21,30 @@ const article = ref({
   registerTime: "",
 });
 
-if (props.type === "modify") {
+onMounted(() => {
+  if (props.type === "modify") {
+    setArticle();
+  }
+});
+
+const setArticle = async () => {
   let { articleNo } = route.params;
 
   const success = (response) => {
     article.value = response.data;
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "Cool",
+    });
   };
 
-  getArticle(articleNo, success, fail);
-}
+  await getArticle(articleNo, success, fail);
+};
 
 const subjectErrMsg = ref("");
 const contentErrMsg = ref("");
@@ -59,48 +71,89 @@ watch(
 
 function onSubmit() {
   if (subjectErrMsg.value) {
-    alert(subjectErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: subjectErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else if (contentErrMsg.value) {
-    alert(contentErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: contentErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else {
     props.type === "regist" ? registArticle() : updateArticle();
   }
 }
 
-function registArticle() {
+const registArticle = async () => {
   const success = (response) => {
     if (response.data === 1) {
-      alert("글이 작성되었습니다");
-      moveList();
+      Swal.fire({
+        title: "성공!",
+        text: "글이 작성되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        moveList();
+      });
     } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작성해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     }
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
-  console.log(article.value);
-  writeArticle(article.value, success, fail);
-}
+  await writeArticle(article.value, success, fail);
+};
 
-function updateArticle() {
+const updateArticle = async () => {
   const success = (response) => {
     if (response.data === 1) {
-      alert("글이 수정되었습니다");
-      moveDetail();
+      Swal.fire({
+        title: "성공!",
+        text: "글이 수정되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        moveDetail();
+      });
     } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작성해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     }
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
-  modifyArticle(article.value, success, fail);
-}
+  await modifyArticle(article.value, success, fail);
+};
 
 function moveList() {
   router.replace({ name: "BoardList" });

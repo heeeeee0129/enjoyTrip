@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>NoticeView</div>
+  <RouterView />
 </template>
 
 <style scoped></style>

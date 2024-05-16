@@ -46,9 +46,9 @@ public class NoticeController {
 	@GetMapping("/notice/{articleno}")
 	public ResponseEntity<?> getArticle(@PathVariable(value = "articleno") int articleno) {
 		try {
+			noticeService.updateHit(articleno);
 			Notice notice = noticeService.getArticle(articleno);
 			if (notice != null && notice.getSubject().length() > 0) {
-				noticeService.updateHit(articleno);
 				return ResponseEntity.ok(notice);
 			} else {
 				return ResponseEntity.noContent().build();

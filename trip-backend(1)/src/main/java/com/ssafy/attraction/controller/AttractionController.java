@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import com.ssafy.attraction.service.AttractionService;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.websocket.server.PathParam;
 
 
 
@@ -31,7 +33,10 @@ public class AttractionController {
 
 	@Operation(summary = "관광지 조회")
 	@GetMapping("/list")
-	public ResponseEntity<?> list(@RequestParam int sido, @RequestParam int gugun, @RequestParam String keyword, @RequestParam String[] contentTypeIds){
+	public ResponseEntity<?> list(@RequestParam(required = false) Integer sido, 
+            @RequestParam(required = false) Integer gugun, 
+            @RequestParam(required = false) String keyword, 
+            @RequestParam(required = false) String[] contentTypeIds){
 		try {
 			List<Attraction> list = attractionService.getAllAttractions(sido, gugun, keyword, contentTypeIds);
 			if(!list.isEmpty()) {
@@ -47,7 +52,7 @@ public class AttractionController {
 	
 	@Operation(summary = "관광지 상세 조회")
 	@GetMapping("/{contentId}")
-	public ResponseEntity<?> detail(@RequestParam int contentId){
+	public ResponseEntity<?> detail(@PathVariable int contentId){
 		try {
 			AttractionWithOverview attraction = attractionService.getAttractionById(contentId);
 			if(attraction != null) {

@@ -88,4 +88,14 @@ public class SwaggerConfiguration {
 				.pathsToMatch("/commentapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
 				.build();
 	}
+	
+	
+	@Bean
+	public GroupedOpenApi hotplaceApi() {
+		return GroupedOpenApi
+				.builder()
+				.group("hotplace")  // 그룹 이름 ( 원하는 이름으로 작성 )
+				.pathsToMatch("/hotplaceapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
+				.build();
+	}
 }

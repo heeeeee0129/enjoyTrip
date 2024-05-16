@@ -9,9 +9,9 @@ public interface CommentService {
 
 	int writeComment(Comment comment) throws Exception;
 
-	int modifyComment(int replyNo) throws Exception;
+	int modifyComment(Comment comment) throws Exception;
 
 	int deleteComment(int replyNo) throws Exception;
 
-	int deleteAll(String userId) throws Exception;
+	Comment getComment(int replyNo) throws Exception;
 }

@@ -1,11 +1,14 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/board";
-import { useUserStore } from "@/stores";
+import { listComment, writeComment } from "@/api/comment";
+import { useUserStore } from "@/stores/index";
 import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
+import Swal from "sweetalert2";
 
-const store = useUserStore();
+const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 
 const route = useRoute();
 const router = useRouter();
@@ -14,20 +17,54 @@ const { articleNo } = route.params;
 
 const article = ref({});
 
-onMounted(() => {
-  detailArticle();
+const newComment = ref({
+  articleNo,
+  replyNo: 0,
+  userId: userStore.member.id,
+  userName: "",
+  content: "",
+  registerTime: "",
 });
 
-const detailArticle = () => {
+const comments = ref([]);
+
+onMounted(() => {
+  detailArticle();
+  getComments();
+});
+
+const detailArticle = async () => {
   const success = (response) => {
     article.value = response.data;
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
-  getArticle(articleNo, success, fail);
+  await getArticle(articleNo, success, fail);
+};
+
+const getComments = async () => {
+  const success = (response) => {
+    comments.value = response.data;
+  };
+
+  const fail = (error) => {
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "Cool",
+    });
+  };
+
+  await listComment(articleNo, success, fail);
 };
 
 function moveList() {
@@ -38,18 +75,83 @@ function moveModify() {
   router.push({ name: "BoardModify", params: { articleNo } });
 }
 
-function onDeleteArticle() {
+const onDeleteArticle = async () => {
   const success = () => {
-    alert("글이 삭제되었습니다");
-    moveList();
+    Swal.fire({
+      title: "성공!",
+      text: "글이 삭제되었습니다.",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then(() => {
+      moveList();
+    });
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
-  deleteArticle(articleNo, success, fail);
-}
+  await deleteArticle(articleNo, success, fail);
+};
+
+const confirmDelete = () => {
+  Swal.fire({
+    title: "정말로 삭제 하시겠습니까?",
+    text: "다시 되돌릴 수 없습니다. 신중하세요.",
+    icon: "question",
+
+    showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+    confirmButtonColor: "#3085d6", // confirm 버튼 색깔 지정
+    cancelButtonColor: "#d33", // cancel 버튼 색깔 지정
+    confirmButtonText: "삭제", // confirm 버튼 텍스트 지정
+    cancelButtonText: "취소", // cancel 버튼 텍스트 지정
+    reverseButtons: true, // 버튼 순서 거꾸로
+  }).then((result) => {
+    // 만약 Promise리턴을 받으면,
+    if (result.isConfirmed) {
+      // 만약 모달창에서 confirm 버튼을 눌렀다면
+      onDeleteArticle();
+    }
+  });
+};
+
+const registComment = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      Swal.fire({
+        title: "성공!",
+        text: "댓글이 작성되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.go(0);
+      });
+    } else {
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작성해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await writeComment(newComment.value, success, fail);
+};
 </script>
 
 <template>
@@ -60,7 +162,7 @@ function onDeleteArticle() {
           <div class="card-body">
             <div class="row my-2">
               <h2 class="text-secondary px-3 rounded-lg">
-                {{ article.articleNo }}. {{ article.subject }}
+                {{ article.subject }}
               </h2>
             </div>
             <div class="row align-items-center">
@@ -80,12 +182,17 @@ function onDeleteArticle() {
                 </div>
               </div>
               <div class="col-md-4 text-end">
-                <span class="badge bg-secondary rounded-pill p-2"
-                  >댓글 : 17</span
-                >
+                <span
+                  class="badge bg-first rounded-pill p-2 border border-secondary">
+                  <span class="text-dark">댓글 : {{ comments.length }}</span>
+                </span>
+                <span
+                  class="badge bg-first rounded-pill p-2 border border-secondary ms-2">
+                  <span class="text-dark">조회수: {{ article.hit }}</span>
+                </span>
                 <p class="mt-3">
                   <span class="text-secondary fw-light">
-                    {{ article.registerTime }} 조회 : {{ article.hit }}
+                    {{ article.registerTime }}
                   </span>
                 </p>
               </div>
@@ -108,18 +215,38 @@ function onDeleteArticle() {
                 type="button"
                 class="btn btn-outline-success me-1 rounded-pill"
                 @click="moveModify"
-                v-if="store.member.id === article.userId">
+                v-if="userStore.member.id === article.userId">
                 글수정
               </button>
               <button
                 type="button"
                 class="btn btn-outline-danger rounded-pill"
-                @click="onDeleteArticle"
-                v-if="store.member.id === article.userId">
+                @click="confirmDelete"
+                v-if="userStore.member.id === article.userId">
                 글삭제
               </button>
             </div>
-            <BoardCommentItem />
+            <BoardCommentItem
+              v-for="comment in comments"
+              :key="comment.replyNo"
+              :comment="comment" />
+            <!-- 댓글 작성 폼 -->
+            <div class="mt-3">
+              <textarea
+                v-model="newComment.content"
+                class="form-control rounded"
+                rows="3"
+                placeholder="댓글을 입력하세요..."></textarea>
+              <div class="d-flex justify-content-end mt-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary me-1 rounded-pill"
+                  @click="registComment"
+                  v-if="isLoggedIn">
+                  작성
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

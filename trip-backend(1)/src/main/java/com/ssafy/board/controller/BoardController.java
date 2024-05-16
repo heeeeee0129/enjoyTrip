@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.board.dto.Board;
 import com.ssafy.board.dto.BoardListDto;
 import com.ssafy.board.service.BoardService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +28,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import com.ssafy.algorithm.service.Kmp;
 import com.ssafy.algorithm.service.KmpImpl;
 import com.ssafy.algorithm.service.SlangService;
-import com.ssafy.algorithm.service.Sort;
 
 @RestController
 @RequestMapping("/boardapi")
@@ -40,14 +38,14 @@ public class BoardController {
 	private Kmp kmp;
 	private SlangService slangservice;
 	private List<String> slangList;
-	private Sort sortService;
+//	private Sort sortService;
 
 	public BoardController(BoardService boardService, SlangService slangservice) {
 		super();
 		this.boardService = boardService;
 		this.slangservice = slangservice;
 		kmp = KmpImpl.getKmp();
-		sortService = Sort.getInstance();
+//		sortService = Sort.getInstance();
 
 		try {
 			slangList = this.slangservice.getList(); // 등록된 비속어 리스트 가져오기
@@ -61,6 +59,9 @@ public class BoardController {
 	public ResponseEntity<?> listArticle(
 			@RequestParam @Parameter(description = "게시글을 얻기위한 부가정보.", required = true) Map<String, String> map) {
 		try {
+			if(!map.get("key").isEmpty() && !map.get("word").isEmpty()) {
+				map.put("pgno", "1");
+			}
 			BoardListDto boardListDto = boardService.listArticle(map);
 			HttpHeaders header = new HttpHeaders();
 			header.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -74,9 +75,9 @@ public class BoardController {
 	@GetMapping("/board/{articleno}")
 	public ResponseEntity<?> getArticle(@PathVariable(value = "articleno") int articleno) {
 		try {
+			boardService.updateHit(articleno);
 			Board board = boardService.getArticle(articleno);
 			if (board != null && board.getSubject().length() > 0) {
-				boardService.updateHit(articleno);
 				return ResponseEntity.ok(board);
 			} else {
 				return ResponseEntity.noContent().build();

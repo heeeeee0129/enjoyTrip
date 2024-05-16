@@ -19,4 +19,8 @@ public interface CommentDao {
 	int modifyComment(Comment comment) throws SQLException;
 
 	int deleteComment(int replyNo) throws SQLException;
+
+	List<Comment> listReComment(int replyNo) throws SQLException;
+
+	int getCountComment(int articleNo) throws SQLException;
 }

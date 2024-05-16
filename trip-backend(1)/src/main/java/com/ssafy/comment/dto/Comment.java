@@ -7,6 +7,7 @@ public class Comment {
 	private String userName;
 	private String content;
 	private String registerTime;
+	private int parentReplyNo;
 
 	public int getReplyNo() {
 		return replyNo;
@@ -55,11 +56,20 @@ public class Comment {
 	public void setRegisterTime(String registerTime) {
 		this.registerTime = registerTime;
 	}
+	
+	public int getParentReplyNo() {
+		return parentReplyNo;
+	}
+
+	public void setParentReplyNo(int parentReplyNo) {
+		this.parentReplyNo = parentReplyNo;
+	}
 
 	@Override
 	public String toString() {
 		return "Comment [replyNo=" + replyNo + ", articleNo=" + articleNo + ", userId=" + userId + ", userName="
-				+ userName + ", content=" + content + ", registerTime=" + registerTime + "]";
+				+ userName + ", content=" + content + ", registerTime=" + registerTime + ", parentReplyNo="
+				+ parentReplyNo + "]";
 	}
 
 }

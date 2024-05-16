@@ -43,11 +43,37 @@ public class CommentController {
 		}
 	}
 	
+	@Operation(summary = "해당 게시글의 총 댓글수를 가져온다.")
+	@GetMapping("/comment/count/{articleNo}")
+	public ResponseEntity<?> getCountComment(@PathVariable(value = "articleNo") int articleNo) {
+		try {
+			int cnt = commentService.getCountComment(articleNo);
+			return ResponseEntity.ok(cnt);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
 	@Operation(summary = "해당 게시글의 댓글목록을 가져온다.")
 	@GetMapping("/comment/list/{articleNo}")
 	public ResponseEntity<?> listComment(@PathVariable(value = "articleNo") int articleNo) {
 		try {
 			List<Comment> listComment = commentService.listComment(articleNo);
+			if (!listComment.isEmpty()) {
+				return ResponseEntity.ok(listComment);
+			} else {
+				return ResponseEntity.noContent().build();
+			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "해당 댓글의 답글목록을 가져온다.")
+	@GetMapping("/comment/listRe/{replyNo}")
+	public ResponseEntity<?> listReComment(@PathVariable(value = "replyNo") int replyNo) {
+		try {
+			List<Comment> listComment = commentService.listReComment(replyNo);
 			if (!listComment.isEmpty()) {
 				return ResponseEntity.ok(listComment);
 			} else {

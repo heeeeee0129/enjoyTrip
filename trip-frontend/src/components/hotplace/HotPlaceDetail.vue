@@ -14,19 +14,17 @@ const router = useRouter();
 
 const { hotNo } = route.params;
 
-const hotplace = ref({});
-const ImgPath = ref("");
-const map = ref(null);
+const hotplace = ref({}); //글정보
+const ImgPath = ref(""); //이미지경로
+const map = ref(null); //지도
+// const address = ref(""); //주소값
 
 onMounted(async () => {
   // console.log("애가 왜 호출돼 1?");
   await loadKakaoMapScript();
-  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
-    center: new window.kakao.maps.LatLng(37.500613, 127.036431),
-    level: 5,
-  });
   detailArticle();
 });
+
 const loadKakaoMapScript = () => {
   return new Promise((resolve, reject) => {
     if (typeof window.kakao !== "undefined") {
@@ -45,6 +43,7 @@ const loadKakaoMapScript = () => {
     document.head.appendChild(script);
   });
 };
+
 function getImageUrl(folder, name) {
   return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
 }
@@ -57,6 +56,49 @@ function moveModify() {
   router.push({ name: "HotPlaceModify", params: { hotNo } });
 }
 
+const initmap = (lat, lng) => {
+  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+    center: new window.kakao.maps.LatLng(lat, lng),
+    level: 5,
+  });
+
+  const markerPosition = new window.kakao.maps.LatLng(lat, lng);
+  const marker = new window.kakao.maps.Marker({
+    position: markerPosition,
+  });
+  marker.setMap(map.value);
+
+  // 지오코딩
+  // 좌표를 주소로 변환하는 함수
+  // const reverseGeocoding = async (res, status) => {
+  //   // 통신 상태 확인
+  //   if (status === window.kakao.maps.services.Status.OK) {
+  //     // 주소값 상태변경
+  //     for (var i = 0; i < res.length; i++) {
+  //       // 행정동의 region_type 값은 'H' 이므로
+  //       if (res[i].region_type === "H") {
+  //         address.value = res[i].address_name;
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     console.error("주소 변환 실패!");
+  //   }
+  // };
+  // const geocoder = new window.kakao.maps.services.Geocoder();
+  // geocoder.coords2Address(lat, lng, reverseGeocoding);
+
+  const infowindow = new window.kakao.maps.InfoWindow({
+    content: "InfoWindow",
+  });
+
+  // 마커에 마우스오버 이벤트를 등록합니다
+  window.kakao.maps.event.addListener(marker, "click", function () {
+    // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+    infowindow.open(map.value, marker);
+  });
+};
+
 const detailArticle = async () => {
   const success = (response) => {
     hotplace.value = response.data;
@@ -64,6 +106,7 @@ const detailArticle = async () => {
       hotplace.value.fileInfo.saveFolder,
       hotplace.value.fileInfo.saveFile
     );
+    initmap(hotplace.value.latitude, hotplace.value.longitude);
   };
 
   const fail = () => {

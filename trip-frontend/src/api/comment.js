@@ -5,10 +5,26 @@ const axios = localAxios();
 // API 주소를 저장할 변수를 정의합니다.
 const BASE_URL = "/commentapi";
 
+// 해당 게시글의 댓글 개수를 반환하는 함수입니다.
+export const getCountComment = async (articleNo, success, fail) => {
+  await axios
+    .get(`${BASE_URL}/comment/count/${articleNo}`)
+    .then(success)
+    .catch(fail);
+};
+
 // 해당 게시글의 댓글 목록을 반환하는 함수입니다.
 export const listComment = async (articleNo, success, fail) => {
   await axios
     .get(`${BASE_URL}/comment/list/${articleNo}`)
+    .then(success)
+    .catch(fail);
+};
+
+// 해당 댓글의 답글 목록을 반환하는 함수입니다.
+export const listReComment = async (replyNo, success, fail) => {
+  await axios
+    .get(`${BASE_URL}/comment/listRe/${replyNo}`)
     .then(success)
     .catch(fail);
 };

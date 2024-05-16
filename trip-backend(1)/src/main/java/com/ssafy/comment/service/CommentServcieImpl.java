@@ -42,4 +42,14 @@ public class CommentServcieImpl implements CommentService {
 		return commentDao.getComment(replyNo);
 	}
 
+	@Override
+	public List<Comment> listReComment(int replyNo) throws Exception {
+		return commentDao.listReComment(replyNo);
+	}
+
+	@Override
+	public int getCountComment(int articleNo) throws Exception {
+		return commentDao.getCountComment(articleNo);
+	}
+
 }

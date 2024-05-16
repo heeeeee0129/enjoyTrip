@@ -13,6 +13,7 @@ const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 �
 const props = defineProps({ type: String });
 
 const map = ref(null);
+
 const hotplace = ref({
   hotNo: 0,
   userId: store.member.id,
@@ -27,17 +28,6 @@ const hotplace = ref({
   fileInfo: null,
 });
 
-onMounted(async () => {
-  console.log("애가 왜 호출됨 ? 2");
-  await loadKakaoMapScript();
-  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
-    center: new window.kakao.maps.LatLng(37.500613, 127.036431),
-    level: 5,
-  });
-  if (props.type === "modify") {
-    setHotPlace();
-  }
-});
 const loadKakaoMapScript = () => {
   return new Promise((resolve, reject) => {
     if (typeof window.kakao !== "undefined") {
@@ -57,11 +47,49 @@ const loadKakaoMapScript = () => {
   });
 };
 
+const initmap = (lat, lng) => {
+  // 지도 세팅
+  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+    center: new window.kakao.maps.LatLng(lat, lng),
+    level: 5,
+  });
+  const markerPosition = new window.kakao.maps.LatLng(lat, lng);
+  const marker = new window.kakao.maps.Marker({
+    position: markerPosition,
+  });
+  marker.setMap(map.value);
+
+  // 지도 클릭 이벤트
+  new window.kakao.maps.event.addListener(map.value, "click", function (
+    mouseEvent
+  ) {
+    // 클릭한 위도, 경도 정보를 가져옵니다
+    let latlng = mouseEvent.latLng;
+    marker.setPosition(latlng);
+
+    hotplace.value.latitude = latlng.getLat();
+    hotplace.value.longitude = latlng.getLng();
+  });
+};
+
+onMounted(async () => {
+  // console.log("애가 왜 호출됨 ? 2");
+  // 지도 로딩
+  await loadKakaoMapScript();
+
+  if (props.type === "modify") {
+    setHotPlace();
+  } else {
+    initmap(37.500613, 127.036431); // 초기값
+  }
+});
+
 const setHotPlace = async () => {
   let { hotNo } = route.params;
 
   const success = (response) => {
     hotplace.value = response.data;
+    initmap(hotplace.value.latitude, hotplace.value.longitude);
   };
 
   const fail = () => {

@@ -3,11 +3,17 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.comment.dao.CommentDao">
 
+	<select id="getCountComment" parameterType="int" resultType="int">
+		SELECT COUNT(reply_no)
+		FROM comment
+		WHERE article_no = #{articleNo}
+	</select>
+
 	<select id="listComment" parameterType="int" resultType="comment">
-		SELECT c.reply_no, c.article_no, c.user_id, m.user_name, c.content, c.register_time
+		SELECT c.reply_no, c.article_no, c.user_id, m.user_name, c.content, c.register_time, c.parent_reply_no
 		FROM comment c
 		JOIN members m ON c.user_id = m.user_id
-		WHERE c.article_no = #{articleNo}
+		WHERE c.article_no = #{articleNo} AND c.parent_reply_no IS NULL
 		ORDER BY c.reply_no ASC
 	</select>
 
@@ -19,8 +25,12 @@
 	</select>
 	
 	<insert id="writeComment" parameterType="comment">
-		INSERT INTO comment (article_no, user_id, content)
-		VALUE (#{articleNo}, #{userId}, #{content})
+		INSERT INTO comment (article_no, user_id, content, parent_reply_no)
+		VALUES (#{articleNo}, #{userId}, #{content}, 
+		CASE 
+		WHEN #{parentReplyNo} = 0 THEN NULL
+		ELSE #{parentReplyNo}
+        END)
 	</insert>
 	
 	<update id="modifyComment" parameterType="comment">
@@ -33,5 +43,13 @@
 		DELETE FROM comment
 		WHERE reply_no = #{replyNo}
 	</delete>
+	
+	<select id="listReComment" parameterType="int" resultType="comment">
+		SELECT c.reply_no, c.article_no, c.user_id, m.user_name, c.content, c.register_time, c.parent_reply_no
+		FROM comment c
+		JOIN members m ON c.user_id = m.user_id
+		WHERE c.parent_reply_no = #{replyNo}
+		ORDER BY c.reply_no ASC
+	</select>
 	
 </mapper>

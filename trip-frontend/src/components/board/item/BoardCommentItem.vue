@@ -2,7 +2,8 @@
   <div>
     <!-- 댓글 목록 표시 -->
     <div class="mt-3">
-      <div class="bg-light rounded p-2 my-2 d-flex align-items-center">
+      <div
+        class="bg-light rounded p-2 my-2 d-flex align-items-center replies-divider">
         <div>
           <div class="fw-bold">
             {{ comment.userName }}({{ comment.userId }})
@@ -24,6 +25,13 @@
           </div>
         </div>
         <div class="ms-auto">
+          <!-- 대댓글 추가 버튼 -->
+          <button
+            class="btn btn-outline-primary btn-sm me-2"
+            @click="isWriting = true"
+            v-if="isLoggedIn">
+            답글
+          </button>
           <!-- 수정 버튼 -->
           <button
             v-if="!isEditing && userStore.member.id === comment.userId"
@@ -34,7 +42,7 @@
           <!-- 저장 버튼 -->
           <button
             v-if="isEditing && userStore.member.id === comment.userId"
-            class="btn btn-outline-primary btn-sm me-2"
+            class="btn btn-outline-success btn-sm me-2"
             @click="saveEdit">
             저장
           </button>
@@ -47,21 +55,82 @@
           </button>
         </div>
       </div>
+      <!-- 대댓글 목록 -->
+      <div class="ml-6 mt-3" v-if="reComments.length > 0">
+        <div>
+          <button
+            class="show-replies-button text-primary"
+            @click="showReplies = !showReplies">
+            {{ showReplies ? "댓글 숨기기" : "댓글 보기" }}
+          </button>
+        </div>
+        <ul class="replies-list" v-show="showReplies">
+          <li
+            v-for="reComment in reComments"
+            :key="reComment.replyNo"
+            class="reply-item">
+            <BoardCommentItem :comment="reComment" />
+          </li>
+        </ul>
+      </div>
+      <div class="mt-3" v-if="isWriting">
+        <textarea
+          v-model="newComment.content"
+          class="form-control rounded"
+          rows="3"
+          placeholder="댓글을 입력하세요..."></textarea>
+        <div class="d-flex justify-content-end mt-2">
+          <button
+            type="button"
+            class="btn btn-outline-secondary me-1 rounded-pill"
+            @click="isWriting = false"
+            v-if="isLoggedIn">
+            취소
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary me-1 rounded-pill"
+            @click="registComment"
+            v-if="isLoggedIn">
+            작성
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
-import { deleteComment, modifyComment } from "@/api/comment";
+import { defineProps, ref, computed, onMounted } from "vue";
+import { deleteComment, modifyComment, writeComment } from "@/api/comment";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/index";
+import { listReComment } from "@/api/comment";
 import Swal from "sweetalert2";
 
 const props = defineProps({ comment: Object });
 const userStore = useUserStore();
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 const router = useRouter();
-let isEditing = ref(false);
+const isEditing = ref(false);
+const isWriting = ref(false);
+const showReplies = ref(false);
+
+onMounted(() => {
+  getComments();
+});
+
+const reComments = ref([]);
+
+const newComment = ref({
+  articleNo: props.comment.articleNo,
+  replyNo: 0,
+  userId: userStore.member.id,
+  userName: "",
+  content: "",
+  registerTime: "",
+  parentReplyNo: props.comment.replyNo,
+});
 
 let editedComment = ref({
   replyNo: props.comment.replyNo,
@@ -70,7 +139,58 @@ let editedComment = ref({
   userName: "",
   content: props.comment.content,
   registerTime: "",
+  parentReplyNo: props.comment.parentReplyNo,
 });
+
+const getComments = async () => {
+  const success = (response) => {
+    reComments.value = response.data;
+  };
+
+  const fail = (error) => {
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "Cool",
+    });
+  };
+
+  await listReComment(props.comment.replyNo, success, fail);
+};
+
+const registComment = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      Swal.fire({
+        title: "성공!",
+        text: "댓글이 작성되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.go(0);
+      });
+    } else {
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작성해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await writeComment(newComment.value, success, fail);
+};
 
 const saveEdit = async () => {
   const success = (response) => {
@@ -154,5 +274,11 @@ const confirmDelete = () => {
 <style scoped>
 .smaller-text {
   font-size: 0.8rem;
+}
+/* 대댓글 목록 구분선 스타일 */
+.replies-divider {
+  border-top: 1px solid #ccc; /* 회색 실선 구분선 */
+  margin-top: 10px; /* 위 여백 추가 */
+  padding-top: 10px; /* 위쪽으로 여백 추가 */
 }
 </style>

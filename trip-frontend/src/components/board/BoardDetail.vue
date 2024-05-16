@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/board";
-import { listComment, writeComment } from "@/api/comment";
+import { listComment, writeComment, getCountComment } from "@/api/comment";
 import { useUserStore } from "@/stores/index";
 import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
 import Swal from "sweetalert2";
@@ -24,13 +24,16 @@ const newComment = ref({
   userName: "",
   content: "",
   registerTime: "",
+  parentReplyNo: 0,
 });
 
 const comments = ref([]);
+const count = ref(0);
 
 onMounted(() => {
   detailArticle();
   getComments();
+  getCount();
 });
 
 const detailArticle = async () => {
@@ -65,6 +68,23 @@ const getComments = async () => {
   };
 
   await listComment(articleNo, success, fail);
+};
+
+const getCount = async () => {
+  const success = (response) => {
+    count.value = response.data;
+  };
+
+  const fail = (error) => {
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "Cool",
+    });
+  };
+
+  await getCountComment(articleNo, success, fail);
 };
 
 function moveList() {
@@ -184,7 +204,7 @@ const registComment = async () => {
               <div class="col-md-4 text-end">
                 <span
                   class="badge bg-first rounded-pill p-2 border border-secondary">
-                  <span class="text-dark">댓글 : {{ comments.length }}</span>
+                  <span class="text-dark">댓글 : {{ count }}</span>
                 </span>
                 <span
                   class="badge bg-first rounded-pill p-2 border border-secondary ms-2">
@@ -231,7 +251,7 @@ const registComment = async () => {
               :key="comment.replyNo"
               :comment="comment" />
             <!-- 댓글 작성 폼 -->
-            <div class="mt-3">
+            <div class="mt-3" v-if="isLoggedIn">
               <textarea
                 v-model="newComment.content"
                 class="form-control rounded"
@@ -241,8 +261,7 @@ const registComment = async () => {
                 <button
                   type="button"
                   class="btn btn-outline-primary me-1 rounded-pill"
-                  @click="registComment"
-                  v-if="isLoggedIn">
+                  @click="registComment">
                   작성
                 </button>
               </div>

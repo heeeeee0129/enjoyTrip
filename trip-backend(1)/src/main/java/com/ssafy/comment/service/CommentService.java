@@ -14,4 +14,8 @@ public interface CommentService {
 	int deleteComment(int replyNo) throws Exception;
 
 	Comment getComment(int replyNo) throws Exception;
+
+	List<Comment> listReComment(int replyNo) throws Exception;
+
+	int getCountComment(int articleNo) throws Exception;
 }

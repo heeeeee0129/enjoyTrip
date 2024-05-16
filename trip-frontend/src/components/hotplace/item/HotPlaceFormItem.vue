@@ -8,9 +8,11 @@ import Swal from "sweetalert2";
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
 const route = useRoute();
+const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
 
 const props = defineProps({ type: String });
 
+const map = ref(null);
 const hotplace = ref({
   hotNo: 0,
   userId: store.member.id,
@@ -25,12 +27,35 @@ const hotplace = ref({
   fileInfo: null,
 });
 
-onMounted(() => {
+onMounted(async () => {
   console.log("애가 왜 호출됨 ? 2");
+  await loadKakaoMapScript();
+  map.value = new window.kakao.maps.Map(document.getElementById("map"), {
+    center: new window.kakao.maps.LatLng(37.500613, 127.036431),
+    level: 5,
+  });
   if (props.type === "modify") {
     setHotPlace();
   }
 });
+const loadKakaoMapScript = () => {
+  return new Promise((resolve, reject) => {
+    if (typeof window.kakao !== "undefined") {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${VITE_KAKAO_API_KEY}&libraries=services,clusterer,drawing`;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        resolve();
+      });
+    };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+};
 
 const setHotPlace = async () => {
   let { hotNo } = route.params;
@@ -258,8 +283,8 @@ const updateArticle = async () => {
   <div class="container mt-5">
     <div class="row">
       <!-- 왼쪽 반은 지도 -->
-      <div class="col-md-6 mb-4">
-        <!-- 여기에 지도를 표시할 컴포넌트를 넣으세요 -->
+      <div class="col-md-6 mb-4 h-[90%] rounded shadow p-3">
+        <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
       </div>
 
       <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->

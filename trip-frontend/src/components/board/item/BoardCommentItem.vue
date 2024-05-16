@@ -4,11 +4,15 @@
     <div class="mt-3">
       <div class="bg-light rounded p-2 my-2 d-flex align-items-center">
         <div>
-          <div class="fw-bold">{{ comment.userName }}({{ comment.userId }})</div>
+          <div class="fw-bold">
+            {{ comment.userName }}({{ comment.userId }})
+          </div>
           <div class="mt-2">
             <!-- 수정 가능한 입력 필드 -->
             <div v-if="isEditing">
-              <textarea v-model="editedComment.content" class="form-control"></textarea>
+              <textarea
+                v-model="editedComment.content"
+                class="form-control"></textarea>
             </div>
             <!-- 댓글 내용 -->
             <div v-else>
@@ -24,24 +28,21 @@
           <button
             v-if="!isEditing && userStore.member.id === comment.userId"
             class="btn btn-outline-success btn-sm me-2"
-            @click="isEditing = true"
-          >
+            @click="isEditing = true">
             수정
           </button>
           <!-- 저장 버튼 -->
           <button
             v-if="isEditing && userStore.member.id === comment.userId"
             class="btn btn-outline-primary btn-sm me-2"
-            @click="saveEdit"
-          >
+            @click="saveEdit">
             저장
           </button>
           <!-- 삭제 버튼 -->
           <button
             class="btn btn-outline-danger btn-sm"
-            @click="onDeleteComment"
-            v-if="userStore.member.id === comment.userId"
-          >
+            @click="confirmDelete"
+            v-if="userStore.member.id === comment.userId">
             삭제
           </button>
         </div>
@@ -55,6 +56,7 @@ import { defineProps, ref } from "vue";
 import { deleteComment, modifyComment } from "@/api/comment";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/index";
+import Swal from "sweetalert2";
 
 const props = defineProps({ comment: Object });
 const userStore = useUserStore();
@@ -73,15 +75,31 @@ let editedComment = ref({
 const saveEdit = async () => {
   const success = (response) => {
     if (response.data === 1) {
-      alert("댓글이 수정되었습니다");
-      router.go(0);
+      Swal.fire({
+        title: "성공!",
+        text: "댓글이 수정되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.go(0);
+      });
     } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작서앻주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     }
   };
 
-  const fail = (error) => {
-    alert("문제가 발생했습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await modifyComment(editedComment.value, success, fail);
@@ -89,15 +107,47 @@ const saveEdit = async () => {
 
 const onDeleteComment = async () => {
   const success = () => {
-    alert("댓글이 삭제되었습니다");
-    router.go(0);
+    Swal.fire({
+      title: "성공!",
+      text: "댓글이 삭제되었습니다",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then(() => {
+      router.go(0);
+    });
   };
 
-  const fail = (error) => {
-    alert("문제가 발생했습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await deleteComment(props.comment.replyNo, success, fail);
+};
+
+const confirmDelete = () => {
+  Swal.fire({
+    title: "정말로 삭제 하시겠습니까?",
+    text: "다시 되돌릴 수 없습니다. 신중하세요.",
+    icon: "question",
+
+    showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+    confirmButtonColor: "#3085d6", // confirm 버튼 색깔 지정
+    cancelButtonColor: "#d33", // cancel 버튼 색깔 지정
+    confirmButtonText: "삭제", // confirm 버튼 텍스트 지정
+    cancelButtonText: "취소", // cancel 버튼 텍스트 지정
+    reverseButtons: true, // 버튼 순서 거꾸로
+  }).then((result) => {
+    // 만약 Promise리턴을 받으면,
+    if (result.isConfirmed) {
+      // 만약 모달창에서 confirm 버튼을 눌렀다면
+      onDeleteComment();
+    }
+  });
 };
 </script>
 

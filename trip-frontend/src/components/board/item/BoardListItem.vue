@@ -3,6 +3,7 @@ const props = defineProps({ article: Object, index: Number });
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { listComment } from "@/api/comment";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const comments = ref([]);
@@ -16,8 +17,13 @@ const getComments = async () => {
     comments.value = response.data;
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await listComment(props.article.articleNo, success, fail);

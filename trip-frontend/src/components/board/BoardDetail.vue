@@ -5,6 +5,7 @@ import { getArticle, deleteArticle } from "@/api/board";
 import { listComment, writeComment } from "@/api/comment";
 import { useUserStore } from "@/stores/index";
 import BoardCommentItem from "@/components/board/item/BoardCommentItem.vue";
+import Swal from "sweetalert2";
 
 const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLoggedIn);
@@ -37,8 +38,13 @@ const detailArticle = async () => {
     article.value = response.data;
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await getArticle(articleNo, success, fail);
@@ -50,7 +56,12 @@ const getComments = async () => {
   };
 
   const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "Cool",
+    });
   };
 
   await listComment(articleNo, success, fail);
@@ -66,29 +77,77 @@ function moveModify() {
 
 const onDeleteArticle = async () => {
   const success = () => {
-    alert("글이 삭제되었습니다");
-    moveList();
+    Swal.fire({
+      title: "성공!",
+      text: "글이 삭제되었습니다.",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then(() => {
+      moveList();
+    });
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await deleteArticle(articleNo, success, fail);
 };
 
+const confirmDelete = () => {
+  Swal.fire({
+    title: "정말로 삭제 하시겠습니까?",
+    text: "다시 되돌릴 수 없습니다. 신중하세요.",
+    icon: "question",
+
+    showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+    confirmButtonColor: "#3085d6", // confirm 버튼 색깔 지정
+    cancelButtonColor: "#d33", // cancel 버튼 색깔 지정
+    confirmButtonText: "삭제", // confirm 버튼 텍스트 지정
+    cancelButtonText: "취소", // cancel 버튼 텍스트 지정
+    reverseButtons: true, // 버튼 순서 거꾸로
+  }).then((result) => {
+    // 만약 Promise리턴을 받으면,
+    if (result.isConfirmed) {
+      // 만약 모달창에서 confirm 버튼을 눌렀다면
+      onDeleteArticle();
+    }
+  });
+};
+
 const registComment = async () => {
   const success = (response) => {
     if (response.data === 1) {
-      alert("댓글이 작성되었습니다");
-      router.go(0);
+      Swal.fire({
+        title: "성공!",
+        text: "댓글이 작성되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.go(0);
+      });
     } else {
-      alert("비속어가 포함되어있습니다. 다시 작성해주세요.");
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 작성해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
     }
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await writeComment(newComment.value, success, fail);
@@ -162,7 +221,7 @@ const registComment = async () => {
               <button
                 type="button"
                 class="btn btn-outline-danger rounded-pill"
-                @click="onDeleteArticle"
+                @click="confirmDelete"
                 v-if="userStore.member.id === article.userId">
                 글삭제
               </button>

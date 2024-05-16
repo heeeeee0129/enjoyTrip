@@ -40,6 +40,7 @@ public class HotPlaceController {
 	private SlangService slangservice;
 	private List<String> slangList;
 	private ServletContext servletContext;
+	private final String realPath = "C:\\SSAFY\\PJT\\pjt07_buk04_11_11\\trip-frontend\\src\\assets\\upload"; // 절대경로 ,환경에 맞춰서 사용
 
 	public HotPlaceController(HotPlaceService hotplaceService, SlangService slangservice,
 			ServletContext servletContext) {
@@ -71,7 +72,6 @@ public class HotPlaceController {
 			}
 			
 			if (!flag && file != null) {
-				String realPath = "/Users/kong/SSAFY/관통PJT/pjt07_buk04_11_11/trip-frontend/src/assets/upload";
 				String today = new SimpleDateFormat("yyMMdd").format(new Date());
 				String saveFolder = realPath + File.separator + today;
 				File folder = new File(saveFolder);
@@ -149,7 +149,6 @@ public class HotPlaceController {
 				}
 			}
 			if (!flag && file != null) {
-				String realPath = "/Users/kong/SSAFY/관통PJT/pjt07_buk04_11_11/trip-frontend/src/assets/upload";
 				String today = new SimpleDateFormat("yyMMdd").format(new Date());
 				String saveFolder = realPath + File.separator + today;
 				File folder = new File(saveFolder);
@@ -162,6 +161,14 @@ public class HotPlaceController {
 				List<String> allowedExtensions = Arrays.asList("jpg", "png", "jpeg");
 				
 				if (allowedExtensions.contains(extension)) {
+					// 기존 파일 삭제
+					HotPlace preHotplace = hotplaceService.getArticle(hotplace.getHotNo());
+					String presaveFolder = realPath + File.separator + preHotplace.getFileInfo().getSaveFolder();
+					File prefolder = new File(presaveFolder);
+					String presaveFileName = preHotplace.getFileInfo().getSaveFile();
+					File fileToDelete = new File(prefolder, presaveFileName);
+					fileToDelete.delete();
+					
 					String saveFileName = UUID.randomUUID().toString() + "." + extension;
 					fileInfo.setSaveFolder(today);
 					fileInfo.setOriginalFile(originalFileName);
@@ -180,6 +187,7 @@ public class HotPlaceController {
 				return ResponseEntity.ok(cnt);
 			}
 		} catch (Exception e) {
+			// 실패시 다시 파일 등록?
 			return exceptionHandling(e);
 		}
 	}
@@ -188,9 +196,18 @@ public class HotPlaceController {
 	@DeleteMapping("/hotplace/{hotNo}")
 	public ResponseEntity<?> deleteArticle(@PathVariable("hotNo") int hotNo) throws Exception {
 		try {
+			// 기존 파일 삭제
+			HotPlace preHotplace = hotplaceService.getArticle(hotNo);
+			String presaveFolder = realPath + File.separator + preHotplace.getFileInfo().getSaveFolder();
+			File prefolder = new File(presaveFolder);
+			String presaveFileName = preHotplace.getFileInfo().getSaveFile();
+			File fileToDelete = new File(prefolder, presaveFileName);
+			fileToDelete.delete();
+			
 			int cnt = hotplaceService.deleteArticle(hotNo);
 			return ResponseEntity.ok(cnt);
 		} catch (Exception e) {
+			// 삭제 실패시 다시 파일 등록?
 			return exceptionHandling(e);
 		}
 	}

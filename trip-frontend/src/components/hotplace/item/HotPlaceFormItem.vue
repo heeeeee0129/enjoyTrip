@@ -3,6 +3,7 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "@/stores";
 import { getArticle, writeArticle, modifyArticle } from "@/api/hotplace.js";
+import Swal from "sweetalert2";
 
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
@@ -25,6 +26,7 @@ const hotplace = ref({
 });
 
 onMounted(() => {
+  console.log("애가 왜 호출됨 ? 2");
   if (props.type === "modify") {
     setHotPlace();
   }
@@ -37,8 +39,13 @@ const setHotPlace = async () => {
     hotplace.value = response.data;
   };
 
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   await getArticle(hotNo, success, fail);
@@ -112,57 +119,44 @@ watch(
 
 function onSubmit() {
   if (subjectErrMsg.value) {
-    alert(subjectErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: subjectErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else if (contentErrMsg.value) {
-    alert(contentErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: contentErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else if (dateErrMsg.value) {
-    alert(dateErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: dateErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else if (categoryErrMsg.value) {
-    alert(categoryErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: categoryErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else if (fileErrMsg.value) {
-    alert(fileErrMsg.value);
+    Swal.fire({
+      title: "실패!",
+      text: fileErrMsg.value,
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
   } else {
     props.type === "regist" ? registArticle() : updateArticle();
   }
 }
-
-const registArticle = async () => {
-  const success = (response) => {
-    if (response.data === 1) {
-      alert("글이 작성되었습니다");
-      moveList();
-    } else if (response.data === 2) {
-      alert("파일형식이 잘못되었습니다.");
-    } else {
-      alert("비속어가 포함되어있습니다. 다시 확인해주세요.");
-    }
-  };
-
-  const fail = (error) => {
-    alert("문제가 발생했습니다: ", error);
-  };
-
-  await writeArticle(hotplace.value, success, fail);
-};
-
-const updateArticle = async () => {
-  const success = (response) => {
-    if (response.data === 1) {
-      alert("글이 수정되었습니다");
-      moveDetail();
-    } else if (response.data === 2) {
-      alert("파일형식이 잘못되었습니다.");
-    } else {
-      alert("비속어가 포함되어있습니다. 다시 확인해주세요.");
-    }
-  };
-
-  const fail = (error) => {
-    alert("문제가 발생헀습니다.", error);
-  };
-
-  await modifyArticle(hotplace.value, success, fail);
-};
 
 function moveList() {
   router.replace({ name: "HotPlaceList" });
@@ -176,6 +170,88 @@ function moveDetail() {
     },
   });
 }
+
+const registArticle = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      Swal.fire({
+        title: "성공!",
+        text: "글이 작성되었습니다",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        moveList();
+      });
+    } else if (response.data === 2) {
+      Swal.fire({
+        title: "실패!",
+        text: "파일형식이 잘못되었습니다.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    } else {
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 확인해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await writeArticle(hotplace.value, success, fail);
+};
+
+const updateArticle = async () => {
+  const success = (response) => {
+    if (response.data === 1) {
+      // Swal.fire({
+      //   title: "성공!",
+      //   text: "글이 수정되었습니다",
+      //   icon: "success",
+      //   confirmButtonText: "OK",
+      // }).then(() => {
+      //   moveDetail();
+      // });
+      alert("글이 수정되었습니다.");
+      moveDetail();
+    } else if (response.data === 2) {
+      Swal.fire({
+        title: "실패!",
+        text: "파일형식이 잘못되었습니다.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    } else {
+      Swal.fire({
+        title: "실패!",
+        text: "비속어가 포함되어있습니다. 다시 확인해주세요.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생했습니다",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await modifyArticle(hotplace.value, success, fail);
+};
 </script>
 
 <template>
@@ -191,13 +267,16 @@ function moveDetail() {
         <form
           @submit.prevent="onSubmit"
           class="p-4 rounded-lg shadow bg-light"
-          enctype="multipart/form-data"
-        >
+          enctype="multipart/form-data">
           <div class="mb-3">
             <label for="placeImage" class="form-label"
               >사진 등록(jpg, jpeg, png 파일만 가능):</label
             >
-            <input type="file" class="form-control" @change="handleFileChange" accept="image/*" />
+            <input
+              type="file"
+              class="form-control"
+              @change="handleFileChange"
+              accept="image/*" />
           </div>
           <div class="mb-3">
             <label for="placeName" class="form-label">장소 이름:</label>
@@ -205,12 +284,14 @@ function moveDetail() {
               type="text"
               class="form-control"
               v-model="hotplace.placeName"
-              placeholder="장소 이름을 입력하세요"
-            />
+              placeholder="장소 이름을 입력하세요" />
           </div>
           <div class="mb-3">
             <label for="visitedDate" class="form-label">다녀온 날짜:</label>
-            <input type="date" class="form-control" v-model="hotplace.registerTime" />
+            <input
+              type="date"
+              class="form-control"
+              v-model="hotplace.registerTime" />
           </div>
           <div class="mb-3">
             <label for="graveType" class="form-label">장소 유형:</label>
@@ -227,23 +308,25 @@ function moveDetail() {
             </select>
           </div>
           <div class="mb-3">
-            <label for="introduction" class="form-label">핫플레이스 소개:</label>
+            <label for="introduction" class="form-label"
+              >핫플레이스 소개:</label
+            >
             <textarea
               class="form-control"
               v-model="hotplace.content"
               rows="5"
-              placeholder="핫플레이스를 소개하세요"
-            ></textarea>
+              placeholder="핫플레이스를 소개하세요"></textarea>
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2">
+            <button
+              type="submit"
+              class="btn btn-outline-primary rounded-pill px-4 me-2">
               {{ type === "regist" ? "글작성" : "글수정" }}
             </button>
             <button
               type="button"
               class="btn btn-outline-success rounded-pill px-4"
-              @click="moveList"
-            >
+              @click="moveList">
               목록으로 이동...
             </button>
           </div>

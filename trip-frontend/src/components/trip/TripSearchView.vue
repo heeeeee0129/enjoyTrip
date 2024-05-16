@@ -1,37 +1,20 @@
 <script setup>
 import { watch, ref, onMounted } from "vue";
-import axios from "axios";
+import { getAttractions } from "@/api/attraction";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import searchBar from "@/components/trip/item/TripSearchBar.vue";
 
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
-const { VITE_KAKAO_API_KEY, BASE_URL, BASE_QUERY } = import.meta.env; // 환경 변수에서 API 키 가져오기
+const { VITE_KAKAO_API_KEY } = import.meta.env; // 환경 변수에서 API 키 가져오기
 
 const attractions = ref([]);
 const selectedSidoCode = ref(0); // 시도
 const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
-const searchKeyword = ref("");
 const positions = ref([]);
 const map = ref(null);
-const tourismTypes = ref([
-  { value: 12, label: "관광지" },
-  { value: 14, label: "문화시설" },
-  { value: 15, label: "축제공연행사" },
-  { value: 25, label: "여행코스" },
-  { value: 28, label: "레포츠" },
-  { value: 32, label: "숙박" },
-  { value: 38, label: "쇼핑" },
-  { value: 39, label: "음식점" },
-]);
-
-const selectAll = (checkbox) => {
-  const checkboxes = document.querySelectorAll('input[name="tourism-type"]');
-  checkboxes.forEach((cb) => {
-    cb.checked = checkbox.checked;
-  });
-};
 
 // 카카오 맵 API 로드
 onMounted(async () => {
@@ -71,25 +54,20 @@ const loadKakaoMapScript = () => {
     document.head.appendChild(script);
   });
 };
+const handleSearch = async (queryString) => {
+  try {
+    const response = await getAttractions(queryString);
+    console.log("Response Data: ", response);
 
-const search = async () => {
-  const sidoCode = selectedSidoCode.value || 0;
-  const gugunCode = selectedGugunCode.value || 0;
-  const keyword = searchKeyword.value;
-  let url = `${BASE_URL}/searchKeyword1?${BASE_QUERY}&areaCode=${sidoCode}&sigunguCode=${gugunCode}&keyword=${encodeURIComponent(
-    keyword
-  )}`;
-
-  const selectedRadios = document.querySelectorAll(
-    'input[name="tourism-type"]:checked'
-  );
-  selectedRadios.forEach((radio) => {
-    url += `&contentTypeId=${radio.value}`;
-  });
-
-  const response = await axios.get(url);
-  attractions.value = response.data.response.body.items.item;
-  updateMapMarkers(attractions.value);
+    if (response && response.response && response.response.body) {
+      attractions.value = response;
+      updateMapMarkers(attractions.value);
+    } else {
+      console.error("Unexpected response structure:", response);
+    }
+  } catch (error) {
+    console.error("Error during search:", error);
+  }
 };
 
 const updateMapMarkers = (trips) => {
@@ -104,7 +82,7 @@ const updateMapMarkers = (trips) => {
 };
 
 const displayMarker = () => {
-  const imageSrc = "../assets/img/marker1.png";
+  const imageSrc = "./marker1.png";
   const imageSize = new window.kakao.maps.Size(24, 35);
   positions.value.forEach((position) => {
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
@@ -139,82 +117,14 @@ const displayMarkerInfo = (position) => {
       <div class="mt-3 text-center fw-bolder" id="search-header">
         <h2 class="mb-3">여행지 검색</h2>
       </div>
+      <searchBar @search="handleSearch" />
 
-      <form class="d-flex my-3 gap-x-6" role="search">
-        <select
-          id="sido"
-          name="sido"
-          v-model="selectedSidoCode"
-          class="text-sm sm:text-base placeholder-gray-500 select-text px-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400">
-          <option value="0" disabled selected>시/도 선택</option>
-          <option
-            v-for="sido in selectSidos"
-            :key="sido.code"
-            :value="sido.code">
-            {{ sido.name }}
-          </option>
-        </select>
-        <select
-          id="gugun"
-          name="gugun"
-          v-model="selectedGugunCode"
-          class="text-sm sm:text-base placeholder-gray-500 px-4 rounded-lg border border-gray-400 w-full py-2 focus:outline-none focus:border-blue-400">
-          <option value="0" disabled selected>구/군 선택</option>
-          <option
-            v-for="gugun in selectGuguns"
-            :key="gugun.code"
-            :value="gugun.code">
-            {{ gugun.name }}
-          </option>
-        </select>
-
-        <input
-          v-model="searchKeyword"
-          id="search-keyword"
-          class="form-control me-2"
-          type="search"
-          placeholder="검색어"
-          aria-label="검색어" />
-        <button
-          @click.prevent="search"
-          id="btn-search"
-          class="btn btn-outline-success"
-          type="button">
-          검색
-        </button>
-      </form>
-
-      <div class="text-center">
-        <div class="form-check form-check-inline">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="select-all"
-            @change="selectAll($event.target)" />
-          <label class="form-check-label" for="select-all">모두</label>
-        </div>
-        <div
-          class="form-check form-check-inline"
-          v-for="type in tourismTypes"
-          :key="type.value">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            :id="`tourism-type-${type.value}`"
-            name="tourism-type"
-            :value="type.value" />
-          <label class="form-check-label" :for="`tourism-type-${type.value}`">{{
-            type.label
-          }}</label>
-        </div>
-      </div>
-
-      <div id="marker-info"></div>
       <div
         id="map"
         class="mt-3"
         style="width: 100%; height: 500px"
         data-aos="fade-up"></div>
+      <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
           <thead>

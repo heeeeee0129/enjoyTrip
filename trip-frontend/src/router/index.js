@@ -72,12 +72,12 @@ const router = createRouter({
     {
       path: "/plan",
       name: "plan",
-      component: () => import("@/views/TripPlanView.vue"),
+      component: () => import("@/components/trip/TripPlanView.vue"),
     },
     {
       path: "/search",
       name: "search",
-      component: () => import("@/components/tripSearch/TripSearchView.vue"),
+      component: () => import("@/components/trip/TripSearchView.vue"),
     },
   ],
 });

@@ -34,7 +34,6 @@ const getTripPlanList = async () => {
 };
 
 const goDetail = (id) => {
-  console.log(id);
   router.push({ name: "PlanDetail", params: { id } });
 };
 
@@ -55,7 +54,8 @@ function formatDate(dateString) {
         <!-- 여행 계획 추가 버튼 -->
         <router-link :to="{ name: 'PlanWrite' }" class="text-white">
           <button
-            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg">
+            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
+          >
             여행 계획 추가
           </button>
         </router-link>
@@ -66,7 +66,8 @@ function formatDate(dateString) {
           v-for="route in trips"
           :key="route.id"
           @click.prevent="goDetail(route.id)"
-          class="p-6 bg-white rounded-lg shadow-lg transition transform hover:scale-105">
+          class="p-6 bg-white rounded-lg shadow-lg transition transform hover:scale-105"
+        >
           <h3 class="text-2xl font-semibold mb-3 text-gray-800">
             {{ route.title }}
           </h3>
@@ -81,7 +82,7 @@ function formatDate(dateString) {
           </p>
           <p class="text-gray-400 text-sm font-light mt-4 border-t pt-3">
             작성일: {{ formatDate(route.createdAt) }} / 작성자:
-            <span class="font-medium text-gray-600">{{ route.userId }}</span>
+            <span class="font-medium text-gray-600">{{ route.userName }}</span>
           </p>
         </div>
       </div>

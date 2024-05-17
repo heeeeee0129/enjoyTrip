@@ -29,10 +29,12 @@
 		VALUES (#{title}, #{content}, #{startDate}, #{endDate}, #{userId})
 	</insert>
 	
-	<select id="getId" resultType="int">
+	<select id="getId" parameterType="tripplan" resultType="int">
 		SELECT id
 		FROM trip_plan
+		WHERE content = #{content} AND user_id = #{userId} AND start_date = #{startDate} AND end_date = #{endDate} 
 		ORDER BY created_at DESC
+		LIMIT 1
 	</select>
 	
 	<insert id="writeLocation" parameterType="tripPlan">

@@ -200,27 +200,21 @@ const formatDate = (dateString) => {
               <p class="text-end">조회수: {{ hotplace.hit }}</p>
               <!-- 왼쪽 반은 지도 -->
               <div
-                class="col-md-6 mb-4 h-[90%] rounded shadow p-3 d-flex flex-column align-items-center">
-                <div
-                  id="map"
-                  class="mt-3"
-                  style="width: 100%; height: 550px"></div>
+                class="col-md-6 mb-4 h-[90%] rounded shadow p-3 d-flex flex-column align-items-center"
+              >
+                <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
                 <!-- Search Button -->
                 <button
                   class="btn btn-success mt-3 w-75"
-                  @click="searchOnNaver(hotplace.placeName)">
+                  @click="searchOnNaver(hotplace.placeName)"
+                >
                   네이버 검색
                 </button>
                 <!-- Directions Button -->
                 <button
                   class="btn btn-warning mt-3 w-75"
-                  @click="
-                    kakaoMapLink(
-                      hotplace.placeName,
-                      hotplace.latitude,
-                      hotplace.longitude
-                    )
-                  ">
+                  @click="kakaoMapLink(hotplace.placeName, hotplace.latitude, hotplace.longitude)"
+                >
                   카카오맵 길찾기
                 </button>
               </div>
@@ -234,7 +228,8 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.userName"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="placeName" class="form-label">장소 이름:</label>
@@ -242,17 +237,17 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.placeName"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
-                    <label for="visitedDate" class="form-label"
-                      >다녀온 날짜:</label
-                    >
+                    <label for="visitedDate" class="form-label">다녀온 날짜:</label>
                     <input
                       type="text"
                       class="form-control"
                       :placeholder="formatDate(hotplace.registerTime)"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
                     <label for="graveType" class="form-label">장소 유형:</label>
@@ -260,44 +255,45 @@ const formatDate = (dateString) => {
                       type="text"
                       class="form-control"
                       :placeholder="hotplace.category"
-                      readonly />
+                      readonly
+                    />
                   </div>
                   <div class="mb-3">
-                    <label for="introduction" class="form-label"
-                      >핫플레이스 소개:</label
-                    >
+                    <label for="introduction" class="form-label">핫플레이스 소개:</label>
                     <textarea
                       class="form-control"
                       :placeholder="hotplace.content"
                       rows="5"
-                      readonly></textarea>
+                      readonly
+                    ></textarea>
                   </div>
                   <div class="text-center">
                     <button
                       type="button"
                       class="btn btn-outline-primary rounded-pill px-4"
                       @click="moveModify"
-                      v-if="userStore.member.id === hotplace.userId">
+                      v-if="userStore.member.id === hotplace.userId"
+                    >
                       수정
                     </button>
                     <button
                       type="button"
                       class="btn btn-outline-danger rounded-pill px-4"
                       @click="confirmDelete"
-                      v-if="userStore.member.id === hotplace.userId">
+                      v-if="userStore.member.id === hotplace.userId"
+                    >
                       삭제
                     </button>
                     <button
                       type="button"
                       class="btn btn-outline-success rounded-pill px-4"
-                      @click="moveList">
+                      @click="moveList"
+                    >
                       목록으로 이동...
                     </button>
                   </div>
                   <div class="text-center mt-3">
-                    <button
-                      type="button"
-                      class="btn btn-outline-info rounded-pill px-4">
+                    <button type="button" class="btn btn-outline-info rounded-pill px-4">
                       좋아요 ❤️ ( 5 )
                     </button>
                   </div>

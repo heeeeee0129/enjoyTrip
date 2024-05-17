@@ -1,8 +1,10 @@
 <script setup>
 import { useUserStore } from "@/stores/index.js";
 import { computed } from "vue"; // 계산된 속성 사용
+import { useRouter } from "vue-router";
 import "@/index.css";
 const store = useUserStore();
+const router = useRouter();
 const isLoggedIn = computed(() => store.isLoggedIn);
 import Swal from "sweetalert2";
 
@@ -13,6 +15,8 @@ const doLogout = () => {
     text: "로그아웃 되었습니다.",
     icon: "success",
     confirmButtonText: "OK",
+  }).then(() => {
+    router.push({ name: "main" });
   });
 };
 </script>
@@ -41,7 +45,12 @@ const doLogout = () => {
           </li>
           <li>
             <router-link :to="{ name: 'HotPlaceView' }" class="hover:text-gray-300 no-underline"
-              >핫플레이스</router-link
+              >여기좋아요</router-link
+            >
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link :to="{ name: 'FavoriteView' }" class="hover:text-gray-300 no-underline"
+              >관심있는장소</router-link
             >
           </li>
           <li>

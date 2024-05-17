@@ -177,97 +177,96 @@ const registComment = async () => {
 </script>
 
 <template>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <div class="card my-3 shadow">
-          <div class="card-body">
-            <div class="row my-2">
-              <h2 class="text-secondary px-3 rounded-lg">
-                {{ article.subject }}
-              </h2>
-            </div>
-            <div class="row align-items-center">
-              <div class="col-md-8">
-                <div class="d-flex align-items-center">
-                  <img
-                    class="avatar me-2 bg-light p-2 rounded-circle"
-                    src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
-                    style="width: 40px; height: 40px" />
-                  <div class="ms-2">
-                    <p class="mb-1">
-                      <span class="fw-bold"
-                        >{{ article.userName }}({{ article.userId }})</span
-                      >
-                    </p>
-                  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card my-3 shadow">
+        <div class="card-body">
+          <div class="row my-2">
+            <h2 class="text-secondary px-3 rounded-lg">
+              {{ article.subject }}
+            </h2>
+          </div>
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <div class="d-flex align-items-center">
+                <img
+                  class="avatar me-2 bg-light p-2 rounded-circle"
+                  src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
+                  style="width: 40px; height: 40px"
+                />
+                <div class="ms-2">
+                  <p class="mb-1">
+                    <span class="fw-bold">{{ article.userName }}({{ article.userId }})</span>
+                  </p>
                 </div>
               </div>
-              <div class="col-md-4 text-end">
-                <span
-                  class="badge bg-first rounded-pill p-2 border border-secondary">
-                  <span class="text-dark">댓글 : {{ count }}</span>
-                </span>
-                <span
-                  class="badge bg-first rounded-pill p-2 border border-secondary ms-2">
-                  <span class="text-dark">조회수: {{ article.hit }}</span>
-                </span>
-                <p class="mt-3">
-                  <span class="text-secondary fw-light">
-                    {{ article.registerTime }}
-                  </span>
-                </p>
-              </div>
             </div>
-            <div
-              class="bg-white rounded p-3"
-              style="min-width: 250px; min-height: 300px">
-              <div class="text-secondary">
-                {{ article.content }}
-              </div>
+            <div class="col-md-4 text-end">
+              <span class="badge bg-first rounded-pill p-2 border border-secondary">
+                <span class="text-dark">댓글 : {{ count }}</span>
+              </span>
+              <span class="badge bg-first rounded-pill p-2 border border-secondary ms-2">
+                <span class="text-dark">조회수: {{ article.hit }}</span>
+              </span>
+              <p class="mt-3">
+                <span class="text-secondary fw-light">
+                  {{ article.registerTime }}
+                </span>
+              </p>
             </div>
-            <div class="d-flex justify-content-end mt-3">
+          </div>
+          <div class="bg-white rounded p-3" style="min-width: 250px; min-height: 300px">
+            <div class="text-secondary">
+              {{ article.content }}
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <button
+              type="button"
+              class="btn btn-outline-primary me-1 rounded-pill"
+              @click="moveList"
+            >
+              글목록
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-success me-1 rounded-pill"
+              @click="moveModify"
+              v-if="userStore.member.id === article.userId"
+            >
+              글수정
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-danger rounded-pill"
+              @click="confirmDelete"
+              v-if="userStore.member.id === article.userId"
+            >
+              글삭제
+            </button>
+          </div>
+          <BoardCommentItem
+            v-for="comment in comments"
+            :key="comment.replyNo"
+            :comment="comment"
+            @get-count="getCount"
+          />
+          <!-- 댓글 작성 폼 -->
+          <div class="mt-3" v-if="isLoggedIn">
+            <textarea
+              v-model="newComment.content"
+              class="form-control rounded"
+              rows="3"
+              placeholder="댓글을 입력하세요..."
+            ></textarea>
+            <div class="d-flex justify-content-end mt-2">
               <button
                 type="button"
                 class="btn btn-outline-primary me-1 rounded-pill"
-                @click="moveList">
-                글목록
+                @click="registComment"
+              >
+                작성
               </button>
-              <button
-                type="button"
-                class="btn btn-outline-success me-1 rounded-pill"
-                @click="moveModify"
-                v-if="userStore.member.id === article.userId">
-                글수정
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-danger rounded-pill"
-                @click="confirmDelete"
-                v-if="userStore.member.id === article.userId">
-                글삭제
-              </button>
-            </div>
-            <BoardCommentItem
-              v-for="comment in comments"
-              :key="comment.replyNo"
-              :comment="comment"
-              @get-count="getCount" />
-            <!-- 댓글 작성 폼 -->
-            <div class="mt-3" v-if="isLoggedIn">
-              <textarea
-                v-model="newComment.content"
-                class="form-control rounded"
-                rows="3"
-                placeholder="댓글을 입력하세요..."></textarea>
-              <div class="d-flex justify-content-end mt-2">
-                <button
-                  type="button"
-                  class="btn btn-outline-primary me-1 rounded-pill"
-                  @click="registComment">
-                  작성
-                </button>
-              </div>
             </div>
           </div>
         </div>

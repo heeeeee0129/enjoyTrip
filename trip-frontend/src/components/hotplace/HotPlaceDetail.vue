@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/hotplace.js";
+import { checkFavorite, countFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
 import { useUserStore } from "@/stores/index";
 import { loadKakaoMapScript } from "@/utils/load-map";
 import dayjs from "dayjs";
@@ -15,6 +16,9 @@ const { hotNo } = route.params;
 
 const hotplace = ref({}); //글정보
 const ImgPath = ref(""); //이미지경로
+const confirmFavorite = ref(false);
+
+const favoriteCount = ref("0");
 var map = null; //지도
 
 onMounted(async () => {
@@ -29,6 +33,10 @@ function getImageUrl(folder, name) {
 
 function moveList() {
   router.push({ name: "HotPlaceList" });
+}
+
+function moveBack() {
+  router.go(-1);
 }
 
 function moveModify() {
@@ -105,6 +113,11 @@ const detailArticle = async () => {
       hotplace.value.fileInfo.saveFolder,
       hotplace.value.fileInfo.saveFile
     );
+    getCount(hotplace.value.hotNo);
+    getCheck({
+      userId: userStore.member.id,
+      hotNo: hotplace.value.hotNo,
+    });
     initmap(hotplace.value.latitude, hotplace.value.longitude);
   };
 
@@ -118,6 +131,114 @@ const detailArticle = async () => {
   };
 
   await getArticle(hotNo, success, fail);
+};
+
+const getCount = async (hotNo) => {
+  const success = (response) => {
+    favoriteCount.value = response.data;
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await countFavorite(hotNo, success, fail);
+};
+
+const getCheck = async (favorite) => {
+  const success = (response) => {
+    if (response.data > 0) {
+      confirmFavorite.value = true;
+    } else {
+      confirmFavorite.value = false;
+    }
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await checkFavorite(favorite, success, fail);
+};
+
+const addCheck = async () => {
+  const success = () => {
+    Swal.fire({
+      title: "성공!",
+      text: "즐겨찾기 목록으로 가시겠습니까?",
+      icon: "success",
+      confirmButtonText: "OK",
+      cancelButtonText: "NO", // 추가: 취소 버튼 텍스트 지정
+      showCancelButton: true, // 추가: 취소 버튼 표시
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // 확인 버튼을 눌렀을 때
+        router.push({ name: "FavoriteList" }); // 즐겨찾기 목록으로 이동
+      } else {
+        router.go(0);
+      }
+    });
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await writeFavorite(
+    {
+      hotNo: hotplace.value.hotNo,
+      userId: userStore.member.id,
+    },
+    success,
+    fail
+  );
+};
+
+const deleteCheck = async () => {
+  const success = () => {
+    Swal.fire({
+      title: "성공!",
+      text: "좋아요가 해제되었습니다.",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then(() => {
+      confirmFavorite.value = false;
+      getCount(hotplace.value.hotNo);
+    });
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await deleteFavorite(
+    {
+      hotNo: hotplace.value.hotNo,
+      userId: userStore.member.id,
+    },
+    success,
+    fail
+  );
 };
 
 const onDeleteArticle = async () => {
@@ -187,118 +308,133 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <div class="card my-3 shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title py-3 text-center">핫플레이스 상세보기</h2>
-          </div>
-          <img :src="ImgPath" alt="이미지가 없음" />
-          <div class="container-fluid mt-5">
-            <div class="row">
-              <p class="text-end">조회수: {{ hotplace.hit }}</p>
-              <!-- 왼쪽 반은 지도 -->
-              <div
-                class="col-md-6 mb-4 h-[90%] rounded shadow p-3 d-flex flex-column align-items-center"
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card my-3 shadow-sm">
+        <div class="card-body">
+          <h2 class="py-3 text-center">핫플레이스 상세보기</h2>
+        </div>
+        <img :src="ImgPath" alt="이미지가 없음" />
+        <div class="container-fluid mt-5">
+          <div class="row">
+            <p class="text-end">조회수: {{ hotplace.hit }}</p>
+            <!-- 왼쪽 반은 지도 -->
+            <div
+              class="col-md-6 mb-4 h-[90%] rounded shadow p-3 d-flex flex-column align-items-center"
+            >
+              <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
+              <!-- Search Button -->
+              <button class="btn btn-success mt-3 w-75" @click="searchOnNaver(hotplace.placeName)">
+                네이버 검색
+              </button>
+              <!-- Directions Button -->
+              <button
+                class="btn btn-warning mt-3 w-75"
+                @click="kakaoMapLink(hotplace.placeName, hotplace.latitude, hotplace.longitude)"
               >
-                <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
-                <!-- Search Button -->
-                <button
-                  class="btn btn-success mt-3 w-75"
-                  @click="searchOnNaver(hotplace.placeName)"
-                >
-                  네이버 검색
-                </button>
-                <!-- Directions Button -->
-                <button
-                  class="btn btn-warning mt-3 w-75"
-                  @click="kakaoMapLink(hotplace.placeName, hotplace.latitude, hotplace.longitude)"
-                >
-                  카카오맵 길찾기
-                </button>
-              </div>
+                카카오맵 길찾기
+              </button>
+            </div>
 
-              <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
-              <div class="col-md-6 mb-4">
-                <form class="p-4 rounded-lg shadow bg-light">
-                  <div class="mb-3">
-                    <label for="userName" class="form-label">작성자:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      :placeholder="hotplace.userName"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="placeName" class="form-label">장소 이름:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      :placeholder="hotplace.placeName"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="visitedDate" class="form-label">다녀온 날짜:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      :placeholder="formatDate(hotplace.registerTime)"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="graveType" class="form-label">장소 유형:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      :placeholder="hotplace.category"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="introduction" class="form-label">핫플레이스 소개:</label>
-                    <textarea
-                      class="form-control"
-                      :placeholder="hotplace.content"
-                      rows="5"
-                      readonly
-                    ></textarea>
-                  </div>
-                  <div class="text-center">
-                    <button
-                      type="button"
-                      class="btn btn-outline-primary rounded-pill px-4"
-                      @click="moveModify"
-                      v-if="userStore.member.id === hotplace.userId"
-                    >
-                      수정
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-danger rounded-pill px-4"
-                      @click="confirmDelete"
-                      v-if="userStore.member.id === hotplace.userId"
-                    >
-                      삭제
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-outline-success rounded-pill px-4"
-                      @click="moveList"
-                    >
-                      목록으로 이동...
-                    </button>
-                  </div>
-                  <div class="text-center mt-3">
-                    <button type="button" class="btn btn-outline-info rounded-pill px-4">
-                      좋아요 ❤️ ( 5 )
-                    </button>
-                  </div>
-                </form>
-              </div>
+            <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
+            <div class="col-md-6 mb-4">
+              <form class="p-4 rounded-lg shadow bg-light">
+                <div class="mb-3">
+                  <label for="userName" class="form-label">작성자:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :placeholder="hotplace.userName"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="placeName" class="form-label">장소 이름:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :placeholder="hotplace.placeName"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="visitedDate" class="form-label">다녀온 날짜:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :placeholder="formatDate(hotplace.registerTime)"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="graveType" class="form-label">장소 유형:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :placeholder="hotplace.category"
+                    readonly
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="introduction" class="form-label">핫플레이스 소개:</label>
+                  <textarea
+                    class="form-control"
+                    :placeholder="hotplace.content"
+                    rows="5"
+                    readonly
+                  ></textarea>
+                </div>
+                <div class="text-center">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary rounded-pill px-4"
+                    @click="moveModify"
+                    v-if="userStore.member.id === hotplace.userId"
+                  >
+                    수정
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger rounded-pill px-4"
+                    @click="confirmDelete"
+                    v-if="userStore.member.id === hotplace.userId"
+                  >
+                    삭제
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-success rounded-pill px-4"
+                    @click="moveList"
+                  >
+                    목록
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary rounded-pill px-4"
+                    @click="moveBack"
+                  >
+                    뒤로가기
+                  </button>
+                </div>
+                <div class="text-center mt-3">
+                  <button
+                    type="button"
+                    class="btn btn-info rounded-pill px-4"
+                    v-if="confirmFavorite"
+                    @click="deleteCheck"
+                  >
+                    좋아요 ❤️ {{ favoriteCount }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-info rounded-pill px-4"
+                    v-else
+                    @click="addCheck"
+                  >
+                    좋아요 ❤️ {{ favoriteCount }}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

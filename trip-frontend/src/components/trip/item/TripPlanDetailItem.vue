@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { getAttraction } from "@/api/attraction";
 import Swal from "sweetalert2";
 
-const props = defineProps({ location: location });
+const props = defineProps({ location: Object });
 const attraction = ref({});
 
 onMounted(() => {

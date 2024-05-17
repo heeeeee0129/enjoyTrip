@@ -1,72 +1,60 @@
 <template>
-  <div class="container">
-    <!-- 카드 -->
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card my-3 shadow-sm">
-          <div class="card-body">
-            <!-- 제목 -->
-            <h2 class="card-title text-center py-3">핫플레이스</h2>
-
-            <!-- 검색창 -->
-            <div class="flex items-center max-w-md mx-auto bg-white rounded-lg">
-              <VSelect :selectOption="selectOption" />
-              <div class="w-full">
-                <input
-                  type="search"
-                  class="w-full px-4 py-1 text-gray-800 rounded-full focus:outline-none"
-                  v-model="word"
-                  placeholder="검색어..." />
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  class="flex items-center bg-blue-500 justify-center w-12 h-12 text-white rounded-r-lg"
-                  :class="
-                    word.length > 0
-                      ? 'bg-blue-500'
-                      : 'bg-gray-500 cursor-not-allowed'
-                  "
-                  :disabled="word.length == 0"
-                  @click="getArticleList">
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <!-- 글쓰기 버튼 -->
-            <div class="text-end mb-3">
-              <button
-                type="button"
-                class="btn btn-outline-primary btn-sm"
-                @click="moveWrite"
-                v-if="isLoggedIn">
-                등록
-              </button>
-            </div>
-
-            <!-- 카드들을 반복하여 보여줍니다 -->
-            <div class="row justify-content-center">
-              <HotPlaceListItem
-                class="col-8"
-                v-for="(hotplace, index) in hotPlaces"
-                :key="hotplace.hotNo"
-                :index="index"
-                :hotplace="hotplace" />
-            </div>
+  <div class="p-10 mt-6 min-h-screen">
+    <div class="mx-24 my-12">
+      <div id="detail-header" class="text-center">
+        <!-- 제목 -->
+        <h2 class="text-3xl py-3">여기 좋아요</h2>
+        <!-- 검색창 -->
+        <div class="flex items-center max-w-md mx-auto bg-white rounded-lg mt-6">
+          <VSelect :selectOption="selectOption" />
+          <div class="w-full">
+            <input
+              type="search"
+              class="w-full px-4 py-1 text-gray-800 rounded-full focus:outline-none"
+              v-model="word"
+              placeholder="검색어..."
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              class="flex items-center bg-blue-500 justify-center w-12 h-12 text-white rounded-r-lg"
+              :class="word.length > 0 ? 'bg-blue-500' : 'bg-gray-500 cursor-not-allowed'"
+              :disabled="word.length == 0"
+              @click="getArticleList"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </button>
           </div>
         </div>
+      </div>
+      <div class="flex justify-end my-12 mx-auto">
+        <button
+          class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
+          @click="moveWrite"
+          v-if="isLoggedIn"
+        >
+          작성하러 가기
+        </button>
+      </div>
+      <hr class="border-gray-400" />
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-24">
+      <div v-for="(hotplace, index) in hotPlaces" :key="hotplace.hotNo">
+        <HotPlaceListItem :index="index" :hotplace="hotplace" />
       </div>
     </div>
   </div>
@@ -119,6 +107,36 @@ const moveWrite = () => {
 };
 </script>
 
-<style>
-/* 여기에 추가적인 스타일링을 할 수 있습니다 */
+<style scoped>
+#detail-header {
+  margin-bottom: 2rem;
+}
+
+/* 이미지 위에 텍스트 오버레이 스타일 */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.left-0 {
+  left: 0;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.text-white {
+  color: #ffffff;
+}
+button:hover {
+  transform: translateY(-2px);
+}
 </style>

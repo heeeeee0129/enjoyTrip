@@ -153,6 +153,24 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/favorite",
+      name: "FavoriteView",
+      component: () => import("@/views/FavoriteView.vue"),
+      redirect: { name: "FavoriteList" },
+      children: [
+        {
+          path: "list",
+          name: "FavoriteList",
+          component: () => import("@/components/favorite/FavoriteList.vue"),
+        },
+        {
+          path: "suggest",
+          name: "SuggestList",
+          component: () => import("@/components/favorite/SuggestList.vue"),
+        },
+      ],
+    },
   ],
 });
 

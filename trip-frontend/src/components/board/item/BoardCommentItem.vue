@@ -69,7 +69,9 @@
             v-for="reComment in reComments"
             :key="reComment.replyNo"
             class="reply-item">
-            <BoardCommentItem :comment="reComment" />
+            <BoardCommentItem
+              :comment="reComment"
+              @get-count="handleGetCount" />
           </li>
         </ul>
       </div>
@@ -101,17 +103,18 @@
 </template>
 
 <script setup>
-import { defineProps, ref, computed, onMounted } from "vue";
+import { defineProps, defineEmits, ref, computed, onMounted } from "vue";
 import { deleteComment, modifyComment, writeComment } from "@/api/comment";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/index";
 import { listReComment } from "@/api/comment";
 import Swal from "sweetalert2";
 
+const emit = defineEmits(["get-count"]);
 const props = defineProps({ comment: Object });
+const router = useRouter();
 const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.isLoggedIn);
-const router = useRouter();
 const isEditing = ref(false);
 const isWriting = ref(false);
 const showReplies = ref(false);
@@ -168,7 +171,10 @@ const registComment = async () => {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        router.go(0);
+        getComments();
+        handleGetCount();
+        isWriting.value = false;
+        newComment.value.content = "";
       });
     } else {
       Swal.fire({
@@ -268,6 +274,11 @@ const confirmDelete = () => {
       onDeleteComment();
     }
   });
+};
+
+const handleGetCount = () => {
+  console.log("호출");
+  emit("get-count");
 };
 </script>
 

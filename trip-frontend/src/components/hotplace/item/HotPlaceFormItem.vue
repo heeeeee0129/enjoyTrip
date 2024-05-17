@@ -34,16 +34,17 @@ const initmap = (lat, lng) => {
     center: new window.kakao.maps.LatLng(lat, lng),
     level: 5,
   });
+  //마커 생성
   const markerPosition = new window.kakao.maps.LatLng(lat, lng);
-  // 마커 이미지를 못가져오네..
-  // const imageSrc = "./marker1.png";
-  // const imageSize = new window.kakao.maps.Size(24, 35);
-  // const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+  const imageSrc = "/marker1.png";
+  const imageSize = new window.kakao.maps.Size(24, 35);
+  const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
   const marker = new window.kakao.maps.Marker({
     map: map,
     position: markerPosition,
-    // image: markerImage,
+    image: markerImage,
   });
+  marker.setMap(map);
 
   // 지도 클릭 이벤트
   new window.kakao.maps.event.addListener(map, "click", function (mouseEvent) {
@@ -323,13 +324,16 @@ const updateArticle = async () => {
         <form
           @submit.prevent="onSubmit"
           class="p-4 rounded-lg shadow bg-light"
-          enctype="multipart/form-data"
-        >
+          enctype="multipart/form-data">
           <div class="mb-3">
             <label for="placeImage" class="form-label"
               >사진 등록(jpg, jpeg, png 파일만 가능):</label
             >
-            <input type="file" class="form-control" @change="handleFileChange" accept="image/*" />
+            <input
+              type="file"
+              class="form-control"
+              @change="handleFileChange"
+              accept="image/*" />
           </div>
           <div class="mb-3">
             <label for="placeName" class="form-label">장소 이름:</label>
@@ -337,12 +341,14 @@ const updateArticle = async () => {
               type="text"
               class="form-control"
               v-model="hotplace.placeName"
-              placeholder="장소 이름을 입력하세요"
-            />
+              placeholder="장소 이름을 입력하세요" />
           </div>
           <div class="mb-3">
             <label for="visitedDate" class="form-label">다녀온 날짜:</label>
-            <input type="date" class="form-control" v-model="hotplace.registerTime" />
+            <input
+              type="date"
+              class="form-control"
+              v-model="hotplace.registerTime" />
           </div>
           <div class="mb-3">
             <label for="graveType" class="form-label">장소 유형:</label>
@@ -359,23 +365,25 @@ const updateArticle = async () => {
             </select>
           </div>
           <div class="mb-3">
-            <label for="introduction" class="form-label">핫플레이스 소개:</label>
+            <label for="introduction" class="form-label"
+              >핫플레이스 소개:</label
+            >
             <textarea
               class="form-control"
               v-model="hotplace.content"
               rows="5"
-              placeholder="핫플레이스를 소개하세요"
-            ></textarea>
+              placeholder="핫플레이스를 소개하세요"></textarea>
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2">
+            <button
+              type="submit"
+              class="btn btn-outline-primary rounded-pill px-4 me-2">
               {{ type === "regist" ? "글작성" : "글수정" }}
             </button>
             <button
               type="button"
               class="btn btn-outline-success rounded-pill px-4"
-              @click="moveList"
-            >
+              @click="moveList">
               목록으로 이동...
             </button>
           </div>

@@ -126,12 +126,18 @@ const router = createRouter({
       component: () => import("@/components/trip/TripPlanView.vue"),
     },
     {
-      path: "/search",
-      name: "search",
-      component: () => import("@/components/trip/TripSearchView.vue"),
+      path: "/trip",
+      name: "TripView",
+      component: () => import("@/views/TripView.vue"),
+      redirect: { name: "search" },
       children: [
         {
-          path: "detail/:id",
+          path: "/search",
+          name: "search",
+          component: () => import("@/components/trip/TripSearchView.vue"),
+        },
+        {
+          path: "detail/:contentId",
           name: "TripDetail",
           component: () => import("@/components/trip/TripDetailView.vue"),
         },

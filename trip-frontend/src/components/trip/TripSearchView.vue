@@ -17,7 +17,8 @@ const positions = ref([]);
 const router = useRouter();
 
 var map = null; // 지도는 ref사용하면 안됨
-var cluster = null;
+var markerCluster = null; // 마커 클러스터
+var overlayCluster = null; // 오버레이 클러스터
 
 // 카카오 맵 API 로드
 onMounted(async () => {
@@ -63,6 +64,7 @@ const updateMapMarkers = (trips) => {
     img: trip.firstImage || "./default.png",
     latlng: new window.kakao.maps.LatLng(trip.latitude, trip.longitude),
     contentId: trip.contentId,
+    contentTypeId: trip.contentTypeId,
   }));
 
   displayMarker();
@@ -98,14 +100,52 @@ const getDistance = (latlng, avgLat, avgLng) => {
   return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
 };
 
-const displayMarker = () => {
-  const imageSrc = "./marker1.png";
-  const imageSize = new window.kakao.maps.Size(24, 35);
+const goToTripDetail = (contentId) => {
+  // Vue Router를 이용하여 TripDetail 페이지로 이동하는 메소드
+  router.push({
+    name: "TripDetail",
+    params: { contentId: contentId },
+  });
+};
 
+// 클러스터링
+const addCluster = (markers, idx) => {
+  if (idx == 1) {
+    if (!markerCluster) {
+      markerCluster = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 3,
+      });
+    }
+    markerCluster.addMarkers(markers);
+  } else {
+    if (!overlayCluster) {
+      overlayCluster = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 3,
+      });
+    }
+    overlayCluster.addMarkers(markers);
+  }
+};
+
+const displayMarker = () => {
   const markers = [];
   const overlays = [];
+  const imageSize = new window.kakao.maps.Size(24, 35);
+  // 기존 클러스터에 추가된 마커들 삭제
+  if (markerCluster) {
+    markerCluster.clear();
+  }
+  if (overlayCluster) {
+    overlayCluster.clear();
+  }
 
   positions.value.forEach((position) => {
+    //마커설정
+    const imageSrc = `./marker${position.contentTypeId}.png`; // 컨텐츠 타입별로 마커 이미지 다르게 해줘야함.
     const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
     const marker = new window.kakao.maps.Marker({
       position: position.latlng,
@@ -120,18 +160,22 @@ const displayMarker = () => {
     });
     markers.push(marker);
 
-    const content = `<div class="flex items-center justify-between relative bottom-8 border border-solid
-                        border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60" onClick="console.log(position.title)">
-                        <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
-                        <span class=" py-auto ml-2">
-                          <svg class="w-5 h-5 text-blue-800 " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                          </svg>
-                        </span>
-                    </div>`;
-
+    // 커스텀 오버레이의 content를 생성합니다
+    const content = document.createElement("div");
+    content.className =
+      "flex items-center justify-between relative bottom-8 border border-solid border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60";
+    content.innerHTML = `
+      <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
+      <span class="py-auto ml-2">
+        <svg class="w-5 h-5 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </span>
+    `;
+    // 오버레이에 클릭 이벤트를 추가합니다
+    content.addEventListener("click", () => goToTripDetail(position.contentId));
+    // 오버레이설정
     const customoverlay = new window.kakao.maps.CustomOverlay({
-      map: map,
       position: position.latlng,
       content: content,
       yAnchor: 1,
@@ -139,28 +183,10 @@ const displayMarker = () => {
       range: 300,
     });
     overlays.push(customoverlay);
-
-    const goToTripDetail = (contentId) => {
-      // Vue Router를 이용하여 TripDetail 페이지로 이동하는 메소드
-      this.$router.push({
-        name: "TripDetail",
-        params: { contentId: contentId },
-      });
-    };
   });
-
-  addCluster(markers);
-  addCluster(overlays);
-};
-
-// 클러스터링
-const addCluster = (markers) => {
-  cluster = new window.kakao.maps.MarkerClusterer({
-    map: map,
-    averageCenter: true,
-    minLevel: 3,
-  });
-  cluster.addMarkers(markers);
+  // 클러스터에 추가
+  addCluster(markers, 1);
+  addCluster(overlays, 2);
 };
 </script>
 
@@ -172,7 +198,10 @@ const addCluster = (markers) => {
       </div>
       <searchBar @search="handleSearch" />
 
-      <div id="map" class="mt-3 rounded shadow-sm p-10" style="width: 100%; height: 550px"></div>
+      <div
+        id="map"
+        class="mt-3 rounded shadow-sm p-10"
+        style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
@@ -189,10 +218,11 @@ const addCluster = (markers) => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="redirectToDetail(attraction.contentId)"
-            >
+              @click="goToTripDetail(attraction.contentId)">
               <td>
-                <img :src="attraction.firstImage || 'default.png'" width="100px" />
+                <img
+                  :src="attraction.firstImage || 'default.png'"
+                  width="100px" />
               </td>
               <td>{{ attraction.title }}</td>
               <td>{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
@@ -257,7 +287,8 @@ const addCluster = (markers) => {
   font-weight: bold;
   overflow: hidden;
   background: #d95050;
-  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
     no-repeat right 14px center;
 }
 #customoverlay .title {

@@ -3,6 +3,7 @@ import { ref, onMounted, watch } from "vue"; // 반응형 변수 사용
 import { join } from "@/api/user.js"; // ���원 가입 API
 import { useRouter } from "vue-router";
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts.js";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 
@@ -43,18 +44,29 @@ const doSignUp = () => {
     member,
     (response) => {
       if (response.data === 1) {
-        alert("회원 가입이 완료되었습니다.");
-        router.push({
-          name: "UserLogin",
-          query: {
-            id: member.id,
-            pwd: member.pwd,
-          },
+        Swal.fire({
+          title: "성공!",
+          text: "회원 가입이 완료되었습니다.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          router.push({
+            name: "UserLogin",
+            query: {
+              id: member.id,
+              pwd: member.pwd,
+            },
+          });
         });
       }
     },
     (error) => {
-      alert(error);
+      Swal.fire({
+        title: "실패!",
+        text: error,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   );
   console.log(member);

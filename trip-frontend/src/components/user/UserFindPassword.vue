@@ -2,17 +2,29 @@
 import { ref } from "vue";
 import { findPass } from "@/api/user";
 import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
 const router = useRouter();
 const memberId = ref("");
 const findPassword = () => {
   findPass(
     memberId.value,
     (response) => {
-      alert(`회원님의 비밀번호는 ${response.data}입니다.`);
-      router.push({ name: "UserLogin" });
+      Swal.fire({
+        title: "성공!",
+        text: `회원님의 비밀번호는 ${response.data}입니다.`,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.push({ name: "UserLogin" });
+      });
     },
     (err) => {
-      alert(err);
+      Swal.fire({
+        title: "실패!",
+        text: err,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   );
 };

@@ -98,4 +98,13 @@ public class SwaggerConfiguration {
 				.pathsToMatch("/hotplaceapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
 				.build();
 	}
+	
+	@Bean
+	public GroupedOpenApi favoriteApi() {
+		return GroupedOpenApi
+				.builder()
+				.group("favorite")  // 그룹 이름 ( 원하는 이름으로 작성 )
+				.pathsToMatch("/favoriteapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
+				.build();
+	}
 }

@@ -1,9 +1,10 @@
 <script setup>
 import "@/index.css";
 import { login } from "@/api/user";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useUserStore } from "@/stores"; // Import the Pinia store
 import { useRouter, useRoute } from "vue-router";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const route = useRoute();
@@ -12,7 +13,7 @@ const queryPwd = route.query.pwd;
 
 const store = useUserStore(); // Use the Pinia store
 
-const isLoggedIn = computed(() => store.isLoggedIn);
+// const isLoggedIn = computed(() => store.isLoggedIn);
 
 const memberId = ref(queryId ? String(queryId) : "");
 const password = ref(queryPwd ? String(queryPwd) : "");
@@ -37,14 +38,19 @@ const doLogin = () => {
   };
 
   const success = (response) => {
-    console.log(response.data);
+    // console.log(response.data);
     store.login(response.data);
-    console.log(isLoggedIn.value);
+    // console.log(isLoggedIn.value);
     router.push({ name: "main" });
   };
 
-  const fail = (error) => {
-    alert("로그인에 실패하였습니다. \n", error);
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "로그인에 실패하였습니다. \n",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
   };
 
   login(member, success, fail);

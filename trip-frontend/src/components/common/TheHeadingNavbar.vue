@@ -4,10 +4,16 @@ import { computed } from "vue"; // 계산된 속성 사용
 import "@/index.css";
 const store = useUserStore();
 const isLoggedIn = computed(() => store.isLoggedIn);
+import Swal from "sweetalert2";
 
 const doLogout = () => {
   store.logout();
-  alert("로그아웃 되었습니다.");
+  Swal.fire({
+    title: "성공!",
+    text: "로그아웃 되었습니다.",
+    icon: "success",
+    confirmButtonText: "OK",
+  });
 };
 </script>
 

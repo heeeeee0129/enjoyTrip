@@ -149,7 +149,9 @@ const registComment = async () => {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        router.go(0);
+        newComment.value.content = "";
+        getComments();
+        getCount();
       });
     } else {
       Swal.fire({
@@ -249,7 +251,8 @@ const registComment = async () => {
             <BoardCommentItem
               v-for="comment in comments"
               :key="comment.replyNo"
-              :comment="comment" />
+              :comment="comment"
+              @get-count="getCount" />
             <!-- 댓글 작성 폼 -->
             <div class="mt-3" v-if="isLoggedIn">
               <textarea

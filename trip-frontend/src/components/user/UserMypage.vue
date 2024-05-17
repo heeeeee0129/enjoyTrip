@@ -4,6 +4,7 @@ import { modify } from "@/api/user.js";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores";
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts.js";
+import Swal from "sweetalert2";
 
 const store = useUserStore();
 const userData = store.member;
@@ -47,13 +48,24 @@ const doModify = () => {
     member,
     (response) => {
       if (response.data === 1) {
-        alert("회원 정보 수정이 완료되었습니다.");
-        store.login(member);
-        router.push({ name: "main" });
+        Swal.fire({
+          title: "성공!",
+          text: "회원 정보 수정이 완료되었습니다.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          store.login(member);
+          router.push({ name: "main" });
+        });
       }
     },
     (error) => {
-      alert(error);
+      Swal.fire({
+        title: "실패!",
+        text: error,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   );
 };

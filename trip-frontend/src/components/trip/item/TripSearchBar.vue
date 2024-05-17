@@ -111,7 +111,7 @@ export default {
       }
       if (contentType && contentType.length > 0) {
         contentType.forEach((type) => {
-          queryString += `&contentTypeIsd=${type}`;
+          queryString += `&contentTypeIds=${type}`;
         });
       }
       emit("search", queryString);

@@ -3,6 +3,7 @@ import { watch, ref, onMounted } from "vue";
 import { getAttractions } from "@/api/attraction";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useRouter } from "vue-router";
 import searchBar from "@/components/trip/item/TripSearchBar.vue";
 
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
@@ -13,7 +14,7 @@ const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
-
+const router = useRouter();
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터
 var overlayCluster = null; // 오버레이 클러스터

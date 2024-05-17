@@ -31,7 +31,7 @@ const formatDate = (dateString) => {
 <template>
   <div class="card mb-3" style="position: relative">
     <img
-      :src="getImageUrl(ffolder, fname)"
+      :src="`/upload/${ffolder}/${fname}`"
       alt="이미지가 없음"
       style="max-width: 100%; height: auto; display: block" />
     <div

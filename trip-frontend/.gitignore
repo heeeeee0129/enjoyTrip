@@ -28,4 +28,8 @@ coverage
 *.sw?
 .env
 *.tsbuildinfo
+<<<<<<< HEAD
 src/assets/upload/*
+=======
+public/upload/*
+>>>>>>> 6cd298003afe6c4072373ca23ac47667be272cbe

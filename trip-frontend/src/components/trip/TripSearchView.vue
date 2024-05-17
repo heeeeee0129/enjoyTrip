@@ -152,40 +152,20 @@ const displayMarker = () => {
       image: markerImage,
       clickable: true,
     });
-    // 마커에 클릭이벤트를 등록합니다
-    // 클릭 이벤트가 됐다 안됐다 한다...
-    new window.kakao.maps.event.addListener(marker, "click", function () {
-      map.panTo(position.latlng);
-    });
-    markers.push(marker);
 
-    // 커스텀 오버레이의 content를 생성합니다
-    const content = document.createElement("div");
-    content.className =
-      "flex items-center justify-between relative bottom-8 border border-solid border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60";
-    content.innerHTML = `
-      <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
-      <span class="py-auto ml-2">
-        <svg class="w-5 h-5 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-        </svg>
-      </span>
-    `;
-    // 오버레이에 클릭 이벤트를 추가합니다
-    content.addEventListener("click", () => goToTripDetail(position.contentId));
-    // 오버레이설정
-    const customoverlay = new window.kakao.maps.CustomOverlay({
-      position: position.latlng,
-      content: content,
-      yAnchor: 1,
-      xAnchor: 0.5,
-      range: 300,
+    window.kakao.maps.event.addListener(marker, "click", function () {
+      displayMarkerInfo(position);
     });
-    overlays.push(customoverlay);
+
+    marker.setMap(map.value);
   });
-  // 클러스터에 추가
-  addCluster(markers, 1);
-  addCluster(overlays, 2);
+
+  map.value.setCenter(positions.value[0].latlng);
+};
+
+const displayMarkerInfo = (position) => {
+  // Implement the info display logic here
+  console.log("Display marker info:", position);
 };
 </script>
 

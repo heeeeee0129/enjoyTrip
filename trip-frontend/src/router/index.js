@@ -123,7 +123,17 @@ const router = createRouter({
     {
       path: "/plan",
       name: "plan",
-      component: () => import("@/components/trip/TripPlanView.vue"),
+      component: () => import("@/components/trip/TripPlanListView.vue"),
+    },
+    {
+      path: "/plan/detail/:id",
+      name: "PlanDetail",
+      component: () => import("@/components/trip/TripPlanDetailView.vue"),
+    },
+    {
+      path: "/plan/write",
+      name: "PlanWrite",
+      component: () => import("@/components/trip/TripPlanWriteView.vue"), // 수정된 부분
     },
     {
       path: "/trip",

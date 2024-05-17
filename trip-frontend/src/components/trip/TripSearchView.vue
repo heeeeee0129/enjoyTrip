@@ -1,7 +1,6 @@
 <script setup>
 import { watch, ref, onMounted } from "vue";
 import { getAttractions } from "@/api/attraction";
-import { useRouter } from "vue-router";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import searchBar from "@/components/trip/item/TripSearchBar.vue";
@@ -14,7 +13,6 @@ const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
-const router = useRouter();
 
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터
@@ -218,7 +216,7 @@ const displayMarker = () => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="goToTripDetail(attraction.contentId)">
+              @click="redirectToDetail(attraction.contentId)">
               <td>
                 <img
                   :src="attraction.firstImage || 'default.png'"

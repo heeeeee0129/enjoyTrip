@@ -60,10 +60,10 @@ const getComments = async () => {
 
   const fail = (error) => {
     Swal.fire({
-      title: "Error!",
+      title: "실패!",
       text: "문제가 발생헀습니다." + error,
       icon: "error",
-      confirmButtonText: "Cool",
+      confirmButtonText: "OK",
     });
   };
 
@@ -77,10 +77,10 @@ const getCount = async () => {
 
   const fail = (error) => {
     Swal.fire({
-      title: "Error!",
+      title: "실패!",
       text: "문제가 발생헀습니다." + error,
       icon: "error",
-      confirmButtonText: "Cool",
+      confirmButtonText: "OK",
     });
   };
 

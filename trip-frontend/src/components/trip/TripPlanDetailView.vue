@@ -12,37 +12,45 @@
       <hr class="border-gray-400" />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-24">
-      <div v-for="location in locations" :key="location.id">
-        <div
-          class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
-          <div class="relative">
-            <img
-              :src="location.img"
-              alt="location.title"
-              class="w-full h-64 object-cover" />
-            <div class="absolute bottom-0 left-0 p-4">
-              <h3 class="text-xl font-semibold text-white">
-                {{ location.title }}
-              </h3>
-            </div>
-          </div>
-          <div class="p-4">
-            <p class="text-gray-700 mb-4">{{ location.content }}</p>
-          </div>
-        </div>
+      <div v-for="location in trip.tripLocations" :key="location.id">
+        <TripPlanDetailItem :location="location" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { getLocationsByTripId } from "@/assets/mock/trip";
+import Swal from "sweetalert2";
+import { getTripPlan } from "@/api/tripplan";
+import TripPlanDetailItem from "@/components/trip/item/TripPlanDetailItem.vue";
 
 const route = useRoute();
 const tripId = Number(route.params.id);
-const locations = getLocationsByTripId(tripId);
-console.log(locations);
+
+const trip = ref({});
+onMounted(() => {
+  getTrip();
+});
+
+const getTrip = async () => {
+  const success = (response) => {
+    trip.value = response.data;
+  };
+
+  const fail = (error) => {
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await getTripPlan(tripId, success, fail);
+};
+
 const goBack = () => {
   window.history.back();
 };

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tripplan.dao.TripPlanDao">
+	
+	<select id="listArticle" resultType="tripPlan">
+		SELECT t.id, t.title, t.content, t.start_date, t.end_date, t.user_id, m.user_name, t.created_at 
+		FROM trip_plan t
+		JOIN members m ON t.user_id = m.user_id 
+	</select>
+	
+	<select id="getArticle" parameterType="int" resultType="tripPlan">
+		SELECT t.id, t.title, t.content, t.start_date, t.end_date, t.user_id, m.user_name, t.created_at 
+		FROM trip_plan t
+		JOIN members m ON t.user_id = m.user_id 
+		WHERE t.id = #{id}
+	</select>
+	
+	<select id="getLocation" parameterType="int" resultType="tripLocation">
+		SELECT id, route_id, memo, `idx`, content_id
+		FROM trip_location
+		WHERE route_id = #{id}
+		ORDER BY `idx` ASC
+	</select>
+	
+	<insert id="writeArticle" parameterType="tripPlan">
+		INSERT INTO trip_plan (title, content, start_date, end_date, user_id)
+		VALUES (#{title}, #{content}, #{startDate}, #{endDate}, #{userId})
+	</insert>
+	
+	<select id="getId" resultType="int">
+		SELECT id
+		FROM trip_plan
+		ORDER BY created_at DESC
+	</select>
+	
+	<insert id="writeLocation" parameterType="tripPlan">
+		INSERT INTO trip_location (route_id, memo, `idx`, content_id) VALUES
+	    <foreach collection="tripLocations" item="item" separator=",">
+        	(#{id}, #{item.memo}, #{item.idx}, #{item.contentId})
+    	</foreach>
+	</insert>
+	
+	<delete id="deleteArticle" parameterType="int">
+		DELETE FROM trip_plan
+		WHERE id = #{id}
+	</delete>
+</mapper>

@@ -1,19 +1,46 @@
 <script setup>
-import { ref, computed } from "vue";
-import { tripRoutes } from "@/assets/mock/trip";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/index";
+import { listTripPlan } from "@/api/tripplan.js";
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
-const router = useRouter();
-const trips = ref(tripRoutes);
+const trips = ref([]);
+
 const store = useUserStore();
 const isLoggedIn = computed(() => store.isLoggedIn);
+const router = useRouter();
+
+onMounted(() => {
+  getTripPlanList();
+});
+
+const getTripPlanList = async () => {
+  const success = (response) => {
+    trips.value = response.data;
+  };
+
+  const fail = (error) => {
+    Swal.fire({
+      title: "Error!",
+      text: "문제가 발생헀습니다." + error,
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await listTripPlan(success, fail);
+};
 
 const goDetail = (id) => {
   console.log(id);
   router.push({ name: "PlanDetail", params: { id } });
 };
-console.log(isLoggedIn.value);
+
+function formatDate(dateString) {
+  return dayjs(dateString).format("YYYY년 MM월 DD일");
+}
 </script>
 
 <template>
@@ -45,14 +72,16 @@ console.log(isLoggedIn.value);
           </h3>
           <p class="text-gray-700 mb-4">{{ route.content }}</p>
           <p class="text-gray-500 mb-1">
-            시작 날짜: <span class="font-medium">{{ route.start_date }}</span>
+            시작 날짜:
+            <span class="font-medium">{{ formatDate(route.startDate) }}</span>
           </p>
           <p class="text-gray-500 mb-1">
-            종료 날짜: <span class="font-medium">{{ route.end_date }}</span>
+            종료 날짜:
+            <span class="font-medium">{{ formatDate(route.endDate) }}</span>
           </p>
           <p class="text-gray-400 text-sm font-light mt-4 border-t pt-3">
-            작성일: {{ route.created_at }} / 작성자:
-            <span class="font-medium text-gray-600">{{ route.user_id }}</span>
+            작성일: {{ formatDate(route.createdAt) }} / 작성자:
+            <span class="font-medium text-gray-600">{{ route.userId }}</span>
           </p>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { getAttractions } from "@/api/attraction";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import searchBar from "@/components/trip/item/TripSearchBar.vue";
-
+import { useRouter } from "vue-router";
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
 import { loadKakaoMapScript } from "@/utils/load-map";
 const attractions = ref([]);
@@ -13,6 +13,7 @@ const selectSidos = ref([]);
 const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
+const router = useRouter();
 
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터

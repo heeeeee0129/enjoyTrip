@@ -277,7 +277,7 @@ const confirmDelete = () => {
 };
 
 const handleGetCount = () => {
-  console.log("호출");
+  // console.log("호출");
   emit("get-count");
 };
 </script>

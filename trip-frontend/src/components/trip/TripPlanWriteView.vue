@@ -2,6 +2,9 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { loadKakaoMapScript } from "@/utils/load-map";
+import { getAttractions, getTripAttraction } from "@/api/attraction";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const router = useRouter();
 const title = ref("");
@@ -9,19 +12,204 @@ const content = ref("");
 const startDate = ref("");
 const endDate = ref("");
 const locations = ref([]);
+const keyword = ref("");
 let map = null;
+let markerCluster = null; // 마커 클러스터
+let overlayCluster = null;
+const positions = ref([]);
+const isModalOpen = ref(false);
+const selectedAttraction = ref({});
+const attractions = ref([]);
+
 const submitForm = () => {
   // 여행 계획 추가 로직을 작성하세요
   // 제목(title), 내용(content), 시작일(startDate), 종료일(endDate)을 이용하여 새로운 여행 계획을 추가합니다
   // 추가된 여행지를 locations에 추가합니다
+  console.log("submit");
 };
+
 onMounted(async () => {
   await loadKakaoMapScript(map);
+  AOS.init();
   map = new window.kakao.maps.Map(document.getElementById("map"), {
     center: new window.kakao.maps.LatLng(33.450701, 126.570667),
     level: 3,
   });
 });
+const handleSearch = async () => {
+  const queryString = keyword.value
+    ? `&sido=0&gugun=0&keyword=${keyword.value}`
+    : "&sido=0&gugun=0";
+
+  try {
+    const response = await getAttractions(queryString);
+    console.log("Response Data: ", response);
+
+    if (response) {
+      attractions.value = response;
+      // console.log(attractions.value);
+      updateMapMarkers(attractions.value);
+    } else {
+      console.error("Unexpected response structure:", response);
+    }
+  } catch (error) {
+    console.error("Error during search:", error);
+  }
+};
+const updateMapMarkers = (trips) => {
+  console.log("trips", trips);
+  positions.value = trips.map((trip) => ({
+    title: trip.title,
+    addr: `${trip.addr1} ${trip.addr2}`,
+    img: trip.firstImage || "./default.png",
+    latlng: new window.kakao.maps.LatLng(trip.latitude, trip.longitude),
+    contentId: trip.contentId,
+    contentTypeId: trip.contentTypeId,
+  }));
+
+  displayMarker();
+  let minDistance = Number.MAX_VALUE;
+  let nearestMarker = null;
+
+  // 평균 Lat, Lng 계산
+  let totalLat = 0;
+  let totalLng = 0;
+  positions.value.forEach((position) => {
+    totalLat += position.latlng.getLat();
+    totalLng += position.latlng.getLng();
+  });
+  const avgLat = totalLat / positions.value.length;
+  const avgLng = totalLng / positions.value.length;
+
+  // 가장 가까운 마커 찾기
+  positions.value.forEach((position) => {
+    const distance = getDistance(position.latlng, avgLat, avgLng);
+    if (distance < minDistance) {
+      minDistance = distance;
+      nearestMarker = position.latlng;
+    }
+  });
+
+  // 가장 가까운 마커를 중심으로 지도 설정
+  map.setCenter(nearestMarker);
+  map.setLevel(12);
+};
+const displayMarker = () => {
+  const markers = [];
+  const overlays = [];
+  const imageSize = new window.kakao.maps.Size(24, 35);
+  // 기존 클러스터에 추가된 마커들 삭제
+  if (markerCluster) {
+    markerCluster.clear();
+  }
+  if (overlayCluster) {
+    overlayCluster.clear();
+  }
+  positions.value.forEach((position) => {
+    //마커설정
+    const imageSrc = `/marker${position.contentTypeId}.png`; // 컨텐츠 타입별로 마커 이미지 다르게 해줘야함.
+    const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+    const marker = new window.kakao.maps.Marker({
+      position: position.latlng,
+      title: position.title,
+      image: markerImage,
+      clickable: true,
+    });
+    // 마커에 클릭이벤트를 등록합니다
+    // 클릭 이벤트가 됐다 안됐다 한다...
+    new window.kakao.maps.event.addListener(marker, "click", function () {
+      map.panTo(position.latlng);
+    });
+    markers.push(marker);
+
+    // 커스텀 오버레이의 content를 생성합니다
+    const content = document.createElement("div");
+    content.className =
+      "flex items-center justify-between relative bottom-8 border border-solid border-gray-300 rounded-lg shadow-md px-3 py-1 bg-gray-50 bg-opacity-60";
+    content.innerHTML = `
+      <span class="block text-center text-black font-bold text-base py-1">${position.title}</span>
+      <span class="py-auto ml-2">
+        <svg class="w-5 h-5 text-blue-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </span>
+    `;
+    // 오버레이에 클릭 이벤트를 추가합니다
+    content.addEventListener("click", () => goToTripDetail(position.contentId));
+
+    // 오버레이설정
+    const customoverlay = new window.kakao.maps.CustomOverlay({
+      position: position.latlng,
+      content: content,
+      yAnchor: 1,
+      xAnchor: 0.5,
+      range: 300,
+    });
+    overlays.push(customoverlay);
+  });
+  addCluster(markers, 1);
+  addCluster(overlays, 2);
+};
+const goToTripDetail = async (contentId) => {
+  // contentId에 해당하는 여행지 정보를 가져오는 메소드
+  const attraction = await getTripAttraction(contentId);
+
+  if (attraction) {
+    selectedAttraction.value = attraction;
+    isModalOpen.value = true;
+    // const location = {
+    //   id: attraction.contentId,
+    //   title: attraction.title,
+    //   content: attraction.overview,
+    //   img: attraction.firstImage,
+    // };
+    // locations.value.push(location);
+    // console.log(locations.value);
+  }
+};
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+const addLocation = () => {
+  console.log(selectedAttraction.value);
+  const location = {
+    id: selectedAttraction.value.contentId,
+    title: selectedAttraction.value.title,
+    content: selectedAttraction.value.overview,
+    img: selectedAttraction.value.firstImage,
+    idx: locations.value.length,
+    latitude: selectedAttraction.value.latitude,
+    longitude: selectedAttraction.value.longitude,
+  };
+  locations.value.push(location);
+  closeModal();
+};
+const addCluster = (markers, idx) => {
+  if (idx == 1) {
+    if (!markerCluster) {
+      markerCluster = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 3,
+      });
+    }
+    markerCluster.addMarkers(markers);
+  } else {
+    if (!overlayCluster) {
+      overlayCluster = new window.kakao.maps.MarkerClusterer({
+        map: map,
+        averageCenter: true,
+        minLevel: 3,
+      });
+    }
+    overlayCluster.addMarkers(markers);
+  }
+};
+const getDistance = (latlng, avgLat, avgLng) => {
+  const latDiff = latlng.getLat() - avgLat;
+  const lngDiff = latlng.getLng() - avgLng;
+  return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+};
 
 const goBack = () => {
   router.go(-1);
@@ -59,10 +247,15 @@ const goBack = () => {
         <!-- 검색 바 --><span class="text-base pl-2">여행지 검색</span>
         <div class="py-2 my-2 bg-white rounded-t-lg flex items-center">
           <input
+            @keydown.enter="handleSearch"
+            id="keyword"
+            name="keyword"
+            v-model="keyword"
             type="text"
             placeholder="장소 검색..."
             class="flex-grow py-2 px-4 border border-gray-300 rounded-l-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
           <div
+            @click="handleSearch"
             class="bg-blue-300 py-2 px-4 rounded-r-md border border-gray-300">
             검색
           </div>
@@ -94,7 +287,7 @@ const goBack = () => {
               name="content"
               v-model="content"
               rows="3"
-              class="px-2 mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+              class="px-2 py-2 mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
           </div>
           <div class="mb-4">
             <label
@@ -127,34 +320,86 @@ const goBack = () => {
     </div>
     <!-- 여행지 목록 -->
     <div class="mx-24">
-      <h3 class="text-2xl font-semibold my-4">여행지 목록</h3>
-      <div
-        v-for="(location, index) in locations"
-        :key="location.id"
-        class="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-        <div class="relative">
-          <img
-            src="/attraction.jpg"
-            :alt="location.title"
-            class="w-full h-40 object-cover" />
-          <div class="absolute bottom-0 left-0 p-4">
-            <h3 class="text-xl font-semibold text-white">
-              {{ location.title }}
-            </h3>
+      <h3 class="text-2xl font-semibold mt-24">TIMELINE</h3>
+      <hr class="border-gray-400" />
+      <div class="mt-10 grid grid-cols-4 gap-4 p-4 px-24">
+        <div
+          v-for="location in locations"
+          :key="location.contentId"
+          class="p-3 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 m-2"
+          data-aos="fade-up"
+          data-aos-duration="1000">
+          <div class="rounded-lg overflow-hidden">
+            <div class="relative">
+              <img
+                :src="location.img ? location.img : 'public/attraction.jpg'"
+                alt="location.title"
+                class="w-full h-64 object-cover" />
+              <div class="absolute bottom-0 left-0 p-4">
+                <h3 class="text-xl font-semibold text-white">
+                  {{ location.title }}
+                </h3>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500">
+              순서: {{ location.idx }} / lat: {{ location.latitude }}/lng:
+              {{ location.longitude }}
+            </p>
+            <div class="p-4">
+              <p class="text-gray-700 mb-4">{{ location.content }}</p>
+            </div>
           </div>
         </div>
-        <div class="p-4">
-          <p class="text-gray-700 mb-4">{{ location.content }}</p>
-          <p class="text-gray-500 mb-1">
-            시작 날짜:
-            <span class="font-medium">{{ location.start_date }}</span>
-          </p>
-          <p class="text-gray-500 mb-1">
-            종료 날짜: <span class="font-medium">{{ location.end_date }}</span>
-          </p>
-          <p class="text-gray-400 text-sm font-light mt-4">
-            순서: {{ index + 1 }}
-          </p>
+      </div>
+    </div>
+    <!-- 타임라인 끝 -->
+    <!-- 모달 -->
+    <div v-if="isModalOpen" class="fixed z-10 inset-0 overflow-y-auto">
+      <div
+        class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <span
+          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+          >&#8203;</span
+        >
+        <div
+          data-aos="fade-up"
+          data-aos-duration="1000"
+          class="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="text-center sm:mt-0 sm:text-left">
+                <h3 class="text-2xl leading-6 font-bold text-gray-900 my-6">
+                  {{ selectedAttraction.title }}
+                </h3>
+
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">
+                    {{ selectedAttraction.overview }}
+                  </p>
+                </div>
+                <img
+                  :src="selectedAttraction.firstImage"
+                  alt="Image"
+                  class="w-full h-64 object-cover mt-4" />
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="addLocation"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+              여행지 등록하기
+            </button>
+            <button
+              @click="closeModal"
+              class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+              닫기
+            </button>
+          </div>
         </div>
       </div>
     </div>

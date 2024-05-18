@@ -28,7 +28,8 @@ onMounted(async () => {
 });
 
 function getImageUrl(folder, name) {
-  return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
+  console.log(new URL(`./upload/${folder}/${name}`, import.meta.url));
+  return new URL(`./upload/${folder}/${name}`, import.meta.url);
 }
 
 function moveList() {

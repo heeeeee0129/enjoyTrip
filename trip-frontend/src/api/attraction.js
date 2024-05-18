@@ -17,3 +17,13 @@ export const getAttractions = async (queryString) => {
 export const getAttraction = async (contentId, success, fail) => {
   await axios.get(`${BASE_URL}/${contentId}`).then(success).catch(fail);
 };
+
+export const getTripAttraction = async (contentId) => {
+  try {
+    const res = await axios.get(`${BASE_URL}/${contentId}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};

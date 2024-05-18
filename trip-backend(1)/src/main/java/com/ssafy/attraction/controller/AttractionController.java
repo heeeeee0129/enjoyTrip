@@ -53,7 +53,6 @@ public class AttractionController {
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
-
 	}
 
 	@Operation(summary = "관광지 상세 조회")
@@ -63,6 +62,21 @@ public class AttractionController {
 			AttractionWithOverview attraction = attractionService.getAttractionById(contentId);
 			if (attraction != null) {
 				return ResponseEntity.ok(attraction);
+			} else {
+				return ResponseEntity.noContent().build();
+			}
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "인기 관광지 조회")
+	@GetMapping("/list/top")
+	public ResponseEntity<?> listTop() {
+		try {
+			List<Attraction> list = attractionService.getTopList();
+			if (!list.isEmpty()) {
+				return ResponseEntity.ok(list);
 			} else {
 				return ResponseEntity.noContent().build();
 			}

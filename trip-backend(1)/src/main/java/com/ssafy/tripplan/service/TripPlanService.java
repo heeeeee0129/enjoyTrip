@@ -18,4 +18,6 @@ public interface TripPlanService {
 
 	List<TripLocation> getLocation(int id) throws SQLException;
 
+	List<TripPlan> listUserArticle(String userId) throws SQLException;
+
 }

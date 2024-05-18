@@ -4,7 +4,12 @@ const axios = localAxios();
 
 // 회원 정보 조회
 export const getUser = async (id, success, fail) => {
-  await axios.get(`/userapi/user/checkId/${id}`).then(success).then(fail);
+  await axios.get(`/userapi/user/checkId/${id}`).then(success).catch(fail);
+};
+
+// 전체 회원 정보 조회
+export const getUserList = async (success, fail) => {
+  await axios.get(`/userapi/user/list`).then(success).catch(fail);
 };
 
 // 비밀번호 찾기

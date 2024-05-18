@@ -16,6 +16,7 @@ const moveDetail = () => {
   <div
     class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105"
     @click="moveDetail"
+    type="button"
   >
     <div class="relative">
       <img :src="attraction.firstImage" alt="location.title" class="w-full h-64 object-cover" />

@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.board.service.BoardService;
 import com.ssafy.district.dto.Sido;
 import com.ssafy.district.service.DistrictServiceImpl;
 import com.ssafy.member.dto.Member;
 import com.ssafy.member.service.MemberService;
-import com.ssafy.trip.service.TripService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
@@ -42,6 +40,17 @@ public class MemberController {
 		try {
 			Member member = memberService.getUser(userId);
 			return ResponseEntity.ok(member);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "전체 유저 목록 ")
+	@GetMapping("user/list")
+	private ResponseEntity<?> getUserList() {
+		try {
+			List<Member> members = memberService.getUserList();
+			return ResponseEntity.ok(members);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}
@@ -147,6 +156,8 @@ public class MemberController {
 			return exceptionHandling(e);
 		}
 	}
+	
+	
 
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();

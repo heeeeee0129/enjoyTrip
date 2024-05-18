@@ -6,11 +6,12 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.ssafy.district.dto.Address;
 import com.ssafy.district.dto.Sido;
 import com.ssafy.district.service.DistrictService;
 
@@ -51,6 +52,36 @@ public class DistrictController {
 			List<String> guguns = districtService.getGuguns(sidoCode);
 			if(!(guguns.isEmpty())) {
 				return ResponseEntity.ok(guguns);
+			}else {
+				return ResponseEntity.noContent().build();
+			}
+		}catch(Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "구/군 이름 얻어오기")
+	@PostMapping("/gugun/name")
+	public ResponseEntity<?> getGugunName(@RequestBody Address address){
+		try {
+			String gugunName = districtService.getGugunName(address);
+			if(!(gugunName.isEmpty())) {
+				return ResponseEntity.ok(gugunName);
+			}else {
+				return ResponseEntity.noContent().build();
+			}
+		}catch(Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "시도 이름 얻어오기")
+	@GetMapping("/sido/name/{sidoCode}")
+	public ResponseEntity<?> getSidoName(@PathVariable(value = "sidoCode") int sidoCode){
+		try {
+			String sidoName = districtService.getSidoName(sidoCode);
+			if(!(sidoName.isEmpty())) {
+				return ResponseEntity.ok(sidoName);
 			}else {
 				return ResponseEntity.noContent().build();
 			}

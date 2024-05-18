@@ -136,6 +136,11 @@ const router = createRouter({
       component: () => import("@/components/trip/TripPlanWriteView.vue"), // 수정된 부분
     },
     {
+      path: "/plan/myplan",
+      name: "MyPlanView",
+      component: () => import("@/components/trip/MyTripPlanView.vue"), // 수정된 부분
+    },
+    {
       path: "/trip",
       name: "TripView",
       component: () => import("@/views/TripView.vue"),
@@ -188,9 +193,27 @@ const router = createRouter({
           component: () => import("@/components/friend/FriendAdd.vue"),
         },
         {
-          path: "favoritelist",
+          path: "favoritelist/:friendId",
           name: "FriendFavoriteList",
           component: () => import("@/components/friend/FriendFavoriteList.vue"),
+        },
+      ],
+    },
+    {
+      path: "/message",
+      name: "MessageView",
+      component: () => import("@/views/MessageView.vue"),
+      redirect: { name: "MessageList" },
+      children: [
+        {
+          path: "list",
+          name: "MessageList",
+          component: () => import("@/components/message/MessageList.vue"),
+        },
+        {
+          path: "write",
+          name: "MessageWrite",
+          component: () => import("@/components/message/MessageWrite.vue"),
         },
       ],
     },

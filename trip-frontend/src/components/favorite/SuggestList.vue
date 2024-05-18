@@ -42,9 +42,9 @@ const moveBack = () => {
       <div id="detail-header" class="text-center">
         <h2 class="text-3xl mt-4">좋아요를 누른 곳과 비슷한 장소</h2>
       </div>
-      <div class="flex justify-end my-12 mx-auto">
+      <div class="flex justify-start my-12 mx-auto">
         <button
-          class="bg-gray-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
+          class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
           @click="moveBack"
         >
           뒤로가기

@@ -19,4 +19,10 @@ public interface HotPlaceService {
 
 	int deleteArticle(int hotNo) throws SQLException;
 
+	void updateCount(int hotNo) throws SQLException;
+
+	void deleteCount(int hotNo) throws SQLException;
+
+	List<HotPlace> listTop() throws SQLException;
+
 }

@@ -20,3 +20,25 @@ export const fetchGuguns = async (sido) => {
     return [];
   }
 };
+
+// 시 이름 가져오기
+export const getSidoName = async (sidoCode) => {
+  try {
+    const res = await axios.get(`districtapi/sido/name/${sidoCode}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return "";
+  }
+};
+
+// 구 이름 가져오기
+export const getGugunName = async (address) => {
+  try {
+    const res = await axios.post(`districtapi/gugun/name`, address);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return "";
+  }
+};

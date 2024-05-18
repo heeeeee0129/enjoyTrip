@@ -55,6 +55,8 @@ const checkDelete = async () => {
       text: "좋아요가 해제되었습니다.",
       icon: "success",
       confirmButtonText: "OK",
+    }).then(() => {
+      router.go(0);
     });
   };
 
@@ -79,11 +81,8 @@ const checkDelete = async () => {
 </script>
 
 <template>
-  <div
-    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105"
-    @click="goDetail(hotplace.hotNo)"
-  >
-    <div class="relative">
+  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+    <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
       <img :src="ImgPath" :alt="hotplace.placeName" class="w-full h-64 object-cover" />
       <div class="absolute bottom-0 left-0 p-4">
         <h3 class="text-xl font-semibold text-white">

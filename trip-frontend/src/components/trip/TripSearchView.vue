@@ -197,10 +197,7 @@ const displayMarker = () => {
       </div>
       <searchBar @search="handleSearch" />
 
-      <div
-        id="map"
-        class="mt-3 rounded shadow-sm p-10"
-        style="width: 100%; height: 550px"></div>
+      <div id="map" class="mt-3 rounded shadow-sm p-10" style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
@@ -217,11 +214,10 @@ const displayMarker = () => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="redirectToDetail(attraction.contentId)">
+              @click="goToTripDetail(attraction.contentId)"
+            >
               <td>
-                <img
-                  :src="attraction.firstImage || 'default.png'"
-                  width="100px" />
+                <img :src="attraction.firstImage || 'default.png'" width="100px" />
               </td>
               <td>{{ attraction.title }}</td>
               <td>{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
@@ -286,8 +282,7 @@ const displayMarker = () => {
   font-weight: bold;
   overflow: hidden;
   background: #d95050;
-  background: #d95050
-    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
     no-repeat right 14px center;
 }
 #customoverlay .title {

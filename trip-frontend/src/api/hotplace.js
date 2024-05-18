@@ -9,6 +9,11 @@ export const listArticles = async (success, fail) => {
   await axios.get(`${BASE_URL}/hotplace`).then(success).catch(fail);
 };
 
+// 핫플레이스 인기글 목록을 가져오는 함수
+export const getTopHotplace = async (success, fail) => {
+  await axios.get(`${BASE_URL}/hotplace/top`).then(success).catch(fail);
+};
+
 // 특정 핫플레이스 글 정보를 가져오는 함수
 export const getArticle = async (hotNo, success, fail) => {
   await axios.get(`${BASE_URL}/hotplace/${hotNo}`).then(success).catch(fail);

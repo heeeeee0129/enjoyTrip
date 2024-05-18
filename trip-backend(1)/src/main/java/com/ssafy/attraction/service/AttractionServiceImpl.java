@@ -42,5 +42,10 @@ public class AttractionServiceImpl implements AttractionService {
 	public List<Attraction> suggestAttractions(int categoryNo) throws SQLException {
 		return attractionDao.suggestAttractions(categoryNo);
 	}
+
+	@Override
+	public List<Attraction> getTopList() throws SQLException {
+		return attractionDao.getTopList();
+	}
 	
 }

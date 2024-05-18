@@ -5,14 +5,15 @@ const BASE_URL = "/tripplanapi";
 
 // 여행계획 글을 작성하는 함수
 export const writeTripPlan = async (tripplan, success, fail) => {
-  await axios
-    .post(`${BASE_URL}/tripplan`, JSON.stringify(tripplan))
-    .then(success)
-    .catch(fail);
+  await axios.post(`${BASE_URL}/tripplan`, JSON.stringify(tripplan)).then(success).catch(fail);
 };
 
 export const listTripPlan = async (success, fail) => {
   await axios.get(`${BASE_URL}/tripplan`).then(success).catch(fail);
+};
+
+export const listUserTripPlan = async (userId, success, fail) => {
+  await axios.get(`${BASE_URL}/tripplan/user/${userId}`).then(success).catch(fail);
 };
 
 export const getTripPlan = async (id, success, fail) => {

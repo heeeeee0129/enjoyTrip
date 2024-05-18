@@ -50,4 +50,9 @@ public class TripPlanServiceImpl implements TripPlanService {
 		return tripplanDao.getLocation(id);
 	}
 
+	@Override
+	public List<TripPlan> listUserArticle(String userId) throws SQLException {
+		return tripplanDao.listUserArticle(userId);
+	}
+
 }

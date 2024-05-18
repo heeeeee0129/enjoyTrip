@@ -12,5 +12,6 @@ public interface AttractionService {
 	List<Attraction> getUserAttraction(String userId) throws SQLException;
     AttractionWithOverview getAttractionById(int attractionId) throws Exception;
 	List<Attraction> suggestAttractions(int categoryNo) throws SQLException;
+	List<Attraction> getTopList() throws SQLException;
 
 }

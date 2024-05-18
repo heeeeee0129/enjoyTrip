@@ -69,4 +69,19 @@ public class HotPlaceServiceImpl implements HotPlaceService {
 		return hotplaceDao.deleteArticle(hotNo);
 	}
 
+	@Override
+	public void updateCount(int hotNo) throws SQLException {
+		hotplaceDao.updateCount(hotNo);
+	}
+
+	@Override
+	public void deleteCount(int hotNo) throws SQLException {
+		hotplaceDao.deleteCount(hotNo);
+	}
+
+	@Override
+	public List<HotPlace> listTop() throws SQLException {
+		return hotplaceDao.listTop();
+	}
+
 }

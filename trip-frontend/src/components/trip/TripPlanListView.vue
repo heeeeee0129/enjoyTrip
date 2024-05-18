@@ -50,15 +50,26 @@ function formatDate(dateString) {
       </div>
     </div>
     <div class="px-32">
-      <div v-if="!!isLoggedIn" class="flex justify-end my-12 mx-auto">
-        <!-- 여행 계획 추가 버튼 -->
-        <router-link :to="{ name: 'PlanWrite' }" class="text-white">
-          <button
-            class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
-          >
-            여행 계획 추가
-          </button>
-        </router-link>
+      <div class="px-32 flex justify-between">
+        <div v-if="!!isLoggedIn" class="my-12 mx-auto">
+          <router-link :to="{ name: 'MyPlanView' }" class="text-white">
+            <button
+              class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg flex-grow"
+            >
+              나의 여행 계획
+            </button>
+          </router-link>
+        </div>
+        <div v-if="!!isLoggedIn" class="my-12 mx-auto">
+          <!-- 여행 계획 추가 버튼 -->
+          <router-link :to="{ name: 'PlanWrite' }" class="text-white">
+            <button
+              class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg flex-grow"
+            >
+              여행 계획 추가
+            </button>
+          </router-link>
+        </div>
       </div>
 
       <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -66,6 +77,7 @@ function formatDate(dateString) {
           v-for="route in trips"
           :key="route.id"
           @click.prevent="goDetail(route.id)"
+          type="button"
           class="p-6 bg-white rounded-lg shadow-lg transition transform hover:scale-105"
         >
           <h3 class="text-2xl font-semibold mb-3 text-gray-800">

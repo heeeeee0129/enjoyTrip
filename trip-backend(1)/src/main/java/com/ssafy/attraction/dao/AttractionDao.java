@@ -14,4 +14,5 @@ public interface AttractionDao {
 	AttractionWithOverview getAttractionById(int attractionId) throws SQLException;
 	List<Attraction> getUserAttraction(String userId) throws SQLException;
 	List<Attraction> suggestAttractions(int categoryNo) throws SQLException;
+	List<Attraction> getTopList() throws SQLException;
 }

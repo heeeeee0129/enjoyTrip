@@ -50,9 +50,14 @@ public class FriendController {
 	public ResponseEntity<?> addFriend(@RequestBody Friend friend) {
 		try {
 			Member check = memberService.getUser(friend.getFriendId());
+			System.out.println(friend);
 			int ck = friendService.getFriend(friend);
 			int cnt = -1;
-			if (check != null && ck == 0) {
+			// 자기자신인 경우 
+			if(friend.getUserId().equals(friend.getFriendId())) {
+				cnt = -2;
+			}
+			else if (check != null && ck == 0) {
 				cnt = friendService.addFriend(friend);
 			}
 			//이미 추가되어있는 경우 

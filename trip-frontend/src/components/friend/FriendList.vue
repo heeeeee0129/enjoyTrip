@@ -21,7 +21,7 @@ const getFriends = async () => {
   };
 
   const fail = () => {
-    Swal({
+    Swal.fire({
       title: "실패!",
       text: "문제가 발생헀습니다.",
       icon: "error",

@@ -11,4 +11,17 @@
 		FROM gugun
 		WHERE sido_code = #{sidoCode}
 	</select>
+	
+	<select id="getGugunName" parameterType="address" resultType="string">
+		SELECT gugun_name
+		FROM gugun
+		WHERE gugun_code = #{gugunCode} AND sido_code = #{sidoCode}
+	</select>
+	
+	<select id="getSidoName" parameterType="int" resultType="string">
+		SELECT sido_name
+		FROM sido
+		WHERE sido_code = #{sidoCode}
+	</select>
+	
 </mapper>

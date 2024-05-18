@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.favorite.dto.Favorite;
 import com.ssafy.favorite.service.FavoriteService;
-
+import com.ssafy.hotplace.service.HotPlaceService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -21,10 +21,12 @@ import io.swagger.v3.oas.annotations.Operation;
 public class FavoriteController {
 
 	private FavoriteService favoriteService;
+	private HotPlaceService hotplaceService;
 
-	public FavoriteController(FavoriteService favoriteService) {
+	public FavoriteController(FavoriteService favoriteService, HotPlaceService hotPlaceService) {
 		super();
 		this.favoriteService = favoriteService;
+		this.hotplaceService = hotPlaceService;
 	}
 	
 	@Operation(summary = "즐겨찾기 개수 가져오기 ")
@@ -70,6 +72,7 @@ public class FavoriteController {
 		try {
 			int cnt = favoriteService.wrtieArticle(favorite);
 			if (cnt != 0) {
+				hotplaceService.updateCount(favorite.getHotNo());
 				return ResponseEntity.ok(cnt);
 			} else {
 				return ResponseEntity.internalServerError().body("Sorry");
@@ -84,6 +87,7 @@ public class FavoriteController {
 		try {
 			int cnt = favoriteService.deleteArticle(favorite);
 			if (cnt != 0) {
+				hotplaceService.deleteCount(favorite.getHotNo());
 				return ResponseEntity.ok(cnt);
 			} else {
 				return ResponseEntity.internalServerError().body("Sorry");

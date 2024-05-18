@@ -10,6 +10,13 @@
 		JOIN members m ON t.user_id = m.user_id 
 	</select>
 	
+	<select id="listUserArticle" parameterType="string" resultType="tripPlan">
+		SELECT t.id, t.title, t.content, t.start_date, t.end_date, t.user_id, m.user_name, t.created_at 
+		FROM trip_plan t
+		JOIN members m ON t.user_id = m.user_id 
+		WHERE t.user_id = #{userId}
+	</select>
+	
 	<select id="getArticle" parameterType="int" resultType="tripPlan">
 		SELECT t.id, t.title, t.content, t.start_date, t.end_date, t.user_id, m.user_name, t.created_at 
 		FROM trip_plan t

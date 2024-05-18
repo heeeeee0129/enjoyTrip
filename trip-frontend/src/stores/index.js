@@ -19,7 +19,7 @@ export const useUserStore = defineStore(
     const login = (userData) => {
       isLoggedIn.value = true; // 로그인 상태로 변경
       member.value = userData;
-      console.log(member.value);
+      // console.log(member.value);
     };
     const logout = () => {
       isLoggedIn.value = false; // 로그아웃 상태로 변경

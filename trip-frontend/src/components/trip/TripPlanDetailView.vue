@@ -6,7 +6,8 @@
       </div>
       <button
         @click="goBack"
-        class="mx-auto hover:shadow-lg bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+        class="mx-auto hover:shadow-lg bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded"
+      >
         뒤로 가기
       </button>
       <hr class="border-gray-400" />

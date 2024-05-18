@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { checkFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
 import { useUserStore } from "@/stores/index";
 import Swal from "sweetalert2";
@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 
 const router = useRouter();
 const store = useUserStore();
+const isLoggedIn = computed(() => store.isLoggedIn);
 const checked = ref(false);
 
 onMounted(() => {
@@ -57,6 +58,8 @@ const checkAdd = async () => {
       if (result.isConfirmed) {
         // 확인 버튼을 눌렀을 때
         router.push({ name: "FavoriteList" }); // 즐겨찾기 목록으로 이동
+      } else {
+        router.go(0);
       }
     });
   };
@@ -87,6 +90,8 @@ const checkDelete = async () => {
       text: "좋아요가 해제되었습니다.",
       icon: "success",
       confirmButtonText: "OK",
+    }).then(() => {
+      router.go(0);
     });
   };
 
@@ -131,11 +136,8 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div
-    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105"
-    @click="goDetail(hotplace.hotNo)"
-  >
-    <div class="relative">
+  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+    <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
       <img
         :src="getImageUrl(ffolder, fname)"
         alt="이미지가 없음"
@@ -153,7 +155,7 @@ const formatDate = (dateString) => {
           <p class="text-gray-700 mb-4">작성자: {{ hotplace.userName }}</p>
           <p class="text-gray-700 mb-4">다녀온 날짜: {{ formatDate(hotplace.registerTime) }}</p>
         </div>
-        <div>
+        <div v-if="isLoggedIn">
           <button class="btn btn-info rounded-pill px-4" v-if="checked" @click="checkDelete">
             ❤️
           </button>

@@ -26,7 +26,7 @@ const doLogout = () => {
     <div class="container mx-auto flex flex-wrap flex-col md:flex-row items-center">
       <a class="flex title-font font-medium items-center text-gray-900">
         <router-link :to="{ name: 'main' }" class="font-bold text-xl">
-          <span class="ml-3 text-xl font-semibold no-underline">EnjoyTrip</span>
+          <span class="ml-1 text-xl font-semibold no-underline">EnjoyTrip</span>
         </router-link>
       </a>
       <nav
@@ -61,6 +61,11 @@ const doLogout = () => {
           <li v-if="isLoggedIn">
             <router-link :to="{ name: 'FriendView' }" class="hover:text-gray-300 no-underline"
               >친구</router-link
+            >
+          </li>
+          <li v-if="isLoggedIn">
+            <router-link :to="{ name: 'MessageView' }" class="hover:text-gray-300 no-underline"
+              >메시지</router-link
             >
           </li>
           <li>

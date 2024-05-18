@@ -45,6 +45,17 @@ public class TripPlanController {
 		}
 	}
 	
+	@Operation(summary = "여행계획 글목록", description = "해당 사용자의 여행계획 정보를 반환한다.")
+	@GetMapping("/tripplan/user/{userId}")
+	public ResponseEntity<?> listUserArticle(@PathVariable(value = "userId") String userId) {
+		try {
+			List<TripPlan> tripPlans = tripplanService.listUserArticle(userId);
+			return ResponseEntity.ok(tripPlans);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
 	@Operation(summary = "여행계획 글", description = "여행계획 정보를 반환한다.")
 	@GetMapping("/tripplan/{id}")
 	public ResponseEntity<?> getArticle(@PathVariable(value = "id") int id) {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/hotplace.js";
 import { checkFavorite, countFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
-
+const isLoggedIn = computed(() => userStore.isLoggedIn);
 const { hotNo } = route.params;
 
 const hotplace = ref({}); //글정보
@@ -28,8 +28,9 @@ onMounted(async () => {
 });
 
 function getImageUrl(folder, name) {
-  console.log(new URL(`./upload/${folder}/${name}`, import.meta.url));
-  return new URL(`./upload/${folder}/${name}`, import.meta.url);
+  // console.log(new URL(`./upload/${folder}/${name}`, import.meta.url));
+  // new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
+  return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
 }
 
 function moveList() {
@@ -417,7 +418,7 @@ const formatDate = (dateString) => {
                     뒤로가기
                   </button>
                 </div>
-                <div class="text-center mt-3">
+                <div class="text-center mt-3" v-if="isLoggedIn">
                   <button
                     type="button"
                     class="btn btn-info rounded-pill px-4"

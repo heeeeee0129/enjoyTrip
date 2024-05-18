@@ -1,5 +1,8 @@
 package com.ssafy.member.service;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.member.dao.MemberDao;
@@ -44,5 +47,10 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public Member getUser(String id) {
 		return memberDao.getUser(id);
+	}
+
+	@Override
+	public List<Member> getUserList() throws SQLException {
+		return memberDao.getUserList();
 	}
 }

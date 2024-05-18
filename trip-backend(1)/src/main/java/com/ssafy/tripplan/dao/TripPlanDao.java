@@ -25,4 +25,6 @@ public interface TripPlanDao {
 
 	int getId(TripPlan tripplan) throws SQLException;
 
+	List<TripPlan> listUserArticle(String userId) throws SQLException;
+
 }

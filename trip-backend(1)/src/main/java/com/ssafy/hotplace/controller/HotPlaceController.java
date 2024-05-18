@@ -214,6 +214,18 @@ public class HotPlaceController {
 			return exceptionHandling(e);
 		}
 	}
+	
+	@Operation(summary = "핫플레이스 인기글 목록 반환")
+	@GetMapping("/hotplace/top")
+	public ResponseEntity<?> listTop() {
+		try {
+			List<HotPlace> hotplaces = hotplaceService.listTop();
+			return ResponseEntity.ok(hotplaces);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
 
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();

@@ -223,7 +223,7 @@ const registComment = async () => {
           <div class="d-flex justify-content-end mt-3">
             <button
               type="button"
-              class="btn btn-outline-primary me-1 rounded-pill"
+              class="btn btn-outline-secondary me-1 rounded-pill"
               @click="moveList"
             >
               글목록

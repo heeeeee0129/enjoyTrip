@@ -171,6 +171,29 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/friend",
+      name: "FriendView",
+      component: () => import("@/views/FriendView.vue"),
+      redirect: { name: "FriendList" },
+      children: [
+        {
+          path: "list",
+          name: "FriendList",
+          component: () => import("@/components/friend/FriendList.vue"),
+        },
+        {
+          path: "add",
+          name: "FriendAdd",
+          component: () => import("@/components/friend/FriendAdd.vue"),
+        },
+        {
+          path: "favoritelist",
+          name: "FriendFavoriteList",
+          component: () => import("@/components/friend/FriendFavoriteList.vue"),
+        },
+      ],
+    },
   ],
 });
 

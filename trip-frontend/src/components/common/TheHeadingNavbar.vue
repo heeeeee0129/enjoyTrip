@@ -58,6 +58,11 @@ const doLogout = () => {
               >자유게시판</router-link
             >
           </li>
+          <li v-if="isLoggedIn">
+            <router-link :to="{ name: 'FriendView' }" class="hover:text-gray-300 no-underline"
+              >친구</router-link
+            >
+          </li>
           <li>
             <router-link :to="{ name: 'NoticeView' }" class="hover:text-gray-300 no-underline"
               >공지사항</router-link

@@ -37,10 +37,10 @@ public class MemberController {
 	}
 
 	@Operation(summary = "아이디 중복 체크")
-	@GetMapping("user/checkId")
-	private ResponseEntity<?> getUser(@RequestParam(value = "id") String id) {
+	@GetMapping("user/checkId/{userId}")
+	private ResponseEntity<?> getUser(@PathVariable(value = "userId") String userId) {
 		try {
-			Member member = memberService.getUser(id);
+			Member member = memberService.getUser(userId);
 			return ResponseEntity.ok(member);
 		} catch (Exception e) {
 			return exceptionHandling(e);
@@ -57,8 +57,8 @@ public class MemberController {
 			return exceptionHandling(e);
 		}
 	}
-	
-	@Operation(summary ="시/도 정보를 가져와서 회원가입 페이지로 이동?")
+
+	@Operation(summary = "시/도 정보를 가져와서 회원가입 페이지로 이동?")
 	@GetMapping("/user/mvjoin")
 	private ResponseEntity<?> mvJoin() {
 		try {
@@ -137,7 +137,11 @@ public class MemberController {
 	@PostMapping("/user")
 	public ResponseEntity<?> join(@RequestBody Member member) {
 		try {
-			int cnt = memberService.join(member);
+			Member check = memberService.getUser(member.getId());
+			int cnt = 0;
+			if (check == null) {
+				cnt = memberService.join(member);
+			}
 			return ResponseEntity.ok(cnt);
 		} catch (Exception e) {
 			return exceptionHandling(e);

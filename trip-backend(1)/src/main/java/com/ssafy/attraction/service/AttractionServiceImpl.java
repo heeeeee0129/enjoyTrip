@@ -37,5 +37,10 @@ public class AttractionServiceImpl implements AttractionService {
 		}
 		return attractionDao.getUserAttraction(userId);
 	}
+
+	@Override
+	public List<Attraction> suggestAttractions(int categoryNo) throws SQLException {
+		return attractionDao.suggestAttractions(categoryNo);
+	}
 	
 }

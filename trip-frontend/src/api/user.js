@@ -3,8 +3,8 @@ import { localAxios } from "./http-commons";
 const axios = localAxios();
 
 // 회원 정보 조회
-export const getUser = (id, success, fail) => {
-  axios.get(`/userapi/user/${id}`).then(success).then(fail);
+export const getUser = async (id, success, fail) => {
+  await axios.get(`/userapi/user/checkId/${id}`).then(success).then(fail);
 };
 
 // 비밀번호 찾기
@@ -26,10 +26,7 @@ export const join = (member, success, fail) => {
 
 //로그인;
 export const login = (member, success, fail) => {
-  axios
-    .post("/userapi/user/login", JSON.stringify(member))
-    .then(success)
-    .catch(fail);
+  axios.post("/userapi/user/login", JSON.stringify(member)).then(success).catch(fail);
 };
 
 // 로그아웃

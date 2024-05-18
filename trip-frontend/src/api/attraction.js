@@ -17,3 +17,8 @@ export const getAttractions = async (queryString) => {
 export const getAttraction = async (contentId, success, fail) => {
   await axios.get(`${BASE_URL}/${contentId}`).then(success).catch(fail);
 };
+
+// user 해당하는 추천 관광지 정보를 반환하는 함수입니다.
+export const suggestAttraction = async (user, success, fail) => {
+  await axios.post(`${BASE_URL}/suggest`, JSON.stringify(user)).then(success).catch(fail);
+};

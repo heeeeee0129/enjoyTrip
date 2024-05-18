@@ -3,6 +3,14 @@
 
 <mapper namespace="com.ssafy.attraction.dao.AttractionDao">
 
+	<select id="suggestAttractions" parameterType="int" resultType="attraction">
+		SELECT content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
+		FROM attraction_info
+		WHERE content_type_id = #{categoryNo}
+		ORDER BY readcount DESC
+		LIMIT 6;
+	</select>
+
     <!-- getAllAttractions 메서드에 대한 SQL 정의 -->
     <select id="getAllAttractions" parameterType="map" resultType="attraction">
         SELECT

@@ -2,10 +2,11 @@
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/index.js";
 import { getFavorites } from "@/api/favorite.js";
+import { useRouter } from "vue-router";
 import FavoriteListItem from "@/components/favorite/Item/FavoriteListItem.vue";
 import Swal from "sweetalert2";
 const store = useUserStore();
-
+const router = useRouter();
 const favorites = ref([]);
 
 onMounted(() => {
@@ -28,6 +29,21 @@ const setFavorite = async () => {
 
   await getFavorites(store.member.id, success, fail);
 };
+
+const showAlert = () => {
+  Swal.fire({
+    title: "좋아요를 눌러보세요!",
+    text: "구경하러 가볼까요?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "OK",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      router.push({ name: "HotPlaceView" });
+    }
+  });
+};
 </script>
 
 <template>
@@ -37,13 +53,22 @@ const setFavorite = async () => {
         <h2 class="text-3xl mt-4">관심 있는 장소 ({{ favorites.length }}개)</h2>
       </div>
       <div class="flex justify-between items-center my-12 mx-auto max-w-md">
-        <router-link :to="{ name: 'SuggestList' }" class="text-white">
+        <router-link :to="{ name: 'SuggestList' }" class="text-white" v-if="favorites.length > 0">
           <button
-            class="bg-green-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
+            class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
           >
             여행지 추천
           </button>
         </router-link>
+
+        <button
+          class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"
+          v-else
+          @click="showAlert"
+        >
+          여행지 추천
+        </button>
+
         <router-link :to="{ name: 'HotPlaceView' }" class="text-white">
           <button
             class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg"

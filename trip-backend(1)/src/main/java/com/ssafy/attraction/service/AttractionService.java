@@ -11,5 +11,6 @@ public interface AttractionService {
     List<Attraction> getAllAttractions(int sido, int gugun, String keyword, String[] contentTypeIds) throws Exception;
 	List<Attraction> getUserAttraction(String userId) throws SQLException;
     AttractionWithOverview getAttractionById(int attractionId) throws Exception;
+	List<Attraction> suggestAttractions(int categoryNo) throws SQLException;
 
 }

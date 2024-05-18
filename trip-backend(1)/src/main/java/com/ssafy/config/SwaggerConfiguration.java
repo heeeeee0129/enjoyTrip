@@ -116,4 +116,13 @@ public class SwaggerConfiguration {
 				.pathsToMatch("/tripplanapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
 				.build();
 	}
+	
+	@Bean
+	public GroupedOpenApi friendApi() {
+		return GroupedOpenApi
+				.builder()
+				.group("friend")  // 그룹 이름 ( 원하는 이름으로 작성 )
+				.pathsToMatch("/friendapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
+				.build();
+	}
 }

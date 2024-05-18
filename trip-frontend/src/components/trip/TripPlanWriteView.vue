@@ -2,9 +2,14 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { loadKakaoMapScript } from "@/utils/load-map";
+import { writeTripPlan } from "@/api/tripplan"
 import { getAttractions, getTripAttraction } from "@/api/attraction";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import {useUserStore} from "@/stores"
+
+const store = useUserStore();
+const userData = store.member;
 
 const router = useRouter();
 const title = ref("");
@@ -21,11 +26,46 @@ const isModalOpen = ref(false);
 const selectedAttraction = ref({});
 const attractions = ref([]);
 
-const submitForm = () => {
-  // 여행 계획 추가 로직을 작성하세요
-  // 제목(title), 내용(content), 시작일(startDate), 종료일(endDate)을 이용하여 새로운 여행 계획을 추가합니다
-  // 추가된 여행지를 locations에 추가합니다
-  console.log("submit");
+const submitForm = async () => {
+  
+  const tripPlan = {
+    id: 0, 
+    title: title.value,
+    content: content.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
+    userId: userData.id, // 실제 로그인된 사용자 ID를 사용하세요.
+    userName: userData.name, // 실제 로그인된 사용자 이름을 사용하세요.
+    createdAt: new Date().toISOString(), // 현재 시간을 생성 일시로 설정합니다.
+    tripLocations: locations.value.map((location, index) => ({
+      id: location.id,
+      routeId: 0, // 경로 ID는 0으로 임시 설정합니다.
+      memo: location.content,
+      idx: index,
+      contentId: location.id,
+    })),
+  };
+
+
+
+  try {
+    await writeTripPlan(
+      tripPlan,
+      (response) => {
+        console.log("Trip plan created successfully:", response);
+        // 성공 시 페이지를 다른 곳으로 이동하거나 알림을 표시할 수 있습니다.
+        alert("여행 계획이 성공적으로 등록되었습니다.");
+        router.push({ name: "plan" }); // 예: 여행 계획 목록 페이지로 이동
+      },
+      (error) => {
+        console.error("Failed to create trip plan:", error);
+        alert("여행 계획 등록에 실패했습니다.");
+      }
+    );
+  } catch (error) {
+    console.error("Error during trip plan submission:", error);
+    alert("여행 계획 등록 중 오류가 발생했습니다.");
+  }
 };
 
 onMounted(async () => {
@@ -47,7 +87,6 @@ const handleSearch = async () => {
 
     if (response) {
       attractions.value = response;
-      // console.log(attractions.value);
       updateMapMarkers(attractions.value);
     } else {
       console.error("Unexpected response structure:", response);
@@ -233,8 +272,9 @@ const goBack = () => {
 
         <div class="flex-grow-0 ml-auto">
           <button
-            type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            
+            class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            @click="submitForm">
             여행 계획 등록하기
           </button>
         </div>
@@ -266,7 +306,7 @@ const goBack = () => {
 
       <!-- 오른쪽에는 여행 계획 추가 폼 -->
       <div class="w-1/2 pl-6 mt-20">
-        <form @submit.prevent="submitForm">
+        <form >
           <div class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-700"
               >여행 제목</label

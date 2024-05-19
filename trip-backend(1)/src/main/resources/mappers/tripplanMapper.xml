@@ -40,7 +40,7 @@
 		SELECT id
 		FROM trip_plan
 		WHERE content = #{content} AND user_id = #{userId} AND start_date = #{startDate} AND end_date = #{endDate} 
-		ORDER BY created_at DESC
+		ORDER BY id DESC
 		LIMIT 1
 	</select>
 	

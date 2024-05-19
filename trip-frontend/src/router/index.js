@@ -215,6 +215,16 @@ const router = createRouter({
           name: "MessageWrite",
           component: () => import("@/components/message/MessageWrite.vue"),
         },
+        {
+          path: "sendList",
+          name: "MessageSendList",
+          component: () => import("@/components/message/MessageSendList.vue"),
+        },
+        {
+          path: "detail/:messageNo",
+          name: "MessageDetail",
+          component: () => import("@/components/message/MessageDetail.vue"),
+        },
       ],
     },
   ],

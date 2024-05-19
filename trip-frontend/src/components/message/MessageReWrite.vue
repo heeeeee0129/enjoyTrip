@@ -7,11 +7,13 @@ import Swal from "sweetalert2";
 
 const store = useUserStore(); // Vuex store 인스턴스 가져오기
 const router = useRouter();
+const props = defineProps({ toId: String });
+const emit = defineEmits(["changeIsWrite"]);
 
 const message = ref({
   messageNo: 0,
   fromId: store.member.id,
-  toId: "",
+  toId: props.toId,
   title: "",
   content: "",
 });
@@ -77,6 +79,11 @@ function onSubmit() {
   }
 }
 
+function onCancel() {
+  // 취소 버튼 클릭 시 처리
+  emit("changeIsWrite"); // changeIsWrite 이벤트 emit
+}
+
 const registArticle = async () => {
   const success = (response) => {
     if (response.data === 1) {
@@ -86,7 +93,7 @@ const registArticle = async () => {
         icon: "success",
         confirmButtonText: "OK",
       }).then(() => {
-        moveList();
+        router.go(0);
       });
     } else {
       Swal.fire({
@@ -109,14 +116,6 @@ const registArticle = async () => {
 
   await writeMessage(message.value, success, fail);
 };
-
-function moveBack() {
-  router.go(-1);
-}
-
-function moveList() {
-  router.replace({ name: "MessageList" });
-}
 </script>
 
 <template>
@@ -143,8 +142,9 @@ function moveList() {
             <input
               type="text"
               class="form-control rounded-pill"
+              disabled="true"
               v-model="message.toId"
-              placeholder="받는사람..."
+              :placeholder="toId"
             />
           </div>
           <div class="mb-3">
@@ -164,9 +164,9 @@ function moveList() {
             <button
               type="button"
               class="btn btn-secondary rounded-pill px-4 me-2"
-              @click="moveBack"
+              @click="onCancel"
             >
-              뒤로가기
+              취소
             </button>
             <button type="submit" class="btn btn-primary rounded-pill px-4">전송</button>
           </div>

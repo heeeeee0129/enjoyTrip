@@ -2,8 +2,8 @@
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/index.js";
 import { useRouter } from "vue-router";
-import { getRecieveMessages } from "@/api/message.js";
-import MessageListItem from "@/components/message/Item/MessageListItem.vue";
+import { getSendMessages } from "@/api/message.js";
+import MessageSendListItem from "@/components/message/Item/MessageSendListItem.vue";
 import Swal from "sweetalert2";
 
 const store = useUserStore();
@@ -29,15 +29,15 @@ const getMessage = async () => {
     });
   };
 
-  await getRecieveMessages(store.member.id, success, fail);
+  await getSendMessages(store.member.id, success, fail);
 };
 
 const moveWrite = () => {
   router.push({ name: "MessageWrite" });
 };
 
-const moveToSendMessages = () => {
-  router.push({ name: "MessageSendList" });
+const moveBack = () => {
+  router.go(-1);
 };
 </script>
 
@@ -47,17 +47,13 @@ const moveToSendMessages = () => {
       <div class="card my-3 shadow-sm">
         <div class="card-body">
           <!-- 제목 -->
-          <h2 class="text-center py-3">받은 메시지 목록</h2>
+          <h2 class="text-center py-3">보낸 메시지 목록</h2>
 
           <div class="button-container">
             <!-- 받은 메시지 목록 버튼 -->
             <span>
-              <button
-                type="button"
-                class="btn btn-outline-success btn-sm"
-                @click="moveToSendMessages"
-              >
-                보낸 메시지 목록
+              <button type="button" class="btn btn-outline-success btn-sm" @click="moveBack">
+                받은 메시지 목록
               </button>
             </span>
 
@@ -81,7 +77,7 @@ const moveToSendMessages = () => {
                 </tr>
               </thead>
               <tbody>
-                <MessageListItem
+                <MessageSendListItem
                   v-for="message in messages"
                   :key="message.messageNo"
                   :message="message"

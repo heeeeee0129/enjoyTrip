@@ -316,7 +316,7 @@ const formatDate = (dateString) => {
         <div class="card-body">
           <h2 class="py-3 text-center">핫플레이스 상세보기</h2>
         </div>
-        <img :src="ImgPath" alt="이미지가 없음" />
+        <img :src="ImgPath" alt="이미지가 없음" class="object-cover" />
         <div class="container-fluid mt-5">
           <div class="row">
             <p class="text-end">조회수: {{ hotplace.hit }}</p>

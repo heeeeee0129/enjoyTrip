@@ -1,0 +1,11 @@
+CREATE TABLE message (
+    message_no INT AUTO_INCREMENT PRIMARY KEY,
+    from_id VARCHAR(16) NOT NULL,
+    to_id VARCHAR(16) NOT NULL,	
+    title VARCHAR(100) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    readed BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (from_id) REFERENCES Members(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (to_id) REFERENCES Members(user_id) ON DELETE CASCADE
+);

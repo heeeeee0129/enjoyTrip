@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/index.js";
 import { useRouter } from "vue-router";
 import { listFriends } from "@/api/friend.js";
 import FriendListItem from "@/components/friend/Item/FriendListItem.vue";
+import SuggestFriend from "@/components/friend/SuggestFriend.vue";
 import Swal from "sweetalert2";
 
 const store = useUserStore();
@@ -43,7 +44,7 @@ const moveAdd = () => {
       <div class="card my-3 shadow-sm">
         <div class="card-body">
           <!-- 제목 -->
-          <h2 class="text-center py-3">친구목록</h2>
+          <h2 class="text-center py-3">친구 목록</h2>
 
           <!-- 친구추가 버튼 -->
           <div class="text-end mb-3">
@@ -79,6 +80,7 @@ const moveAdd = () => {
       </div>
     </div>
   </div>
+  <SuggestFriend />
 </template>
 
 <style scoped></style>

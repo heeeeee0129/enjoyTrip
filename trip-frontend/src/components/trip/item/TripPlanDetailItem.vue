@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getAttraction } from "@/api/attraction";
+import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 
 const props = defineProps({ location: Object });
 const attraction = ref({});
+const router = useRouter();
 
 onMounted(() => {
   getAttract(props.location.contentId);
@@ -26,10 +28,17 @@ const getAttract = async (contentId) => {
 
   await getAttraction(contentId, success, fail);
 };
+
+const goDetail = () => {
+  router.push({ name: "TripDetail", params: { contentId: props.location.contentId } });
+};
 </script>
 
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+  <div
+    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105"
+    @click="goDetail"
+  >
     <div class="relative">
       <img :src="attraction.firstImage" alt="location.title" class="w-full h-64 object-cover" />
       <div class="absolute bottom-0 left-0 p-4">

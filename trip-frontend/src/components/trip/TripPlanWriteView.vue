@@ -42,11 +42,12 @@ const submitForm = async () => {
       routeId: 0, // 경로 ID는 0으로 임시 설정합니다.
       memo: location.content,
       idx: index,
+      lat: location.latitude,
+      lng: location.longitude,
       contentId: location.id,
     })),
   };
-
-
+  
 
   try {
     await writeTripPlan(

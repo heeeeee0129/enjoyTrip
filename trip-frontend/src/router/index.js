@@ -232,6 +232,19 @@ const router = createRouter({
       name: "ChatView",
       component: () => import("@/views/ChatView.vue"),
     },
+    {
+      path: "/news",
+      name: "NewsView",
+      component: () => import("@/views/NewsView.vue"),
+      redirect: { name: "NewsList" },
+      children: [
+        {
+          path: "list",
+          name: "NewsList",
+          component: () => import("@/components/news/NewsList.vue"),
+        },
+      ],
+    },
   ],
 });
 

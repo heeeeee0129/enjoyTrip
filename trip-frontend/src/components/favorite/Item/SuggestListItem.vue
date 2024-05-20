@@ -17,12 +17,14 @@ const moveDetail = () => {
   <div
     class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105"
     @click="moveDetail"
-    type="button">
+    type="button"
+  >
     <div class="relative">
       <img
         :src="attraction.firstImage ? attraction.firstImage : image"
-        :alt="location.title"
-        class="w-full h-64 object-cover" />
+        :alt="attraction.title"
+        class="w-full h-64 object-cover"
+      />
       <div class="absolute bottom-0 left-0 p-4">
         <h3 class="text-xl font-semibold text-white">
           {{ attraction.title }}

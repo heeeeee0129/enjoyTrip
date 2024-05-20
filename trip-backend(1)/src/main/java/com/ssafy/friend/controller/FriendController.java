@@ -50,7 +50,7 @@ public class FriendController {
 	public ResponseEntity<?> addFriend(@RequestBody Friend friend) {
 		try {
 			Member check = memberService.getUser(friend.getFriendId());
-			System.out.println(friend);
+//			System.out.println(friend);
 			int ck = friendService.getFriend(friend);
 			int cnt = -1;
 			// 자기자신인 경우 

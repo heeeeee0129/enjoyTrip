@@ -48,7 +48,10 @@ const moveAdd = () => {
 
           <!-- 친구추가 버튼 -->
           <div class="text-end mb-3">
-            <button type="button" class="btn btn-outline-primary btn-sm" @click="moveAdd">
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              @click="moveAdd">
               친구추가
             </button>
           </div>
@@ -71,8 +74,7 @@ const moveAdd = () => {
                   v-for="(friend, index) in friends"
                   :key="friend.friendNo"
                   :index="index"
-                  :friend="friend"
-                />
+                  :friend="friend" />
               </tbody>
             </table>
           </div>
@@ -80,7 +82,7 @@ const moveAdd = () => {
       </div>
     </div>
   </div>
-  <SuggestFriend />
+  <SuggestFriend :userId="store.member.id" />
 </template>
 
 <style scoped></style>

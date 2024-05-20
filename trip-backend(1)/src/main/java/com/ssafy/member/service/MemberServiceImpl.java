@@ -53,4 +53,9 @@ public class MemberServiceImpl implements MemberService {
 	public List<Member> getUserList() throws SQLException {
 		return memberDao.getUserList();
 	}
+
+	@Override
+	public List<Member> getSuggestList(String userId) throws SQLException {
+		return memberDao.getSuggestList(userId);
+	}
 }

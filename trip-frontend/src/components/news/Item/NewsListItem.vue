@@ -4,7 +4,7 @@ defineProps({ news: Object });
 
 <template>
   <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
-    <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
+    <div class="relative" type="button">
       <a :href="news.url" target="_blank">
         <img :src="news.image" alt="이미지 없음" class="w-full h-64 object-cover" />
       </a>

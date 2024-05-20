@@ -227,6 +227,11 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/chat",
+      name: "ChatView",
+      component: () => import("@/views/ChatView.vue"),
+    },
   ],
 });
 

@@ -16,7 +16,7 @@
 		FROM attraction_info
 		WHERE content_type_id = 12
 		ORDER BY readcount DESC
-		LIMIT 8;
+		LIMIT 4;
 	</select>
 
     <!-- getAllAttractions 메서드에 대한 SQL 정의 -->

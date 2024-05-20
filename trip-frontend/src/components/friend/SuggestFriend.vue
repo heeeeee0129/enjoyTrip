@@ -1,5 +1,32 @@
 <script setup>
+import { ref, onMounted } from "vue";
+import { getSuggestList } from "@/api/user";
 import SuggestFriendItem from "@/components/friend/Item/SuggestFriendItem.vue";
+import Swal from "sweetalert2";
+
+const props = defineProps({ userId: String });
+const suggests = ref([]);
+
+onMounted(() => {
+  getSuggests();
+});
+
+const getSuggests = async () => {
+  const success = (response) => {
+    suggests.value = response.data;
+  };
+
+  const fail = () => {
+    Swal.fire({
+      title: "실패!",
+      text: "문제가 발생헀습니다.",
+      icon: "error",
+      confirmButtonText: "OK",
+    });
+  };
+
+  await getSuggestList(props.userId, success, fail);
+};
 </script>
 
 <template>
@@ -23,7 +50,11 @@ import SuggestFriendItem from "@/components/friend/Item/SuggestFriendItem.vue";
                 </tr>
               </thead>
               <tbody>
-                <SuggestFriendItem />
+                <SuggestFriendItem
+                  v-for="suggest in suggests"
+                  :key="suggest.id"
+                  :suggest="suggest"
+                  :userId="userId" />
               </tbody>
             </table>
           </div>

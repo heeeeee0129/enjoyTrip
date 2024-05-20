@@ -12,6 +12,11 @@ export const getUserList = async (success, fail) => {
   await axios.get(`/userapi/user/list`).then(success).catch(fail);
 };
 
+// 추천 친구 정보 조회
+export const getSuggestList = async (userId, success, fail) => {
+  await axios.get(`/userapi/user/suggest/${userId}`).then(success).catch(fail);
+};
+
 // 비밀번호 찾기
 export const findPass = (id, success, fail) => {
   axios
@@ -31,7 +36,10 @@ export const join = (member, success, fail) => {
 
 //로그인;
 export const login = (member, success, fail) => {
-  axios.post("/userapi/user/login", JSON.stringify(member)).then(success).catch(fail);
+  axios
+    .post("/userapi/user/login", JSON.stringify(member))
+    .then(success)
+    .catch(fail);
 };
 
 // 로그아웃

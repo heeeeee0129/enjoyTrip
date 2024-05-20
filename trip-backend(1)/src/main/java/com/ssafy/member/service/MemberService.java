@@ -14,4 +14,5 @@ public interface MemberService {
 	public String findPass(String id);
 	public Member getUser(String id);
 	public List<Member> getUserList() throws SQLException;
+	public List<Member> getSuggestList(String userId) throws SQLException;
 }

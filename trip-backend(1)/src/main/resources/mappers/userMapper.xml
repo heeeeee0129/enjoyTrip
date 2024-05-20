@@ -47,4 +47,13 @@
 		WHERE user_id != "admin"
 		ORDER BY join_date ASC
 	</select>
+	
+	<select id="getSuggestList">
+		SELECT user_id id, user_name name, user_password pwd, email_id, email_domain, sido, gugun
+		FROM members
+		WHERE user_id != "admin" AND user_id != #{userId}
+		ORDER BY RAND() 
+		LIMIT 3;
+	</select>
+	
 </mapper>

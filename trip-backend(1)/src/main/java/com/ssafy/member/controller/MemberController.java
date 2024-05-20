@@ -1,5 +1,6 @@
 package com.ssafy.member.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.district.dto.Sido;
 import com.ssafy.district.service.DistrictServiceImpl;
+import com.ssafy.friend.dto.Friend;
+import com.ssafy.friend.service.FriendService;
 import com.ssafy.member.dto.Member;
 import com.ssafy.member.service.MemberService;
 
@@ -27,11 +30,13 @@ public class MemberController {
 
 	private MemberService memberService;
 	private DistrictServiceImpl districtService;
+	private FriendService friendService;
 
-	public MemberController(MemberService memberService, DistrictServiceImpl districtService) {
+	public MemberController(MemberService memberService, DistrictServiceImpl districtService, FriendService friendService) {
 		super();
 		this.memberService = memberService;
 		this.districtService = districtService;
+		this.friendService = friendService;
 	}
 
 	@Operation(summary = "아이디 중복 체크")
@@ -40,6 +45,28 @@ public class MemberController {
 		try {
 			Member member = memberService.getUser(userId);
 			return ResponseEntity.ok(member);
+		} catch (Exception e) {
+			return exceptionHandling(e);
+		}
+	}
+	
+	@Operation(summary = "추천 친구 목록 ")
+	@GetMapping("user/suggest/{userId}")
+	private ResponseEntity<?> getSuggestList(@PathVariable(value="userId") String userId) {
+		try {
+			
+			List<Member> members = memberService.getSuggestList(userId);
+			List<Member> sugests = new ArrayList<>();
+			for(Member member: members) {
+				Friend friend = new Friend();
+				friend.setUserId(userId);
+				friend.setFriendId(member.getId());
+				int cnt = friendService.getFriend(friend);
+				if(cnt == 0) {
+					sugests.add(member);
+				}
+			}
+			return ResponseEntity.ok(sugests);
 		} catch (Exception e) {
 			return exceptionHandling(e);
 		}

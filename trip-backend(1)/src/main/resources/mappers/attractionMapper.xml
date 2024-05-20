@@ -45,7 +45,7 @@
             </foreach>
         </if>
         ORDER BY content_id DESC
-        LIMIT 10
+        LIMIT 50
     </select>
 
     <!-- getAttractionById 메서드에 대한 SQL 정의 -->

@@ -8,7 +8,18 @@ public class TripLocation {
 	private int contentId;
 	private double lat;
 	private double lng;
+	private String title;
+	
+	public String getTitle() {
+		return title;
+	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+
+	
 	public int getId() {
 		return id;
 	}

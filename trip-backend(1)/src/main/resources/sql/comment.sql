@@ -9,11 +9,3 @@ CREATE TABLE comment (
     FOREIGN KEY (user_id) REFERENCES Members(user_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_reply_no) REFERENCES comment(reply_no) ON DELETE CASCADE
 );
-
-CREATE TABLE hotplace (
-	hot_no INT AUTO_INCREMENT PRIMARY KEY,
-    user_id VARCHAR(16) NOT NULL,
-    content TEXT NOT NULL,
-    register_time TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Members(user_id) ON DELETE CASCADE
-);

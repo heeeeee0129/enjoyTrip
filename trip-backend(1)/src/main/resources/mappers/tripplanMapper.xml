@@ -25,7 +25,7 @@
 	</select>
 	
 	<select id="getLocation" parameterType="int" resultType="tripLocation">
-		SELECT id, route_id, memo, `idx`, content_id, lat, lng
+		SELECT id, route_id, memo, `idx`, content_id, lat, lng, title
 		FROM trip_location
 		WHERE route_id = #{id}
 		ORDER BY `idx` ASC
@@ -45,9 +45,9 @@
 	</select>
 	
 	<insert id="writeLocation" parameterType="tripPlan">
-		INSERT INTO trip_location (route_id, memo, `idx`, content_id, lat, lng) VALUES
+		INSERT INTO trip_location (route_id, memo, `idx`, content_id, lat, lng, title) VALUES
 	    <foreach collection="tripLocations" item="item" separator=",">
-        	(#{id}, #{item.memo}, #{item.idx}, #{item.contentId}, #{item.lat}, #{item.lng})
+        	(#{id}, #{item.memo}, #{item.idx}, #{item.contentId}, #{item.lat}, #{item.lng}, #{item.title})
     	</foreach>
 	</insert>
 	

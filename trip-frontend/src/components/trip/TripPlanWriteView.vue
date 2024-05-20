@@ -2,11 +2,11 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { loadKakaoMapScript } from "@/utils/load-map";
-import { writeTripPlan } from "@/api/tripplan"
+import { writeTripPlan } from "@/api/tripplan";
 import { getAttractions, getTripAttraction } from "@/api/attraction";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import {useUserStore} from "@/stores"
+import { useUserStore } from "@/stores";
 
 const store = useUserStore();
 const userData = store.member;
@@ -27,9 +27,8 @@ const selectedAttraction = ref({});
 const attractions = ref([]);
 
 const submitForm = async () => {
-  
   const tripPlan = {
-    id: 0, 
+    id: 0,
     title: title.value,
     content: content.value,
     startDate: startDate.value,
@@ -45,9 +44,9 @@ const submitForm = async () => {
       lat: location.latitude,
       lng: location.longitude,
       contentId: location.id,
+      title: location.title,
     })),
   };
-  
 
   try {
     await writeTripPlan(
@@ -197,14 +196,6 @@ const goToTripDetail = async (contentId) => {
   if (attraction) {
     selectedAttraction.value = attraction;
     isModalOpen.value = true;
-    // const location = {
-    //   id: attraction.contentId,
-    //   title: attraction.title,
-    //   content: attraction.overview,
-    //   img: attraction.firstImage,
-    // };
-    // locations.value.push(location);
-    // console.log(locations.value);
   }
 };
 const closeModal = () => {
@@ -215,7 +206,7 @@ const addLocation = () => {
   const location = {
     id: selectedAttraction.value.contentId,
     title: selectedAttraction.value.title,
-    content: selectedAttraction.value.overview,
+    content: selectedAttraction.value.memo,
     img: selectedAttraction.value.firstImage,
     idx: locations.value.length,
     latitude: selectedAttraction.value.latitude,
@@ -273,7 +264,6 @@ const goBack = () => {
 
         <div class="flex-grow-0 ml-auto">
           <button
-            
             class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
             @click="submitForm">
             여행 계획 등록하기
@@ -307,7 +297,7 @@ const goBack = () => {
 
       <!-- 오른쪽에는 여행 계획 추가 폼 -->
       <div class="w-1/2 pl-6 mt-20">
-        <form >
+        <form>
           <div class="mb-4">
             <label for="title" class="block text-sm font-medium text-gray-700"
               >여행 제목</label
@@ -409,14 +399,13 @@ const goBack = () => {
         <div
           data-aos="fade-up"
           data-aos-duration="1000"
-          class="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          class="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
           <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">
               <div class="text-center sm:mt-0 sm:text-left">
                 <h3 class="text-2xl leading-6 font-bold text-gray-900 my-6">
                   {{ selectedAttraction.title }}
                 </h3>
-
                 <div class="mt-2">
                   <p class="text-sm text-gray-500">
                     {{ selectedAttraction.overview }}
@@ -426,6 +415,13 @@ const goBack = () => {
                   :src="selectedAttraction.firstImage"
                   alt="Image"
                   class="w-full h-64 object-cover mt-4" />
+                <div class="mt-4">
+                  <input
+                    v-model="selectedAttraction.memo"
+                    type="text"
+                    placeholder="나만의 메모를 입력하세요"
+                    class="w-full h-[100px] px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                </div>
               </div>
             </div>
           </div>

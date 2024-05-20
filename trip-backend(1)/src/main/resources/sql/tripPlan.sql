@@ -18,7 +18,9 @@ CREATE TABLE trip_location (
     FOREIGN KEY (route_id) REFERENCES Trip_plan(id) ON DELETE CASCADE,
     FOREIGN KEY (content_id) REFERENCES Attraction_info(content_id) ON DELETE CASCADE
 );
-
+ALTER TABLE trip_location
+ADD COLUMN lat DECIMAL(10, 7) NOT NULL,
+ADD COLUMN lng DECIMAL(10, 7) NOT NULL;
 select * from trip_plan;
 
 select * from trip_location;

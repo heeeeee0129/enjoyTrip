@@ -2,6 +2,7 @@
 import { RouterView } from "vue-router";
 import TheHeadingNavbar from "@/components/common/TheHeadingNavbar.vue";
 import { onMounted } from "vue";
+import { useUserStore } from "./stores";
 const { VITE_SEND_BIRD_APP_ID } = import.meta.env;
 
 onMounted(() => {
@@ -18,6 +19,8 @@ onMounted(() => {
     f.parentNode.insertBefore(j, f);
   })(window, document, "script", VITE_SEND_BIRD_APP_ID, "onboarding_bot", {
     apiHost: "https://api-cf-ap-2.sendbird.com",
+    userId: useUserStore().member.id,
+    nickname: useUserStore().member.name,
   });
 });
 </script>

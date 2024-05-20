@@ -7,7 +7,7 @@ import searchBar from "@/components/trip/item/TripSearchBar.vue";
 import { useRouter } from "vue-router";
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
 import { loadKakaoMapScript } from "@/utils/load-map";
-import { TripDetailModal } from "@/components/trip/item/TripDetailModal.vue";
+import TripDetailModal from "@/components/trip/item/TripDetailModal.vue";
 
 const attractions = ref([]);
 const selectedSidoCode = ref(0); // 시도
@@ -16,7 +16,7 @@ const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
 const router = useRouter();
-const selectedAttraction = ref({});
+const selectedContentId = ref({});
 const showModal = ref(false);
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터
@@ -108,9 +108,11 @@ const goToTripDetail = (contentId) => {
     name: "TripDetail",
     params: { contentId: contentId },
   });
+  openModal(contentId);
 };
-const openModal = (attraction) => {
-  selectedAttraction.value = attraction;
+const openModal = (contentId) => {
+  console.log(contentId);
+  selectedContentId.value = contentId;
   showModal.value = true;
 };
 
@@ -224,7 +226,7 @@ const displayMarker = () => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="openModal(attraction)"
+              @click="openModal(attraction.contentId)"
               style="cursor: pointer">
               <td>
                 <img
@@ -241,7 +243,11 @@ const displayMarker = () => {
       </div>
     </div>
   </div>
-  <TripDetailModal :attraction="selectedAttraction" :showModal="showModal" />
+  <TripDetailModal
+    :selectedContentId="selectedContentId"
+    :showModal="showModal"
+    @update:showModal="showModal = $event"
+  />
 </template>
 
 <style scoped>

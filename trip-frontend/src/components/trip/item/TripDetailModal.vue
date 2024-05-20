@@ -69,15 +69,17 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, computed } from "vue";
+import { ref, defineProps, onMounted, computed,defineEmits } from "vue";
 import { getAttraction } from "@/api/attraction.js";
 import { fail } from "@/utils/error-handler";
 import image from "@/assets/images.png";
 
+
 const props = defineProps({
   showModal: Boolean,
-  selectedAttraction: Object,
+  selectedContentId: Number,
 });
+const emit = defineEmits(["update:showModal"]);
 
 const attraction = ref({});
 
@@ -88,10 +90,20 @@ onMounted(async () => {
 const detailAttraction = async () => {
   const success = (response) => {
     attraction.value = response.data;
+    console.log("response", attraction.value);
   };
-
-  await getAttraction(props.selectedAttraction.contentId, success, fail);
+  console.log("Selected", props.selectedContentId);
+  if(props.selectedContentId){
+    await getAttraction(props.selectedContentId.value, success, fail);
+  }
+  
 };
+
+onMounted(() => {
+  if(props.showModal){
+    detailAttraction();
+  }});
+
 
 const kakaoMapLink = computed(() => {
   const { latitude, longitude, title } = attraction.value;
@@ -107,7 +119,9 @@ const naverSearchLink = computed(() => {
   )}`;
 });
 
-const closeModal = () => {};
+const closeModal = () => {
+  emit("update:showModal", false);
+};
 </script>
 
 <style scoped></style>

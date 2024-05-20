@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import image from "@/assets/images.png";
 
 const props = defineProps({ location: Object });
 const attraction = ref({});
@@ -49,8 +50,8 @@ const goDetail = () => {
     <div class="rounded-lg overflow-hidden">
       <div class="relative">
         <img
-          :src="attraction.firstImage"
-          alt="location.title"
+          :src="attraction.firstImage ? attraction.firstImage : image"
+          :alt="location.title"
           class="w-full h-64 object-cover" />
         <div class="absolute bottom-0 left-0 p-4">
           <h3 class="text-xl font-semibold text-white">

@@ -21,6 +21,7 @@ CREATE TABLE trip_location (
 ALTER TABLE trip_location
 ADD COLUMN lat DECIMAL(10, 7) NOT NULL,
 ADD COLUMN lng DECIMAL(10, 7) NOT NULL;
+Alter table trip_location add column title varchar(100) not null;
 select * from trip_plan;
 
 select * from trip_location;

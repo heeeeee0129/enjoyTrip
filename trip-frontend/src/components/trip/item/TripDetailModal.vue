@@ -1,5 +1,6 @@
 <template>
   <div
+    :class="{ 'is-active': showModal }"
     class="container max-w-4xl my-24 bg-white rounded-lg overflow-hidden shadow-lg py-3">
     <div class="flex flex-row">
       <!-- 왼쪽에 이미지 -->
@@ -45,9 +46,9 @@
     <div class="pt-4 border-gray-200 flex justify-end">
       <!-- 버튼 -->
       <button
-        @click="goBack"
+        @click="closeModal"
         class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg mr-2">
-        돌아가기
+        닫기
       </button>
       <a
         :href="kakaoMapLink"
@@ -68,15 +69,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, defineProps, onMounted, computed } from "vue";
 import { getAttraction } from "@/api/attraction.js";
 import { fail } from "@/utils/error-handler";
 import image from "@/assets/images.png";
 
-const router = useRouter();
-const route = useRoute();
-const { contentId } = route.params;
+const props = defineProps({
+  showModal: Boolean,
+  selectedAttraction: Object,
+});
 
 const attraction = ref({});
 
@@ -89,11 +90,7 @@ const detailAttraction = async () => {
     attraction.value = response.data;
   };
 
-  await getAttraction(contentId, success, fail);
-};
-
-const goBack = () => {
-  router.go(-1);
+  await getAttraction(props.selectedAttraction.contentId, success, fail);
 };
 
 const kakaoMapLink = computed(() => {
@@ -109,6 +106,8 @@ const naverSearchLink = computed(() => {
     title
   )}`;
 });
+
+const closeModal = () => {};
 </script>
 
 <style scoped></style>

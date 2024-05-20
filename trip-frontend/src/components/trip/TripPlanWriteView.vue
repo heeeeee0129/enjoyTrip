@@ -245,6 +245,33 @@ const getDistance = (latlng, avgLat, avgLng) => {
 const goBack = () => {
   router.go(-1);
 };
+
+const dragStart = (event, index) => {
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("index", index);
+  event.target.classList.add("dragging");
+};
+
+const dragEnd = (event) => {
+  event.target.classList.remove("dragging");
+};
+
+const dragOver = (event) => {
+  event.preventDefault();
+};
+
+const drop = (event, index) => {
+  event.preventDefault();
+  const draggedIndex = event.dataTransfer.getData("index");
+  const draggedItem = locations.value.splice(draggedIndex, 1)[0];
+  locations.value.splice(index, 0, draggedItem);
+  updateLocationIndexes();
+};
+const updateLocationIndexes = () => {
+  locations.value.forEach((location, index) => {
+    location.idx = index;
+  });
+};
 </script>
 
 <template>
@@ -355,7 +382,12 @@ const goBack = () => {
       <hr class="border-gray-400" />
       <div class="mt-10 grid grid-cols-4 gap-4 p-4 px-24">
         <div
-          v-for="location in locations"
+          v-for="(location, index) in locations"
+          draggable="true"
+          @dragstart="(event) => dragStart(event, index)"
+          @dragend="dragEnd"
+          @dragover="dragOver"
+          @drop="(event) => drop(event, index)"
           :key="location.contentId"
           class="p-3 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 m-2"
           data-aos="fade-up"

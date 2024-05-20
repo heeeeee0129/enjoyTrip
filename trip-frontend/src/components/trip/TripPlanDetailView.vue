@@ -42,10 +42,12 @@
         <div
           class="bg-white bg-opacity-30 p-4 rounded-lg shadow-md absolute bottom-0 w-full">
           <p class="text-sm font-bold">
-            요금: {{ result.fare.taxi }}원 (택시), {{ result.fare.toll }}원
-            (통행료)
+            요금: {{ formatNumber(result.fare.taxi) }}원 (택시),
+            {{ formatNumber(result.fare.toll) }}원 (통행료)
           </p>
-          <p class="text-sm font-bold">거리: {{ result.distance }}m</p>
+          <p class="text-sm font-bold">
+            거리: {{ formatNumber(result.distance / 1000) }}km
+          </p>
           <p class="text-sm font-bold">
             소요 시간: {{ formatDuration(result.duration) }}
           </p>
@@ -128,7 +130,7 @@ import Swal from "sweetalert2";
 import { getTripPlan } from "@/api/tripplan";
 import TripPlanDetailItem from "@/components/trip/item/TripPlanDetailItem.vue";
 import { loadKakaoMapScript, getCarDirection } from "@/utils/load-map";
-import { formatDuration } from "@/utils/convert-time";
+import { formatDuration, formatNumber } from "@/utils/convert-time";
 import { getAttraction } from "@/api/attraction";
 import { fail } from "@/utils/error-handler";
 const route = useRoute();

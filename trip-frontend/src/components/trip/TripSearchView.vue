@@ -7,6 +7,8 @@ import searchBar from "@/components/trip/item/TripSearchBar.vue";
 import { useRouter } from "vue-router";
 import { fetchSidos, fetchGuguns } from "@/api/getDistricts";
 import { loadKakaoMapScript } from "@/utils/load-map";
+import { TripDetailModal } from "@/components/trip/item/TripDetailModal.vue";
+
 const attractions = ref([]);
 const selectedSidoCode = ref(0); // 시도
 const selectSidos = ref([]);
@@ -14,7 +16,8 @@ const selectGuguns = ref([]);
 const selectedGugunCode = ref(0);
 const positions = ref([]);
 const router = useRouter();
-
+const selectedAttraction = ref({});
+const showModal = ref(false);
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터
 var overlayCluster = null; // 오버레이 클러스터
@@ -105,6 +108,10 @@ const goToTripDetail = (contentId) => {
     name: "TripDetail",
     params: { contentId: contentId },
   });
+};
+const openModal = (attraction) => {
+  selectedAttraction.value = attraction;
+  showModal.value = true;
 };
 
 // 클러스터링
@@ -197,7 +204,10 @@ const displayMarker = () => {
       </div>
       <searchBar @search="handleSearch" />
 
-      <div id="map" class="mt-3 rounded shadow-sm p-10" style="width: 100%; height: 550px"></div>
+      <div
+        id="map"
+        class="mt-3 rounded shadow-sm p-10"
+        style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row" style="margin-top: 50px">
         <table class="table table-striped">
@@ -214,10 +224,12 @@ const displayMarker = () => {
             <tr
               v-for="attraction in attractions"
               :key="attraction.contentId"
-              @click="goToTripDetail(attraction.contentId)"
-            >
+              @click="openModal(attraction)"
+              style="cursor: pointer">
               <td>
-                <img :src="attraction.firstImage || 'default.png'" width="100px" />
+                <img
+                  :src="attraction.firstImage || 'default.png'"
+                  width="100px" />
               </td>
               <td>{{ attraction.title }}</td>
               <td>{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
@@ -229,6 +241,7 @@ const displayMarker = () => {
       </div>
     </div>
   </div>
+  <TripDetailModal :attraction="selectedAttraction" :showModal="showModal" />
 </template>
 
 <style scoped>
@@ -282,7 +295,8 @@ const displayMarker = () => {
   font-weight: bold;
   overflow: hidden;
   background: #d95050;
-  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
     no-repeat right 14px center;
 }
 #customoverlay .title {

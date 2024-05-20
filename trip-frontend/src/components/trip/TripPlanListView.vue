@@ -50,27 +50,28 @@ function formatDate(dateString) {
       </div>
     </div>
     <div class="px-32">
-      <div class="px-32 flex justify-between">
-        <div v-if="!!isLoggedIn" class="my-12 mx-auto">
+      <div class="p-2 flex justify-between mb-2">
+        <div v-if="!!isLoggedIn" class="">
           <router-link :to="{ name: 'MyPlanView' }" class="text-white">
             <button
-              class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg flex-grow"
+              class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full"
             >
               나의 여행 계획
             </button>
           </router-link>
         </div>
-        <div v-if="!!isLoggedIn" class="my-12 mx-auto">
-          <!-- 여행 계획 추가 버튼 -->
+        <div v-if="!!isLoggedIn" class="text-right">
+          
           <router-link :to="{ name: 'PlanWrite' }" class="text-white">
             <button
-              class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg flex-grow"
+              class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full"
             >
               여행 계획 추가
             </button>
           </router-link>
         </div>
       </div>
+      <hr class="border-gray-600 border-1 px-3 m-0" />
 
       <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div

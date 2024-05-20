@@ -2,6 +2,9 @@
 import { useUserStore } from "@/stores/index.js";
 import { ref, computed } from "vue"; // 계산된 속성 사용
 import { useRouter } from "vue-router";
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 import "@/index.css";
 const store = useUserStore();
@@ -24,6 +27,7 @@ const isDropdownOpen = ref(false);
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
+library.add(faCaretDown);
 </script>
 
 <template>
@@ -74,7 +78,8 @@ const toggleDropdown = () => {
                 class="hover:text-gray-300 no-underline"
                 @click="toggleDropdown"
                 @mouseenter="isDropdownOpen = true">
-                커뮤니티
+                커뮤니티                <font-awesome-icon :icon="['fas', 'caret-down']" class="ml-1"/>
+
               </button>
               <ul
                 @mouseenter="isDropdownOpen = true"

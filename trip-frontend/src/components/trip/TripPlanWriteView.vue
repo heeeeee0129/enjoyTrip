@@ -275,12 +275,14 @@ const updateLocationIndexes = () => {
 </script>
 
 <template>
-  <div class="p-10 mt-6 min-h-screen">
-    <div class="mx-24 my-12">
-      <div id="detail-header" class="text-center">
-        <h2 class="text-3xl mt-4">여행 계획 추가</h2>
+  <div class="p-10 mt-6">
+    <div class="row px-10">
+      <div class="text-center mt-3 fw-bolder">
+        <h2 class="">여행 계획 추가</h2>
       </div>
-      <div class="flex">
+    </div>
+    <div class="px-32">
+      <div class="flex justify-between">
         <div class="flex-grow-0">
           <button
             @click="goBack"
@@ -299,7 +301,8 @@ const updateLocationIndexes = () => {
       </div>
       <hr class="border-gray-400" />
     </div>
-    <div class="flex mx-24">
+
+    <div class="flex mx-32">
       <!-- 왼쪽에는 map 지도를 띄울 공간 -->
       <div class="w-1/2 flex flex-col">
         <!-- 검색 바 --><span class="text-base pl-2">여행지 검색</span>
@@ -377,7 +380,7 @@ const updateLocationIndexes = () => {
       </div>
     </div>
     <!-- 여행지 목록 -->
-    <div class="mx-24">
+    <div class="mx-32">
       <h3 class="text-2xl font-semibold mt-24">TIMELINE</h3>
       <hr class="border-gray-400" />
       <div class="mt-10 grid grid-cols-4 gap-4 p-4 px-24">
@@ -476,10 +479,6 @@ const updateLocationIndexes = () => {
 </template>
 
 <style scoped>
-#detail-header {
-  margin-bottom: 2rem;
-}
-
 button:hover {
   transform: translateY(-2px);
 }

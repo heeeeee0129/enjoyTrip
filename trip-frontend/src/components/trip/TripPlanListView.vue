@@ -45,7 +45,7 @@ function formatDate(dateString) {
 <template>
   <div class="p-10 mt-6">
     <div class="row px-10">
-      <div class="mt-3 text-center fw-bolder" id="search-header">
+      <div class="mt-3 text-center fw-bolder">
         <h2 class="">여행 계획</h2>
       </div>
     </div>
@@ -54,18 +54,15 @@ function formatDate(dateString) {
         <div v-if="!!isLoggedIn" class="">
           <router-link :to="{ name: 'MyPlanView' }" class="text-white">
             <button
-              class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full"
-            >
+              class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full">
               나의 여행 계획
             </button>
           </router-link>
         </div>
         <div v-if="!!isLoggedIn" class="text-right">
-          
           <router-link :to="{ name: 'PlanWrite' }" class="text-white">
             <button
-              class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full"
-            >
+              class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition transform hover:-translate-y-1 hover:shadow-lg w-full">
               여행 계획 추가
             </button>
           </router-link>
@@ -79,8 +76,7 @@ function formatDate(dateString) {
           :key="route.id"
           @click.prevent="goDetail(route.id)"
           type="button"
-          class="p-6 bg-white rounded-lg shadow-lg transition transform hover:scale-105"
-        >
+          class="p-6 bg-white rounded-lg shadow-lg transition transform hover:scale-105">
           <h3 class="text-2xl font-semibold mb-3 text-gray-800">
             {{ route.title }}
           </h3>
@@ -104,10 +100,6 @@ function formatDate(dateString) {
 </template>
 
 <style scoped>
-#search-header {
-  margin-bottom: 2rem;
-}
-
 button {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }

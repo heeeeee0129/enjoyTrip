@@ -313,22 +313,33 @@ const updateArticle = async () => {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row flex">
     <!-- 왼쪽 반은 지도 -->
-    <div class="col-md-6 mb-4 h-[90%] rounded shadow p-3">
-      <div id="map" class="mt-3" style="width: 100%; height: 550px"></div>
+    <div class="col-md-6 mb-4 h-[500px] rounded-xl p-3 relative">
+      <div class="marker-guide text-center text-gray-600">
+        원하는 위치에 마커를 찍어주세요
+      </div>
+      <div
+        id="map"
+        class="mt-3 rounded-xl"
+        style="width: 100%; height: 550px"></div>
     </div>
 
     <!-- 오른쪽 반은 글작성 또는 글수정 폼 -->
     <div class="col-md-6 mb-4">
       <form
         @submit.prevent="onSubmit"
-        class="p-4 rounded-lg shadow bg-light"
-        enctype="multipart/form-data"
-      >
+        class="p-4 h-[600px] rounded-xl"
+        enctype="multipart/form-data">
         <div class="mb-3">
-          <label for="placeImage" class="form-label">사진 등록(jpg, jpeg, png 파일만 가능):</label>
-          <input type="file" class="form-control" @change="handleFileChange" accept="image/*" />
+          <label for="placeImage" class="form-label"
+            >사진 등록(jpg, jpeg, png 파일만 가능):</label
+          >
+          <input
+            type="file"
+            class="form-control"
+            @change="handleFileChange"
+            accept="image/*" />
         </div>
         <div class="mb-3">
           <label for="placeName" class="form-label">장소 이름:</label>
@@ -336,12 +347,14 @@ const updateArticle = async () => {
             type="text"
             class="form-control"
             v-model="hotplace.placeName"
-            placeholder="장소 이름을 입력하세요"
-          />
+            placeholder="장소 이름을 입력하세요" />
         </div>
         <div class="mb-3">
           <label for="visitedDate" class="form-label">다녀온 날짜:</label>
-          <input type="date" class="form-control" v-model="hotplace.registerTime" />
+          <input
+            type="date"
+            class="form-control"
+            v-model="hotplace.registerTime" />
         </div>
         <div class="mb-3">
           <label for="graveType" class="form-label">장소 유형:</label>
@@ -360,27 +373,26 @@ const updateArticle = async () => {
         <div class="mb-3">
           <label for="introduction" class="form-label">핫플레이스 소개:</label>
           <textarea
-            class="form-control"
+            class="form-control h-[200px]"
             v-model="hotplace.content"
             rows="5"
-            placeholder="핫플레이스를 소개하세요"
-          ></textarea>
-        </div>
-        <div class="text-center">
-          <button type="submit" class="btn btn-outline-primary rounded-pill px-4 me-2">
-            {{ type === "regist" ? "글작성" : "글수정" }}
-          </button>
-          <button
-            type="button"
-            class="btn btn-outline-secondary rounded-pill px-4"
-            @click="moveList"
-          >
-            뒤로가기
-          </button>
+            placeholder="핫플레이스를 소개하세요"></textarea>
         </div>
       </form>
     </div>
+    <div class="text-center mt-4">
+      <button
+        type="submit"
+        class="btn btn-outline-primary rounded-pill px-4 mx-12">
+        {{ type === "regist" ? "글작성" : "글수정" }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary rounded-pill px-4 mx-12"
+        @click="moveList">
+        뒤로가기
+      </button>
+    </div>
   </div>
 </template>
-
 <style scoped></style>

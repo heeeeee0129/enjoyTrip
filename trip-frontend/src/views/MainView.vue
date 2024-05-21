@@ -37,6 +37,7 @@ const trip = ref([
     title: "여행지 검색",
     content: "국내의 다양한 여행지를 검색해보세요",
     img: search,
+    link: "search",
   },
   {
     duration: 1000,
@@ -44,6 +45,7 @@ const trip = ref([
     title: "여행 계획",
     content: "나만의 여행 계획을 세워보세요",
     img: plan,
+    link: "PlanWrite",
   },
   {
     duration: 1500,
@@ -51,6 +53,7 @@ const trip = ref([
     title: "여행 경로",
     content: "길찾기를 통한 전체 여행 경로를 확인해보세요",
     img: route,
+    link: "plan",
   },
 ]);
 
@@ -61,6 +64,7 @@ const place = ref([
     title: "나만의 여행지 공유",
     content: "나의 특별한 여행지를 공유해보세요",
     img: upload,
+    link: "HotPlaceView",
   },
   {
     duration: 1000,
@@ -68,6 +72,7 @@ const place = ref([
     title: "핫플레이스",
     content: "다양한 특별한 여행지를 확인해보세요",
     img: attraction,
+    link: "HotPlaceView",
   },
   {
     duration: 1500,
@@ -75,6 +80,7 @@ const place = ref([
     title: "좋아요한 여행지",
     content: "좋아요한 여행지를 한 눈에 확인해보세요",
     img: like,
+    link: "FavoriteList",
   },
 ]);
 const community = ref([
@@ -84,6 +90,7 @@ const community = ref([
     title: "친구",
     content: "여행을 함께 할 친구를 추가해보세요",
     img: friend,
+    link: "FriendView",
   },
   {
     duration: 1000,
@@ -91,6 +98,7 @@ const community = ref([
     title: "채팅",
     content: "친구와 실시간 채팅을 통해 소통해보세요",
     img: chat,
+    link: "ChatView",
   },
   {
     duration: 1500,
@@ -98,6 +106,7 @@ const community = ref([
     title: "자유게시판",
     content: "게시판을 통해 여행 관련 글을 남겨보세요",
     img: board,
+    link: "BoardView",
   },
 ]);
 const info = ref([
@@ -114,6 +123,7 @@ const info = ref([
     title: "최신 뉴스",
     content: "여행 관련 최신 뉴스를 확인해보세요",
     img: news,
+    link: "NewsView",
   },
   {
     duration: 1500,
@@ -135,7 +145,7 @@ const setHotplace = async () => {
   const success = (response) => {
     hotplaces.value = response.data;
   };
-  await getTopHotplace(success, fail);
+  await getTopHotplace(success, fail).then(console.log(hotplaces));
 };
 function getImageUrl(folder, name) {
   return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
@@ -162,12 +172,12 @@ const goDetailHotPlace = (hotNo) => {
 
 <template>
   <div
-    class="py-[20%] bg-cover bg-center"
-    style="background-image: url('/bg_trip.jpg'); height: 370vh">
-    <div class="flex flex-col items-center w-full mb-[20%]">
+    class="py-[15%] bg-cover bg-center"
+    style="background-image: url('/bg_trip.jpg'); height: fit">
+    <div class="flex flex-col items-center w-full mb-[30%]">
       <div
         class="font-extrabold text-7xl text-white"
-        data-aos="fade-down"
+        data-aos="fade-up"
         data-aos-easing="ease-in"
         data-aos-duration="1000">
         특별한 여행을 떠나세요
@@ -182,66 +192,71 @@ const goDetailHotPlace = (hotNo) => {
         :info="community"
         sectionTitle="여행을 함께 할 메이트를 찾아보세요" />
       <InfoSection :info="info" sectionTitle="여행 관련 정보를 찾아보세요" />
-    </div>
-
-    <div data-aos="fade-right" data-aos-duration="1000" class="mb-5">
-      <router-link :to="{ name: 'TripView' }" class="no-underline">
-        <h1
-          class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 relative flex items-center ml-[5%] w-[90vw] text-white font-extrabold text-3xl mb-3">
-          인기 여행지
-        </h1></router-link
-      >
-      <div class="grid grid-cols-4 gap-4 p-4">
+      <div class="mx-[7%] mt-24">
         <div
-          v-for="attraction in attractions"
-          :key="attraction.contentId"
+          data-aos="fade-right"
+          data-aos-duration="1000"
+          class="text-black text-2xl font-bold my-2 ml-12">
+          인기 여행지
+        </div>
+
+        <div
           data-aos="fade-up"
           data-aos-duration="1000"
-          class="p-3 h-60 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 m-2"
-          @click="goDetailAttraction(attraction.contentId)"
-          type="button">
-          <img
-            :src="attraction.firstImage"
-            :alt="attraction.title"
-            class="w-full h-full object-cover" />
-          <div class="absolute bottom-0 left-0 p-4">
-            <h3 class="text-xl font-semibold text-white">
-              {{ attraction.title }}
-            </h3>
+          class="grid grid-cols-4 gap-4 p-4">
+          <div
+            v-for="attraction in attractions"
+            :key="attraction.contentId"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            class="h-60 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg hover:shadow-gray-600 transition-shadow duration-300 m-2"
+            @click="goDetailAttraction(attraction.contentId)"
+            type="button">
+            <img
+              :src="attraction.firstImage"
+              :alt="attraction.title"
+              class="w-full h-full object-cover rounded-xl" />
+            <div
+              class="absolute bottom-0 left-0 p-4 bg-opacity-40 bg-gray-300 w-full rounded-b-lg">
+              <h3 class="text-xl font-bold text-black">
+                {{ attraction.title }}
+              </h3>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div data-aos="fade-right" data-aos-duration="1000">
-      <router-link :to="{ name: 'TripView' }" class="no-underline">
-        <h1
-          class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 relative flex items-center ml-[5%] w-[90vw] text-white font-extrabold text-3xl mb-3">
-          나만의 장소
-        </h1></router-link
-      >
-      <div class="grid grid-cols-4 gap-4 p-4">
+      <div class="mx-[7%] mt-24">
         <div
-          v-for="hotplace in hotplaces"
-          :key="hotplace.hotNo"
-          data-aos="fade-up"
+          data-aos="fade-right"
           data-aos-duration="1000"
-          class="p-3 h-60 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 m-2"
-          @click="goDetailHotPlace(hotplace.hotNo)"
-          type="button">
-          <img
-            :src="
-              getImageUrl(
-                hotplace.fileInfo.saveFolder,
-                hotplace.fileInfo.saveFile
-              )
-            "
-            :alt="hotplace.placeName"
-            class="w-full h-full object-cover" />
-          <div class="absolute bottom-0 left-0 p-4">
-            <h3 class="text-xl font-semibold text-white">
-              {{ hotplace.placeName }}
-            </h3>
+          class="text-black text-2xl font-bold my-2 ml-12">
+          나만의 장소
+        </div>
+
+        <div class="grid grid-cols-4 gap-4 p-4">
+          <div
+            v-for="hotplace in hotplaces"
+            :key="hotplace.hotNo"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            class="h-60 bg-gray-100 bg-opacity-40 rounded-lg shadow-md hover:shadow-lg hover:shadow-gray-600 transition-shadow duration-300 m-2"
+            @click="goDetailHotPlace(hotplace.hotNo)"
+            type="button">
+            <img
+              class="w-full h-full object-cover rounded-xl"
+              :src="
+                getImageUrl(
+                  hotplace.fileInfo.saveFolder,
+                  hotplace.fileInfo.saveFile
+                )
+              "
+              :alt="hotplace.placeName" />
+            <div
+              class="absolute text-center items-center bottom-0 left-0 p-4 bg-opacity-40 bg-gray-300 w-full rounded-b-lg">
+              <h3 class="text-xl font-bold text-black">
+                {{ hotplace.placeName }}
+              </h3>
+            </div>
           </div>
         </div>
       </div>

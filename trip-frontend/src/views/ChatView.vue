@@ -62,7 +62,7 @@ export default {
       </div>
       <div class="nickname">{{ sbUserInfo?.nickname }}</div>
     </header>
-    <main style="height: 1000px">
+    <main style="height: 85vh">
       <Chat
         :config="config"
         :setSbUserInfo="setSbUserInfo"

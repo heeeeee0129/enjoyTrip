@@ -124,10 +124,9 @@ const confirmDelete = () => {
     title: "정말로 삭제 하시겠습니까?",
     text: "다시 되돌릴 수 없습니다. 신중하세요.",
     icon: "question",
-
     showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
-    confirmButtonColor: "#3085d6", // confirm 버튼 색깔 지정
-    cancelButtonColor: "#d33", // cancel 버튼 색깔 지정
+    confirmButtonColor: "#d33", // confirm 버튼 색깔 지정
+    cancelButtonColor: "#3085d6", // cancel 버튼 색깔 지정
     confirmButtonText: "삭제", // confirm 버튼 텍스트 지정
     cancelButtonText: "취소", // cancel 버튼 텍스트 지정
     reverseButtons: true, // 버튼 순서 거꾸로

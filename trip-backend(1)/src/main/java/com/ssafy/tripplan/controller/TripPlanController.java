@@ -1,5 +1,7 @@
 package com.ssafy.tripplan.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -73,6 +75,14 @@ public class TripPlanController {
 	@PostMapping("/tripplan")
 	public ResponseEntity<?> writeArticle(@RequestBody TripPlan tripplan) {
 		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date start = dateFormat.parse(tripplan.getStartDate());
+			Date end = dateFormat.parse(tripplan.getEndDate());
+			if(start.after(end)) {
+				String tmp = tripplan.getStartDate();
+				tripplan.setStartDate(tripplan.getEndDate());
+				tripplan.setEndDate(tmp);
+			}
 			int cnt = tripplanService.writeArticle(tripplan);
 			if(cnt != 0) {
 				return ResponseEntity.ok(cnt);
@@ -85,8 +95,8 @@ public class TripPlanController {
 		}
 	}
 	
-	@Operation(summary = "여행계획 작성 ")
-	@DeleteMapping("/tripplan")
+	@Operation(summary = "여행계획 삭제 ")
+	@DeleteMapping("/tripplan/{id}")
 	public ResponseEntity<?> deleteArticle(@PathVariable(value = "id") int id) {
 		try {
 			int cnt = tripplanService.deleteArticle(id);

@@ -1,6 +1,7 @@
 <script setup>
 import { watch, ref, onMounted } from "vue";
 import { getAttractions, getAttraction } from "@/api/attraction";
+import WeatherDetail from "../weather/WeatherDetail.vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import searchBar from "@/components/trip/item/TripSearchBar.vue";
@@ -18,11 +19,14 @@ const selectedGugunCode = ref(0);
 const positions = ref([]);
 const router = useRouter();
 const isModalOpen = ref(false); //
+const isShowWeather = ref(false);
 const selectedAttraction = ref({});
 
 var map = null; // 지도는 ref사용하면 안됨
 var markerCluster = null; // 마커 클러스터
 var overlayCluster = null; // 오버레이 클러스터
+
+const weather = ref({});
 
 // 카카오 맵 API 로드
 onMounted(async () => {
@@ -42,6 +46,8 @@ const openDetailModal = async (contentId) => {
     contentId,
     (response) => {
       selectedAttraction.value = response.data;
+      weather.value.lat = selectedAttraction.value.latitude;
+      weather.value.lon = selectedAttraction.value.longitude;
     },
     fail
   ).then(() => {
@@ -62,6 +68,10 @@ watch(selectedSidoCode, async () => {
   selectGuguns.value = await fetchGuguns(selectedSidoCode.value);
 });
 
+const changeModal = () => {
+  isShowWeather.value = !isShowWeather.value;
+};
+
 // 카카오 맵 API 스크립트 로드
 
 const handleSearch = async (queryString) => {
@@ -73,7 +83,7 @@ const handleSearch = async (queryString) => {
       attractions.value = response;
       // console.log(attractions.value);
       updateMapMarkers(attractions.value);
-      console.log(attractions.value);
+      // console.log(attractions.value);
     } else {
       console.error("Unexpected response structure:", response);
     }
@@ -322,6 +332,11 @@ const displayMarker = () => {
         </div>
         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
           <button
+            @click="changeModal"
+            class="w-full inline-flex justify-center rounded-md border border-blue-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm ml-2">
+            날씨보기
+          </button>
+          <button
             @click="closeModal"
             class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
             닫기
@@ -330,6 +345,12 @@ const displayMarker = () => {
       </div>
     </div>
   </div>
+  <Modal
+    v-if="isShowWeather"
+    @close="isShowWeather = false"
+    class="fixed z-10 inset-0 overflow-y-auto">
+    <WeatherDetail :weather="weather" @change-modal="changeModal" />
+  </Modal>
 </template>
 
 <style scoped>

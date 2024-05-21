@@ -5,7 +5,7 @@ import { getWeather } from "@/api/weather";
 import Swal from "sweetalert2";
 
 const info = ref({});
-const props = defineProps({ weather: Object, isModalOpen: Boolean });
+const props = defineProps({ weather: Object });
 const emit = defineEmits(["changeModal"]);
 
 onMounted(() => {

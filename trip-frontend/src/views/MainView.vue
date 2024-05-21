@@ -3,10 +3,24 @@ import { ref, onMounted } from "vue";
 import { getTopAttractions } from "@/api/attraction";
 import { getTopHotplace } from "@/api/hotplace";
 import AOS from "aos";
-import Swal from "sweetalert2";
 import "aos/dist/aos.css";
 import { useRouter } from "vue-router";
-
+import { fail } from "@/utils/error-handler";
+import InfoSection from "@/components/common/InfoSection.vue";
+import {
+  aiChat,
+  attraction,
+  chat,
+  friend,
+  like,
+  news,
+  plan,
+  board,
+  route,
+  search,
+  upload,
+  weather,
+} from "@/assets/icons/index.js";
 const router = useRouter();
 const attractions = ref([]);
 const hotplaces = ref([]);
@@ -16,41 +30,116 @@ onMounted(() => {
   setAttraction();
   setHotplace();
 });
+const trip = ref([
+  {
+    duration: 500,
+    hover: false,
+    title: "여행지 검색",
+    content: "국내의 다양한 여행지를 검색해보세요",
+    img: search,
+  },
+  {
+    duration: 1000,
+    hover: false,
+    title: "여행 계획",
+    content: "나만의 여행 계획을 세워보세요",
+    img: plan,
+  },
+  {
+    duration: 1500,
+    hover: false,
+    title: "여행 경로",
+    content: "길찾기를 통한 전체 여행 경로를 확인해보세요",
+    img: route,
+  },
+]);
+
+const place = ref([
+  {
+    duration: 500,
+    hover: false,
+    title: "나만의 여행지 공유",
+    content: "나의 특별한 여행지를 공유해보세요",
+    img: upload,
+  },
+  {
+    duration: 1000,
+    hover: false,
+    title: "핫플레이스",
+    content: "다양한 특별한 여행지를 확인해보세요",
+    img: attraction,
+  },
+  {
+    duration: 1500,
+    hover: false,
+    title: "좋아요한 여행지",
+    content: "좋아요한 여행지를 한 눈에 확인해보세요",
+    img: like,
+  },
+]);
+const community = ref([
+  {
+    duration: 500,
+    hover: false,
+    title: "친구",
+    content: "여행을 함께 할 친구를 추가해보세요",
+    img: friend,
+  },
+  {
+    duration: 1000,
+    hover: false,
+    title: "채팅",
+    content: "친구와 실시간 채팅을 통해 소통해보세요",
+    img: chat,
+  },
+  {
+    duration: 1500,
+    hover: false,
+    title: "자유게시판",
+    content: "게시판을 통해 여행 관련 글을 남겨보세요",
+    img: board,
+  },
+]);
+const info = ref([
+  {
+    duration: 500,
+    hover: false,
+    title: "AI 챗봇",
+    content: "AI를 탑재한 챗봇에게 궁금한 것을 물어보세요",
+    img: aiChat,
+  },
+  {
+    duration: 1000,
+    hover: false,
+    title: "최신 뉴스",
+    content: "여행 관련 최신 뉴스를 확인해보세요",
+    img: news,
+  },
+  {
+    duration: 1500,
+    hover: false,
+    title: "날씨",
+    content: "여행지의 실시간 날씨 정보를 확인해보세요",
+    img: weather,
+  },
+]);
 
 const setAttraction = async () => {
   const success = (response) => {
     attractions.value = response.data;
   };
-
-  const fail = () => {
-    Swal.fire({
-      title: "실패!",
-      text: "문제가 발생헀습니다.",
-      icon: "error",
-      confirmButtonText: "OK",
-    });
-  };
-
   await getTopAttractions(success, fail);
 };
 
 const setHotplace = async () => {
   const success = (response) => {
     hotplaces.value = response.data;
-    // console.log(hotplaces);
   };
-
-  const fail = () => {
-    Swal.fire({
-      title: "실패!",
-      text: "문제가 발생헀습니다.",
-      icon: "error",
-      confirmButtonText: "OK",
-    });
-  };
-
   await getTopHotplace(success, fail);
 };
+function getImageUrl(folder, name) {
+  return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
+}
 
 const goDetailAttraction = (contentId) => {
   router.push({
@@ -69,16 +158,12 @@ const goDetailHotPlace = (hotNo) => {
     },
   });
 };
-
-function getImageUrl(folder, name) {
-  return new URL(`/src/assets/upload/${folder}/${name}`, import.meta.url);
-}
 </script>
 
 <template>
   <div
     class="py-[20%] bg-cover bg-center"
-    style="background-image: url('/bg_trip.jpg'); height: 300vh">
+    style="background-image: url('/bg_trip.jpg'); height: 370vh">
     <div class="flex flex-col items-center w-full mb-[20%]">
       <div
         class="font-extrabold text-7xl text-white"
@@ -88,57 +173,16 @@ function getImageUrl(folder, name) {
         특별한 여행을 떠나세요
       </div>
     </div>
-    <router-link :to="{ name: 'search' }" class="no-underline">
-      <div
-        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[10%] relative flex items-center"
-        data-aos="fade-right"
-        data-aos-duration="1000">
-        <div class="flex-grow">
-          <h3 class="text-white font-extrabold text-3xl mb-3">다양한 여행지</h3>
-          <h4 class="text-gray-100">국내의 다양한 여행지를 검색해보세요</h4>
-        </div>
-        <h1
-          class="text-black text-opacity-50 font-bold text-4xl text-right flex-none">
-          >
-        </h1>
-      </div>
-    </router-link>
-    <router-link :to="{ name: 'plan' }" class="no-underline">
-      <div
-        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[20%] relative flex items-center"
-        data-aos="fade-right"
-        data-aos-duration="1000">
-        <div class="flex-grow">
-          <h3 class="text-white font-extrabold text-3xl mb-3">
-            편리한 일정 계획
-          </h3>
-          <h4 class="text-gray-100">
-            지도 정보를 통해 편리하게 일정을 계획해보세요
-          </h4>
-        </div>
-        <h1
-          class="text-black text-opacity-50 font-bold text-4xl text-right flex-none">
-          >
-        </h1>
-      </div>
-    </router-link>
-    <router-link :to="{ name: 'HotPlaceView' }" class="no-underline">
-      <div
-        class="bg-gray-400 bg-opacity-50 shadow-lg rounded-lg p-5 m-[10%] w-[50vw] ml-[30%] relative flex items-center"
-        data-aos="fade-right"
-        data-aos-duration="1000">
-        <div class="flex-grow">
-          <h3 class="text-white font-extrabold text-3xl mb-3">
-            나만의 핫플레이스
-          </h3>
-          <h4 class="text-gray-100">나만의 특별한 핫플레이스를 공유해보세요</h4>
-        </div>
-        <h1
-          class="text-black text-opacity-50 font-bold text-4xl text-right flex-none">
-          >
-        </h1>
-      </div>
-    </router-link>
+    <div class="bg-white bg-opacity-10 py-20">
+      <InfoSection :info="trip" sectionTitle="편리하게 여행을 계획하세요" />
+      <InfoSection
+        :info="place"
+        sectionTitle="나의 특별한 여행지를 공유해보세요" />
+      <InfoSection
+        :info="community"
+        sectionTitle="여행을 함께 할 메이트를 찾아보세요" />
+      <InfoSection :info="info" sectionTitle="여행 관련 정보를 찾아보세요" />
+    </div>
 
     <div data-aos="fade-right" data-aos-duration="1000" class="mb-5">
       <router-link :to="{ name: 'TripView' }" class="no-underline">

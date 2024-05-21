@@ -65,6 +65,7 @@ library.add(faCaretDown);
                 >여기좋아요</router-link
               >
             </li>
+
             <li v-if="isLoggedIn">
               <router-link
                 :to="{ name: 'FavoriteView' }"

@@ -111,8 +111,6 @@ public class HotPlaceController {
 	public ResponseEntity<?> listArticle(@RequestParam Map<String, String> map) {
 		try {
 			List<HotPlace> hotplaces = hotplaceService.listArticle(map);
-			System.out.println(map);
-			System.out.println(hotplaces);
 			return ResponseEntity.ok(hotplaces);
 		} catch (Exception e) {
 			return exceptionHandling(e);

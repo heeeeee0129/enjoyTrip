@@ -152,4 +152,13 @@ public class SwaggerConfiguration {
 				.pathsToMatch("/weatherapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
 				.build();
 	}
+	
+	@Bean
+	public GroupedOpenApi chatgptApi() {
+		return GroupedOpenApi
+				.builder()
+				.group("chatGPT")  // 그룹 이름 ( 원하는 이름으로 작성 )
+				.pathsToMatch("/chatgptapi/**") // 경로 패턴이 일치하는 것들을 API로 인식
+				.build();
+	}
 }

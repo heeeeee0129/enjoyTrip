@@ -250,6 +250,11 @@ const router = createRouter({
       name: "WeatherDetail",
       component: () => import("@/components/weather/WeatherDetail.vue"),
     },
+    {
+      path: "/chatgpt",
+      name: "ChatGPT",
+      component: () => import("@/components/chatgpt/ChatGPT.vue"),
+    },
   ],
 });
 

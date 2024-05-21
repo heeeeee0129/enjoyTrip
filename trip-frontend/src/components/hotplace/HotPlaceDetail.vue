@@ -2,14 +2,10 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getArticle, deleteArticle } from "@/api/hotplace.js";
-import {
-  checkFavorite,
-  countFavorite,
-  deleteFavorite,
-  writeFavorite,
-} from "@/api/favorite.js";
+import { checkFavorite, countFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
 import { useUserStore } from "@/stores/index";
 import { loadKakaoMapScript } from "@/utils/load-map";
+import WeatherDetail from "../weather/WeatherDetail.vue";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
@@ -23,6 +19,9 @@ const hotplace = ref({}); //글정보
 const ImgPath = ref(""); //이미지경로
 const confirmFavorite = ref(false);
 
+const weather = ref({});
+const isShowWeather = ref(false);
+
 const favoriteCount = ref("0");
 var map = null; //지도
 
@@ -31,6 +30,10 @@ onMounted(async () => {
   await loadKakaoMapScript();
   detailArticle();
 });
+
+const changeModal = () => {
+  isShowWeather.value = !isShowWeather.value;
+};
 
 function getImageUrl(folder, name) {
   // console.log(new URL(`./upload/${folder}/${name}`, import.meta.url));
@@ -116,6 +119,8 @@ const initmap = (lat, lng) => {
 const detailArticle = async () => {
   const success = (response) => {
     hotplace.value = response.data;
+    weather.value.lat = hotplace.value.latitude;
+    weather.value.lon = hotplace.value.longitude;
     ImgPath.value = getImageUrl(
       hotplace.value.fileInfo.saveFolder,
       hotplace.value.fileInfo.saveFile
@@ -322,12 +327,12 @@ const formatDate = (dateString) => {
     </div>
 
     <div class="flex px-32 flex-col md:flex-row">
-      <div
-        class="w-full h-full md:w-1/3 items-center justify-center rounded-full">
+      <div class="w-full h-full md:w-1/3 items-center justify-center rounded-full">
         <img
           :src="ImgPath"
           alt="이미지가 없음"
-          class="w-full h-full object-cover p-3 rounded-lg mt-16 opacity-90" />
+          class="w-full h-full object-cover p-3 rounded-lg mt-16 opacity-90"
+        />
       </div>
 
       <!--  -->
@@ -341,48 +346,39 @@ const formatDate = (dateString) => {
                 type="button"
                 class="py-2 px-4 rounded-lg text-white bg-blue-400 hover:bg-blue-500 shadow-md"
                 v-if="confirmFavorite"
-                @click="deleteCheck">
+                @click="deleteCheck"
+              >
                 좋아요 ❤️ {{ favoriteCount }}
               </button>
               <button
                 type="button"
                 class="py-2 px-4 rounded-lg text-blue-400 border border-blue-400 hover:bg-blue-100 shadow-md"
                 v-else
-                @click="addCheck">
+                @click="addCheck"
+              >
                 좋아요 ❤️ {{ favoriteCount }}
               </button>
             </div>
           </div>
           <div>
-            <label
-              for="placeName"
-              class="block text-sm font-medium text-gray-700"
+            <label for="placeName" class="block text-sm font-medium text-gray-700"
               >장소 이름:</label
             >
-            <div
-              class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
+            <div class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
               {{ hotplace.placeName }}
             </div>
           </div>
           <div>
-            <label
-              for="visitedDate"
-              class="block text-sm font-medium text-gray-700"
+            <label for="visitedDate" class="block text-sm font-medium text-gray-700"
               >다녀온 날짜:</label
             >
-            <div
-              class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
+            <div class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
               {{ formatDate(hotplace.registerTime) }}
             </div>
           </div>
           <div>
-            <label
-              for="category"
-              class="block text-sm font-medium text-gray-700"
-              >장소 유형:</label
-            >
-            <div
-              class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
+            <label for="category" class="block text-sm font-medium text-gray-700">장소 유형:</label>
+            <div class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-semibold">
               {{ hotplace.category }}
             </div>
           </div>
@@ -390,8 +386,7 @@ const formatDate = (dateString) => {
             <label for="content" class="block text-sm font-medium text-gray-700"
               >핫플레이스 소개:</label
             >
-            <div
-              class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-medium">
+            <div class="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm font-medium">
               {{ hotplace.content }}
             </div>
           </div>
@@ -400,27 +395,38 @@ const formatDate = (dateString) => {
           <button
             type="button"
             class="py-2 px-14 rounded-lg text-white bg-blue-500 hover:bg-blue-600 shadow-md"
+            @click="changeModal"
+          >
+            날씨
+          </button>
+          <button
+            type="button"
+            class="py-2 px-14 rounded-lg text-white bg-yellow-500 hover:bg-yellow-600 shadow-md"
             @click="moveModify"
-            v-if="userStore.member.id === hotplace.userId">
+            v-if="userStore.member.id === hotplace.userId"
+          >
             수정
           </button>
           <button
             type="button"
             class="py-2 px-14 rounded-lg text-white bg-red-500 hover:bg-red-600 shadow-md"
             @click="confirmDelete"
-            v-if="userStore.member.id === hotplace.userId">
+            v-if="userStore.member.id === hotplace.userId"
+          >
             삭제
           </button>
           <button
             type="button"
             class="py-2 px-14 rounded-lg text-white bg-green-500 hover:bg-green-600 shadow-md"
-            @click="moveList">
+            @click="moveList"
+          >
             목록
           </button>
           <button
             type="button"
             class="py-2 px-14 rounded-lg text-white bg-gray-500 hover:bg-gray-600 shadow-md"
-            @click="moveBack">
+            @click="moveBack"
+          >
             뒤로가기
           </button>
         </div>
@@ -432,27 +438,29 @@ const formatDate = (dateString) => {
 
       <div class="p-6">
         <div id="map" class="w-full h-96 mb-4"></div>
-        <div
-          class="flex flex-col md:flex-row justify-center space-y-2 md:space-y-0 md:space-x-4">
+        <div class="flex flex-col md:flex-row justify-center space-y-2 md:space-y-0 md:space-x-4">
           <button
             class="w-full md:w-1/2 py-2 text-white bg-green-500 rounded-lg shadow hover:bg-green-600"
-            @click="searchOnNaver(hotplace.placeName)">
+            @click="searchOnNaver(hotplace.placeName)"
+          >
             네이버 검색
           </button>
           <button
             class="w-full md:w-1/2 py-2 text-white bg-yellow-500 rounded-lg shadow hover:bg-yellow-600"
-            @click="
-              kakaoMapLink(
-                hotplace.placeName,
-                hotplace.latitude,
-                hotplace.longitude
-              )
-            ">
+            @click="kakaoMapLink(hotplace.placeName, hotplace.latitude, hotplace.longitude)"
+          >
             카카오맵 길찾기
           </button>
         </div>
       </div>
     </div>
+    <Modal
+      v-if="isShowWeather"
+      @close="isShowWeather = false"
+      class="fixed z-10 inset-0 overflow-y-auto"
+    >
+      <WeatherDetail :weather="weather" @change-modal="changeModal" />
+    </Modal>
   </div>
 </template>
 

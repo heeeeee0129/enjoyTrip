@@ -5,8 +5,11 @@ const faxios = fileAxios();
 const BASE_URL = "/hotplaceapi";
 
 // 핫플레이스 글 목록을 가져오는 함수
-export const listArticles = async (success, fail) => {
-  await axios.get(`${BASE_URL}/hotplace`).then(success).catch(fail);
+export const listArticles = async (param, success, fail) => {
+  await axios
+    .get(`${BASE_URL}/hotplace`, { params: param })
+    .then(success)
+    .catch(fail);
 };
 
 // 핫플레이스 인기글 목록을 가져오는 함수

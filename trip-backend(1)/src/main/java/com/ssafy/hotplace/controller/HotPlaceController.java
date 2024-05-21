@@ -1,13 +1,12 @@
 package com.ssafy.hotplace.controller;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -17,8 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,13 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.algorithm.service.Kmp;
 import com.ssafy.algorithm.service.KmpImpl;
 import com.ssafy.algorithm.service.SlangService;
-import com.ssafy.favorite.dto.Favorite;
 import com.ssafy.hotplace.dto.FileInfo;
 import com.ssafy.hotplace.dto.HotPlace;
 import com.ssafy.hotplace.service.HotPlaceService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.ServletContext;
 
 @RestController
 @RequestMapping("/hotplaceapi")
@@ -42,16 +39,14 @@ public class HotPlaceController {
 	private Kmp kmp;
 	private SlangService slangservice;
 	private List<String> slangList;
-	private ServletContext servletContext;
-	private final String realPath = "C:\\SSAFY\\PJT\\final_buk04_11_11\\trip-frontend\\src\\assets\\upload"; // 절대경로 , 환경에 맞춰서 사용
+	private final String realPath = "C:\\SSAFY\\PJT\\final_buk04_11_11\\trip-frontend\\src\\assets\\upload"; // 절대경로 
+																												
 //	private final String realPath = "/Users/kong/SSAFY/관통PJT/pjt07_buk04_11_11/trip-frontend/src/assets/upload";
 
-	public HotPlaceController(HotPlaceService hotplaceService, SlangService slangservice,
-			ServletContext servletContext) {
+	public HotPlaceController(HotPlaceService hotplaceService, SlangService slangservice) {
 		super();
 		this.hotplaceService = hotplaceService;
 		this.slangservice = slangservice;
-		this.servletContext = servletContext;
 		kmp = KmpImpl.getKmp();
 		try {
 			slangList = this.slangservice.getList(); // 등록된 비속어 리스트 가져오기
@@ -62,7 +57,8 @@ public class HotPlaceController {
 
 	@Operation(summary = "핫플레이스 글작성 ")
 	@PostMapping("/hotplace")
-	public ResponseEntity<?> writeArticle(@RequestPart(value="hotplace") HotPlace hotplace, @RequestPart(value="file") MultipartFile file) {
+	public ResponseEntity<?> writeArticle(@RequestPart(value = "hotplace") HotPlace hotplace,
+			@RequestPart(value = "file") MultipartFile file) {
 		try {
 			boolean flag = false;
 			int cnt = 0;
@@ -74,7 +70,7 @@ public class HotPlaceController {
 					break;
 				}
 			}
-			
+
 			if (!flag && file != null) {
 				String today = new SimpleDateFormat("yyMMdd").format(new Date());
 				String saveFolder = realPath + File.separator + today;
@@ -112,9 +108,11 @@ public class HotPlaceController {
 
 	@Operation(summary = "핫플레이스 글 목록 반환")
 	@GetMapping("/hotplace")
-	public ResponseEntity<?> listArticle() {
+	public ResponseEntity<?> listArticle(@RequestParam Map<String, String> map) {
 		try {
-			List<HotPlace> hotplaces = hotplaceService.listArticle();
+			List<HotPlace> hotplaces = hotplaceService.listArticle(map);
+			System.out.println(map);
+			System.out.println(hotplaces);
 			return ResponseEntity.ok(hotplaces);
 		} catch (Exception e) {
 			return exceptionHandling(e);
@@ -163,7 +161,7 @@ public class HotPlaceController {
 				String originalFileName = file.getOriginalFilename();
 				String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
 				List<String> allowedExtensions = Arrays.asList("jpg", "png", "jpeg");
-				
+
 				if (allowedExtensions.contains(extension)) {
 					// 기존 파일 삭제
 					HotPlace preHotplace = hotplaceService.getArticle(hotplace.getHotNo());
@@ -172,7 +170,7 @@ public class HotPlaceController {
 					String presaveFileName = preHotplace.getFileInfo().getSaveFile();
 					File fileToDelete = new File(prefolder, presaveFileName);
 					fileToDelete.delete();
-					
+
 					String saveFileName = UUID.randomUUID().toString() + "." + extension;
 					fileInfo.setSaveFolder(today);
 					fileInfo.setOriginalFile(originalFileName);
@@ -207,7 +205,7 @@ public class HotPlaceController {
 			String presaveFileName = preHotplace.getFileInfo().getSaveFile();
 			File fileToDelete = new File(prefolder, presaveFileName);
 			fileToDelete.delete();
-			
+
 			int cnt = hotplaceService.deleteArticle(hotNo);
 			return ResponseEntity.ok(cnt);
 		} catch (Exception e) {
@@ -215,7 +213,7 @@ public class HotPlaceController {
 			return exceptionHandling(e);
 		}
 	}
-	
+
 	@Operation(summary = "핫플레이스 인기글 목록 반환")
 	@GetMapping("/hotplace/top")
 	public ResponseEntity<?> listTop() {
@@ -226,7 +224,6 @@ public class HotPlaceController {
 			return exceptionHandling(e);
 		}
 	}
-	
 
 	private ResponseEntity<String> exceptionHandling(Exception e) {
 		e.printStackTrace();

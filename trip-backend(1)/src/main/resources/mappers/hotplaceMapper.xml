@@ -23,6 +23,19 @@
 	    <result property="originalFile" column="original_file"/>
 	    <result property="saveFile" column="save_file"/>
 	</resultMap>
+	
+	<sql id="search">
+	    <where>
+	        <if test="word != null and word != ''">
+	            <if test="key == 'place_name'">
+	                AND h.place_name LIKE CONCAT('%', #{word}, '%')
+	            </if>
+	            <if test="key == 'user_name'">
+	                AND m.user_name = #{word}
+	            </if>
+	        </if>
+	    </where>
+	</sql>
 
 	<insert id="writeArticle" parameterType="hotPlace">
 		insert into hotplace (user_id, place_name, category, content, register_time, latitude, longitude)
@@ -43,6 +56,7 @@
    	 	FROM hotplace h
     	JOIN members m ON h.user_id = m.user_id
     	LEFT JOIN file_info f ON h.hot_no = f.hot_no
+    	<include refid="search"></include>
 		ORDER BY h.hot_no DESC
 	</select>
 

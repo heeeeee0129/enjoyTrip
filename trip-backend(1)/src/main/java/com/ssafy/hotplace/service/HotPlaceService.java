@@ -2,6 +2,7 @@ package com.ssafy.hotplace.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.hotplace.dto.HotPlace;
 
@@ -9,7 +10,7 @@ public interface HotPlaceService {
 
 	int writeArticle(HotPlace hotplace) throws SQLException;
 
-	List<HotPlace> listArticle() throws SQLException;
+	List<HotPlace> listArticle(Map<String, String> map) throws SQLException;
 
 	void updateHit(int hotNo) throws SQLException;
 
@@ -24,5 +25,6 @@ public interface HotPlaceService {
 	void deleteCount(int hotNo) throws SQLException;
 
 	List<HotPlace> listTop() throws SQLException;
+
 
 }

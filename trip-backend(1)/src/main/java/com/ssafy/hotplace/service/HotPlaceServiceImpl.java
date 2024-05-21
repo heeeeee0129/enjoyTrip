@@ -2,6 +2,7 @@ package com.ssafy.hotplace.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +36,8 @@ public class HotPlaceServiceImpl implements HotPlaceService {
 	}
 
 	@Override
-	public List<HotPlace> listArticle() throws SQLException {
-		return hotplaceDao.listArticle();
+	public List<HotPlace> listArticle(Map<String, String> map) throws SQLException {
+		return hotplaceDao.listArticle(map);
 	}
 
 	@Override

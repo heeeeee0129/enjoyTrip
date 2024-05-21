@@ -69,11 +69,10 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, computed,defineEmits } from "vue";
+import { ref, defineProps, onMounted, computed, defineEmits } from "vue";
 import { getAttraction } from "@/api/attraction.js";
 import { fail } from "@/utils/error-handler";
 import image from "@/assets/images.png";
-
 
 const props = defineProps({
   showModal: Boolean,
@@ -93,17 +92,16 @@ const detailAttraction = async () => {
     console.log("response", attraction.value);
   };
   console.log("Selected", props.selectedContentId);
-  if(props.selectedContentId){
+  if (props.selectedContentId) {
     await getAttraction(props.selectedContentId.value, success, fail);
   }
-  
 };
 
 onMounted(() => {
-  if(props.showModal){
+  if (props.showModal) {
     detailAttraction();
-  }});
-
+  }
+});
 
 const kakaoMapLink = computed(() => {
   const { latitude, longitude, title } = attraction.value;

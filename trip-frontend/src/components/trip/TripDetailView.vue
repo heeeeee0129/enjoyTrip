@@ -49,6 +49,11 @@
         class="py-2 px-4 bg-gray-200 text-gray-800 rounded-lg mr-2">
         돌아가기
       </button>
+      <button
+        @click="changeModal"
+        class="py-2 px-4 bg-blue-200 text-blue-800 rounded-lg mr-2">
+        날씨보기
+      </button>
       <a
         :href="kakaoMapLink"
         target="_blank"
@@ -64,6 +69,14 @@
         네이버 검색
       </a>
     </div>
+
+    <!-- 모달 -->
+    <Modal
+      v-if="isModalVisible"
+      @close="isModalVisible = false"
+      class="fixed z-10 inset-0 overflow-y-auto">
+      <WeatherDetail :weather="weather" @change-modal="changeModal" />
+    </Modal>
   </div>
 </template>
 
@@ -72,6 +85,7 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getAttraction } from "@/api/attraction.js";
 import { fail } from "@/utils/error-handler";
+import WeatherDetail from "@/components/weather/WeatherDetail.vue";
 import image from "@/assets/images.png";
 
 const router = useRouter();
@@ -79,6 +93,8 @@ const route = useRoute();
 const { contentId } = route.params;
 
 const attraction = ref({});
+const weather = ref({});
+const isModalVisible = ref(false);
 
 onMounted(async () => {
   detailAttraction();
@@ -87,6 +103,8 @@ onMounted(async () => {
 const detailAttraction = async () => {
   const success = (response) => {
     attraction.value = response.data;
+    weather.value.lat = attraction.value.latitude;
+    weather.value.lon = attraction.value.longitude;
   };
 
   await getAttraction(contentId, success, fail);
@@ -109,6 +127,10 @@ const naverSearchLink = computed(() => {
     title
   )}`;
 });
+
+const changeModal = () => {
+  isModalVisible.value = !isModalVisible.value;
+};
 </script>
 
 <style scoped></style>

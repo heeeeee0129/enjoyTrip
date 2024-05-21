@@ -38,7 +38,7 @@ export default {
 <template>
   <div>
     <header class="header">
-      <svg
+      <!-- <svg
         class="logo"
         viewBox="0 0 128 128"
         width="24"
@@ -52,7 +52,7 @@ export default {
           fill="#35495e"
           d="M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z"
           data-v-97393f76=""></path>
-      </svg>
+      </svg> -->
       채팅창
       <div class="message-count">
         <img class="message-icon" src="@/assets/message.png" alt="" />

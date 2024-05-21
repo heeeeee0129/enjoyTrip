@@ -2,9 +2,9 @@
 import { useUserStore } from "@/stores/index.js";
 import { ref, computed } from "vue"; // 계산된 속성 사용
 import { useRouter } from "vue-router";
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
 import "@/index.css";
 const store = useUserStore();
@@ -78,8 +78,8 @@ library.add(faCaretDown);
                 class="hover:text-gray-300 no-underline"
                 @click="toggleDropdown"
                 @mouseenter="isDropdownOpen = true">
-                커뮤니티                <font-awesome-icon :icon="['fas', 'caret-down']" class="ml-1"/>
-
+                커뮤니티
+                <font-awesome-icon :icon="['fas', 'caret-down']" class="ml-1" />
               </button>
               <ul
                 @mouseenter="isDropdownOpen = true"
@@ -117,7 +117,13 @@ library.add(faCaretDown);
                 </li>
               </ul>
             </li>
-
+            <li>
+              <router-link
+                :to="{ name: 'NewsView' }"
+                class="hover:text-gray-300 no-underline"
+                >뉴스</router-link
+              >
+            </li>
             <li>
               <router-link
                 :to="{ name: 'NoticeView' }"

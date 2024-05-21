@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.5</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ssafy</groupId>
 	<artifactId>pjt06_buk04_11_11</artifactId>
@@ -49,13 +50,13 @@
 			<version>3.0.3</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- TODO: 1. JSP Servlet 활성화를 위해 추가-->
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		
+
 		<!-- TODO: 5. JSTL 추가 -->
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
@@ -65,28 +66,35 @@
 			<groupId>jakarta.servlet.jsp.jstl</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
 		</dependency>
-		
+
 		<!-- TODO: 11. JUnit 추가 -->
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
 		</dependency>
-		
+
 		<!-- TODO: 13. Swagger를 위한 SpringDoc 추가 -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-		
+
 		<!-- 크롤링 위한 Jsoup추가 -->
 		<dependency>
-		    <groupId>org.jsoup</groupId>
-		    <artifactId>jsoup</artifactId>
-		    <version>1.15.3</version>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.15.3</version>
 		</dependency>
 
-			
+		<!-- JSON 파싱 -->
+		<!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20240303</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -97,7 +105,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<!-- TODO: 6. 정적 파일 등록-->
 	<!-- TODO: 7. Controller, DAO, DTO, Service 추가-->
 </project>

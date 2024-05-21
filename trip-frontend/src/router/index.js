@@ -245,6 +245,11 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/weather",
+      name: "WeatherDetail",
+      component: () => import("@/components/weather/WeatherDetail.vue"),
+    },
   ],
 });
 

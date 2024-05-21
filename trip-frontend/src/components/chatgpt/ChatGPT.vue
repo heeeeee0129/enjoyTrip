@@ -11,7 +11,7 @@ const chatGPT = ref({
 const chatLog = ref([
   {
     sender: "bot",
-    message: "안녕하세요! 무엇을 도와드릴까요?",
+    message: "어디로 놀러가시나요? 맛집을 추천해드릴게요!",
   },
 ]);
 

@@ -58,12 +58,18 @@ const scrollToBottom = () => {
   <div class="text-center" style="margin-top: 20px"><h2>Chat-GPT</h2></div>
   <div class="chat-container">
     <div ref="chatLogRef" class="chat-log">
-      <div v-for="(log, index) in chatLog" :key="index" :class="[log.sender, 'bubble']">
+      <div
+        v-for="(log, index) in chatLog"
+        :key="index"
+        :class="[log.sender, 'bubble']">
         <span>{{ log.sender }}: {{ log.message }}</span>
       </div>
     </div>
     <div class="chat-input">
-      <input v-model="chatGPT.userMsg" @keyup.enter="sendMessage" placeholder="Type a message..." />
+      <input
+        v-model="chatGPT.userMsg"
+        @keyup.enter="sendMessage"
+        placeholder="Type a message..." />
       <button @click="sendMessage">Send</button>
     </div>
   </div>

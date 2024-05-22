@@ -15,6 +15,7 @@ onMounted(() => {
 const getinfo = async () => {
   const success = (response) => {
     info.value = response.data;
+    console.log(info.value);
   };
 
   const fail = () => {

@@ -6,7 +6,7 @@
 	<select id="suggestAttractions" parameterType="int" resultType="attraction">
 		SELECT content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
 		FROM attraction_info
-		WHERE content_type_id = #{categoryNo} AND first_image != ""
+		WHERE content_type_id = #{categoryNo} AND first_image != "" AND first_image2 != ""
 		ORDER BY RAND()
 		LIMIT 6;
 	</select>
@@ -14,7 +14,7 @@
 	<select id="getTopList" resultType="attraction">
 		SELECT content_id, content_type_id, title, addr1, addr2, zipcode, tel, first_image, first_image2, readcount, sido_code, gugun_code, latitude, longitude, mlevel
 		FROM attraction_info
-		WHERE content_type_id = 12 AND first_image != ""
+		WHERE content_type_id = 12 AND first_image != "" AND first_image2 != ""
 		ORDER BY RAND()
 		LIMIT 4;
 	</select>

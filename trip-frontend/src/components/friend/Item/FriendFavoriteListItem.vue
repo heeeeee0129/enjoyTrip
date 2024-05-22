@@ -1,7 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { checkFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
+import {
+  checkFavorite,
+  deleteFavorite,
+  writeFavorite,
+} from "@/api/favorite.js";
 import { getArticle } from "@/api/hotplace.js";
 import { useUserStore } from "@/stores/index";
 import Swal from "sweetalert2";
@@ -151,9 +155,13 @@ const checkDelete = async () => {
 </script>
 
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+  <div
+    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
     <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
-      <img :src="ImgPath" :alt="hotplace.placeName" class="w-full h-64 object-cover" />
+      <img
+        :src="ImgPath"
+        :alt="hotplace.placeName"
+        class="w-full h-64 object-cover" />
       <div class="absolute bottom-0 left-0 p-4">
         <h3 class="text-xl font-semibold text-white">
           {{ hotplace.placeName }}
@@ -163,10 +171,18 @@ const checkDelete = async () => {
     <div class="p-4 d-flex justify-content-between align-items-center">
       <p class="text-gray-700 mb-4">작성자: {{ hotplace.userName }}</p>
       <div>
-        <button class="btn btn-info rounded-pill px-4" v-if="checked" @click="checkDelete">
+        <button
+          class="btn btn-primary rounded-pill px-4"
+          v-if="checked"
+          @click="checkDelete">
           ❤️
         </button>
-        <button class="btn btn-outline-info rounded-pill px-4" v-else @click="checkAdd">❤️</button>
+        <button
+          class="btn btn-outline-primary rounded-pill px-4"
+          v-else
+          @click="checkAdd">
+          ❤️
+        </button>
       </div>
     </div>
   </div>

@@ -60,11 +60,12 @@ function moveBack() {
                 <img
                   class="avatar me-2 bg-light p-2 rounded-circle"
                   src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
-                  style="width: 40px; height: 40px"
-                />
+                  style="width: 40px; height: 40px" />
                 <div class="ms-2">
                   <p class="mb-1">
-                    <span class="fw-bold">{{ message.fromName }}({{ message.fromId }})</span>
+                    <span class="fw-bold"
+                      >{{ message.fromName }}({{ message.fromId }})</span
+                    >
                   </p>
                 </div>
               </div>
@@ -73,11 +74,12 @@ function moveBack() {
                 <img
                   class="avatar me-2 bg-light p-2 rounded-circle"
                   src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
-                  style="width: 40px; height: 40px"
-                />
+                  style="width: 40px; height: 40px" />
                 <div class="ms-2">
                   <p class="mb-1">
-                    <span class="fw-bold">{{ message.toName }}({{ message.toId }})</span>
+                    <span class="fw-bold"
+                      >{{ message.toName }}({{ message.toId }})</span
+                    >
                   </p>
                 </div>
               </div>
@@ -90,7 +92,9 @@ function moveBack() {
               </p>
             </div>
           </div>
-          <div class="bg-white rounded p-3" style="min-width: 250px; min-height: 300px">
+          <div
+            class="bg-white rounded p-3"
+            style="min-width: 250px; min-height: 300px">
             <div class="text-secondary">
               {{ message.content }}
             </div>
@@ -99,15 +103,13 @@ function moveBack() {
             <button
               type="button"
               class="btn btn-outline-secondary me-1 rounded-pill"
-              @click="moveBack"
-            >
+              @click="moveBack">
               뒤로가기
             </button>
             <button
               type="button"
               class="btn btn-outline-primary me-1 rounded-pill"
-              @click="changeIsWrite"
-            >
+              @click="changeIsWrite">
               답장
             </button>
           </div>
@@ -115,7 +117,10 @@ function moveBack() {
       </div>
     </div>
   </div>
-  <MessageReWrite v-if="isWrite" :toId="message.fromId" @changeIsWrite="changeIsWrite" />
+  <MessageReWrite
+    v-if="isWrite"
+    :toId="message.fromId"
+    @changeIsWrite="changeIsWrite" />
 </template>
 
 <style scoped></style>

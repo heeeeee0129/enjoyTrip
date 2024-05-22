@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-md mx-auto p-4">
     <!-- Chat Container -->
-    <div class="bg-white rounded-lg shadow-md p-4">
+    <div class="bg-white rounded-lg shadow-md p-4 relative">
       <!-- Chat Header -->
       <div class="flex items-center mb-4">
         <div class="ml-3">
@@ -85,6 +85,14 @@
           Send
         </button>
       </div>
+
+      <!-- Loading Indicator -->
+      <div
+        v-if="loading"
+        class="absolute inset-0 bg-gray-900 opacity-50 flex items-center justify-center">
+        <div
+          class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -98,6 +106,7 @@ const chatGPT = ref({
   userMsg: "",
   gptMsg: "",
 });
+const loading = ref(false);
 
 const chatLog = ref([
   {
@@ -118,20 +127,24 @@ const sendMessage = () => {
 };
 
 const getChat = async () => {
+  loading.value = true; // 로딩 시작
+
   const success = async (response) => {
     chatGPT.value = response.data;
     chatLog.value.push({ sender: "bot", message: chatGPT.value.gptMsg });
     await nextTick();
     scrollToBottom();
+    loading.value = false; // 로딩 종료
   };
 
   const fail = () => {
     Swal.fire({
       title: "실패!",
-      text: "문제가 발생헀습니다.",
+      text: "문제가 발생했습니다.",
       icon: "error",
       confirmButtonText: "OK",
     });
+    loading.value = false; // 로딩 종료
   };
 
   await getChatResponse(chatGPT.value, success, fail);
@@ -254,5 +267,24 @@ const scrollToBottom = () => {
 }
 .max-h-128 {
   max-height: 32rem;
+}
+
+/* 추가적인 스타일 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  animation: spin 2s linear infinite;
 }
 </style>

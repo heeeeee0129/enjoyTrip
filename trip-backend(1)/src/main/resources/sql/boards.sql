@@ -74,3 +74,4 @@ VALUES ('ssafy', '제목1', '내용1', 0, NOW()),
        ('ssafy', '제목9', '내용9', 0, NOW());
 
 COMMIT;
+

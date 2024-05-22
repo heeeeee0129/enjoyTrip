@@ -75,6 +75,8 @@ const setHotPlace = async () => {
   const success = (response) => {
     hotplace.value = response.data;
     initmap(hotplace.value.latitude, hotplace.value.longitude);
+    hotplace.value.fileInfo = 0;
+    hotplace.value.registerTime = "";
   };
 
   const fail = () => {

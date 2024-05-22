@@ -81,9 +81,13 @@ const checkDelete = async () => {
 </script>
 
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+  <div
+    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
     <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
-      <img :src="ImgPath" :alt="hotplace.placeName" class="w-full h-64 object-cover" />
+      <img
+        :src="ImgPath"
+        :alt="hotplace.placeName"
+        class="w-full h-64 object-cover" />
       <div class="absolute bottom-0 left-0 p-4">
         <h3 class="text-xl font-semibold text-white">
           {{ hotplace.placeName }}
@@ -92,7 +96,12 @@ const checkDelete = async () => {
     </div>
     <div class="p-4 d-flex justify-content-between align-items-center">
       <p class="text-gray-700 mb-4">작성자: {{ hotplace.userName }}</p>
-      <button type="button" class="btn btn-info rounded-pill px-4" @click="checkDelete">❤️</button>
+      <button
+        type="button"
+        class="btn btn-primary rounded-pill px-4"
+        @click="checkDelete">
+        ❤️
+      </button>
     </div>
   </div>
 </template>

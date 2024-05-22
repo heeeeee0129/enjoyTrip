@@ -5,7 +5,7 @@
       <!-- Chat Header -->
       <div class="flex items-center mb-4">
         <div class="ml-3">
-          <p class="text-xl font-medium">맛집 추천</p>
+          <p class="text-xl font-medium text-blue-500">맛집 추천</p>
           <p class="text-gray-500">Chat-GPT</p>
         </div>
       </div>

@@ -1,6 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { checkFavorite, deleteFavorite, writeFavorite } from "@/api/favorite.js";
+import {
+  checkFavorite,
+  deleteFavorite,
+  writeFavorite,
+} from "@/api/favorite.js";
 import { useUserStore } from "@/stores/index";
 import Swal from "sweetalert2";
 
@@ -136,13 +140,13 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
+  <div
+    class="bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
     <div class="relative" @click="goDetail(hotplace.hotNo)" type="button">
       <img
         :src="getImageUrl(ffolder, fname)"
         alt="이미지가 없음"
-        class="w-full h-64 object-cover"
-      />
+        class="w-full h-64 object-cover" />
       <div class="absolute bottom-0 left-0 p-4">
         <h3 class="text-xl font-semibold text-white">
           {{ hotplace.placeName }}
@@ -153,13 +157,21 @@ const formatDate = (dateString) => {
       <div class="flex justify-between items-center">
         <div>
           <p class="text-gray-700 mb-4">작성자: {{ hotplace.userName }}</p>
-          <p class="text-gray-700 mb-4">다녀온 날짜: {{ formatDate(hotplace.registerTime) }}</p>
+          <p class="text-gray-700 mb-4">
+            다녀온 날짜: {{ formatDate(hotplace.registerTime) }}
+          </p>
         </div>
         <div v-if="isLoggedIn">
-          <button class="btn btn-info rounded-pill px-4" v-if="checked" @click="checkDelete">
+          <button
+            class="btn btn-primary rounded-pill px-4"
+            v-if="checked"
+            @click="checkDelete">
             ❤️
           </button>
-          <button class="btn btn-outline-info rounded-pill px-4" v-else @click="checkAdd">
+          <button
+            class="btn btn-outline-primary rounded-pill px-4"
+            v-else
+            @click="checkAdd">
             ❤️
           </button>
         </div>

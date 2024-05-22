@@ -58,12 +58,20 @@ const scrollToBottom = () => {
   <div class="text-center" style="margin-top: 20px"><h2>Chat-GPT</h2></div>
   <div class="chat-container">
     <div ref="chatLogRef" class="chat-log">
-      <div v-for="(log, index) in chatLog" :key="index" :class="[log.sender, 'bubble']">
-        <span>{{ log.sender }}: {{ log.message }}</span>
+      <div
+        v-for="(log, index) in chatLog"
+        :key="index"
+        :class="['bubble-container', log.sender]">
+        <div :class="[log.sender, 'bubble']">
+          <span>{{ log.message }}</span>
+        </div>
       </div>
     </div>
     <div class="chat-input">
-      <input v-model="chatGPT.userMsg" @keyup.enter="sendMessage" placeholder="Type a message..." />
+      <input
+        v-model="chatGPT.userMsg"
+        @keyup.enter="sendMessage"
+        placeholder="Type a message..." />
       <button @click="sendMessage">Send</button>
     </div>
   </div>
@@ -76,58 +84,98 @@ const scrollToBottom = () => {
   height: 70vh;
   max-width: 600px;
   margin: 20px auto 0 auto;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .chat-log {
   flex: 1;
-  padding: 10px;
+  padding: 20px;
   overflow-y: auto;
-  background-color: #f9f9f9;
+  background-color: #f3f3f3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.bubble {
-  max-width: 70%; /* 말풍선 최대 너비 설정 */
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 10px;
+.bubble-container {
+  display: flex;
+  width: 100%;
 }
 
 .user {
-  align-self: flex-end; /* 사용자 말풍선을 오른쪽에 정렬 */
-  background-color: #007bff; /* 사용자 말풍선 색상 */
-  color: white;
+  justify-content: flex-end;
 }
 
 .bot {
-  align-self: flex-start; /* 봇 말풍선을 왼쪽에 정렬 */
-  background-color: #f9f9f9; /* 봇 말풍선 색상 */
+  justify-content: flex-start;
+}
+
+.bubble {
+  display: inline-block; /* 크기를 내용에 맞춤 */
+  max-width: 75%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+  position: relative;
+  animation: fadeIn 0.5s ease-in-out;
+  word-wrap: break-word; /* 긴 단어가 있을 때 줄바꿈 */
+}
+
+.user .bubble {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 5px;
+  border-top-left-radius: 20px;
+  text-align: right;
+  margin-left: auto; /* 사용자 말풍선을 오른쪽에 정렬 */
+}
+
+.bot .bubble {
+  background-color: #ebebeb;
   color: black;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 20px;
 }
 
 .chat-input {
   display: flex;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #ddd;
 }
 
 .chat-input input {
   flex: 1;
-  padding: 10px;
+  padding: 15px;
   border: none;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid #ddd;
+  font-size: 16px;
 }
 
 .chat-input button {
-  padding: 10px 20px;
+  padding: 15px 20px;
   border: none;
   background-color: #007bff;
   color: white;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .chat-input button:hover {
   background-color: #0056b3;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

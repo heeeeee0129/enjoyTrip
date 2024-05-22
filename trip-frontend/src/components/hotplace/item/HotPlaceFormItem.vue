@@ -75,6 +75,8 @@ const setHotPlace = async () => {
   const success = (response) => {
     hotplace.value = response.data;
     initmap(hotplace.value.latitude, hotplace.value.longitude);
+    hotplace.value.fileInfo = 0;
+    hotplace.value.registerTime = "";
   };
 
   const fail = () => {
@@ -168,6 +170,7 @@ watch(
 );
 
 function onSubmit() {
+  console.log("호출");
   if (subjectErrMsg.value) {
     Swal.fire({
       title: "실패!",
@@ -378,20 +381,20 @@ const updateArticle = async () => {
             rows="5"
             placeholder="핫플레이스를 소개하세요"></textarea>
         </div>
+        <div class="text-center mt-4">
+          <button
+            type="submit"
+            class="btn btn-outline-primary rounded-pill px-4 mx-12">
+            {{ type === "regist" ? "글작성" : "글수정" }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary rounded-pill px-4 mx-12"
+            @click="moveList">
+            뒤로가기
+          </button>
+        </div>
       </form>
-    </div>
-    <div class="text-center mt-4">
-      <button
-        type="submit"
-        class="btn btn-outline-primary rounded-pill px-4 mx-12">
-        {{ type === "regist" ? "글작성" : "글수정" }}
-      </button>
-      <button
-        type="button"
-        class="btn btn-outline-secondary rounded-pill px-4 mx-12"
-        @click="moveList">
-        뒤로가기
-      </button>
     </div>
   </div>
 </template>

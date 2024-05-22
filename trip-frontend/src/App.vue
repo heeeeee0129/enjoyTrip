@@ -1,10 +1,19 @@
 <script setup>
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
 import TheHeadingNavbar from "@/components/common/TheHeadingNavbar.vue";
-import { onMounted } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useUserStore } from "./stores";
 const { VITE_SEND_BIRD_APP_ID } = import.meta.env;
 
+const route = useRoute();
+const addSpacer = ref(false);
+watch(
+  () => route.name,
+  (newRoute) => {
+    addSpacer.value = newRoute !== "main";
+  },
+  { immediate: true }
+);
 onMounted(() => {
   (function (w, d, s, ...args) {
     var div = d.createElement("div");
@@ -28,6 +37,7 @@ onMounted(() => {
 <template>
   <div id="chatbot-container">
     <TheHeadingNavbar />
+    <div v-if="addSpacer" class="h-24"></div>
     <router-view />
   </div>
 </template>

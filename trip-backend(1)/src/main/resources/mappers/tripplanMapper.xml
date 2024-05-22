@@ -8,6 +8,7 @@
 		SELECT t.id, t.title, t.content, t.start_date, t.end_date, t.user_id, m.user_name, t.created_at 
 		FROM trip_plan t
 		JOIN members m ON t.user_id = m.user_id 
+		order by t.id desc
 	</select>
 	
 	<select id="listUserArticle" parameterType="string" resultType="tripPlan">

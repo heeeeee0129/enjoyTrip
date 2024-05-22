@@ -20,9 +20,9 @@
         @click="navigateTo(item.link)"
         class="p-3 h-60 rounded-2xl m-2 text-white grid-cols-3"
         :class="{
-          ' bg-opacity-80 transition-all bg-gray-900 shadow-none duration-300':
+          ' bg-opacity-80 transition-all bg-gray-900 shadow-none duration-500':
             item.hover,
-          ' bg-opacity-60 transition-all bg-gray-700 shadow-gray-700 shadow-lg duration-300':
+          ' bg-opacity-60 transition-all bg-gray-700 shadow-gray-700 shadow-lg duration-500':
             !item.hover,
         }">
         <div
@@ -34,7 +34,7 @@
           </h3>
           <img
             :src="item.img"
-            class="m-2 w-24 h-24 items-center mb-2 opacity-90" />
+            class="m-2 w-20 h-20 items-center mb-2 opacity-70" />
         </div>
         <p v-else class="text-lg font-bold p-4">{{ item.content }}</p>
       </div>

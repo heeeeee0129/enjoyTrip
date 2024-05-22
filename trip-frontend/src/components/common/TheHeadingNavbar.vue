@@ -29,106 +29,90 @@ const toggleDropdown = () => {
 };
 library.add(faCaretDown);
 </script>
-
 <template>
-  <header class="text-gray-600 py-4 shadow-sm">
-    <div
-      class="container flex flex-wrap text-base justify-between flex-row sm:flex-auto">
-      <div class="flex flex-row">
-        <a class="flex title-font font-medium items-center text-gray-900">
-          <router-link :to="{ name: 'main' }" class="font-bold text-xl">
-            <span class="ml-1 text-xl font-semibold no-underline"
-              >EnjoyTrip</span
-            >
-          </router-link>
-        </a>
-        <nav class="flex flex-wrap text-base justify-around">
-          <ul class="flex items-center space-x-4 lg:space-x-10 my-auto">
+  <header class="header py-4 shadow-md fixed w-full top-0 z-50 h-24">
+    <div class="container flex flex-wrap items-center justify-between">
+      <div class="flex items-center">
+        <router-link
+          :to="{ name: 'main' }"
+          class="text-3xl font-bold text-white">
+          EnjoyTrip
+        </router-link>
+        <nav class="pt-2 text-white font-semibold text-base">
+          <ul class="flex items-center space-x-6 pt-2 gap-x-3">
             <li>
-              <router-link
-                :to="{ name: 'search' }"
-                class="hover:text-gray-300 no-underline"
+              <router-link :to="{ name: 'search' }" class="hover:text-black"
                 >여행지검색</router-link
               >
             </li>
             <li>
-              <router-link
-                :to="{ name: 'plan' }"
-                class="hover:text-gray-300 no-underline"
+              <router-link :to="{ name: 'plan' }" class="hover:text-black"
                 >여행계획</router-link
               >
             </li>
             <li>
               <router-link
                 :to="{ name: 'HotPlaceView' }"
-                class="hover:text-gray-300 no-underline"
+                class="hover:text-black"
                 >여기좋아요</router-link
               >
             </li>
-
             <li v-if="isLoggedIn">
               <router-link
                 :to="{ name: 'FavoriteView' }"
-                class="hover:text-gray-300 no-underline"
+                class="hover:text-black"
                 >관심있는장소</router-link
               >
             </li>
-
-            <li v-if="isLoggedIn" @mouseenter="isDropdownOpen = true">
+            <li
+              v-if="isLoggedIn"
+              class="relative"
+              @mouseenter="isDropdownOpen = true">
               <button
-                class="hover:text-gray-300 no-underline"
                 @click="toggleDropdown"
-                @mouseenter="isDropdownOpen = true">
+                @mouseenter="isDropdownOpen = true"
+                class="hover:text-black">
                 커뮤니티
                 <font-awesome-icon :icon="['fas', 'caret-down']" class="ml-1" />
               </button>
               <ul
+                v-show="isDropdownOpen"
                 @mouseenter="isDropdownOpen = true"
                 @mouseleave="isDropdownOpen = false"
-                v-show="isDropdownOpen"
-                class="absolute bg-white border rounded shadow-md mt-2 w-48 z-10"
-                style="display: none">
-                <li class="hover:bg-gray-100">
+                class="dropdown-menu">
+                <li class="hover:bg-black">
                   <router-link
                     :to="{ name: 'FriendView' }"
-                    class="block p-2 text-sm m-1 text-gray-700 hover:text-gray-900"
+                    class="dropdown-link"
                     >친구</router-link
                   >
                 </li>
-                <li class="hover:bg-gray-100">
+                <li class="hover:bg-black">
                   <router-link
                     :to="{ name: 'MessageView' }"
-                    class="block p-2 text-sm m-1 text-gray-700 hover:text-gray-900"
+                    class="dropdown-link"
                     >메시지</router-link
                   >
                 </li>
-                <li class="hover:bg-gray-100">
-                  <router-link
-                    :to="{ name: 'ChatView' }"
-                    class="block p-2 text-sm m-1 text-gray-700 hover:text-gray-900"
+                <li class="hover:bg-black">
+                  <router-link :to="{ name: 'ChatView' }" class="dropdown-link"
                     >채팅</router-link
                   >
                 </li>
-                <li class="hover:bg-gray-100">
-                  <router-link
-                    :to="{ name: 'BoardView' }"
-                    class="block p-2 text-sm m-1 text-gray-700 hover:text-gray-900"
+                <li class="hover:bg-black">
+                  <router-link :to="{ name: 'BoardView' }" class="dropdown-link"
                     >자유게시판</router-link
                   >
                 </li>
               </ul>
             </li>
             <li>
-              <router-link
-                :to="{ name: 'NewsView' }"
-                class="hover:text-gray-300 no-underline"
+              <router-link :to="{ name: 'NewsView' }" class="hover:text-black"
                 >뉴스</router-link
               >
             </li>
             <li>
-              <router-link
-                :to="{ name: 'NoticeView' }"
-                class="hover:text-gray-300 no-underline"
+              <router-link :to="{ name: 'NoticeView' }" class="hover:text-black"
                 >공지사항</router-link
               >
             </li>
@@ -136,52 +120,85 @@ library.add(faCaretDown);
         </nav>
       </div>
 
-      <ul
-        class="flex flex-row-reverse items-center space-x-4 lg:space-x-10 my-auto mt-1">
-        <div v-if="isLoggedIn">
-          <div class="flex items-center">
-            <router-link
-              :to="{ name: 'UserMypage' }"
-              class="mx-6 inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
-              마이페이지
-            </router-link>
-            <button
-              @click.prevent="doLogout"
-              class="shadow-sm inline-flex items-center bg-gray-200 border-0 py-2 px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mx-6">
-              로그아웃
-            </button>
-          </div>
+      <div class="flex items-center space-x-2">
+        <div v-if="isLoggedIn" class="flex items-center space-x-4">
+          <router-link :to="{ name: 'UserMypage' }" class="button"
+            >마이페이지</router-link
+          >
+          <button @click.prevent="doLogout" class="button">로그아웃</button>
         </div>
-        <div v-else>
-          <router-link
-            :to="{ name: 'UserLogin' }"
-            class="mx-6 inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
-            로그인
-          </router-link>
-          <router-link
-            :to="{ name: 'UserJoin' }"
-            class="mx-6 inline-flex items-center bg-gray-200 border-0 py-2 shadow-sm px-3 focus:outline-none hover:bg-gray-300 rounded text-sm text-gray-900 mr-4">
-            회원가입
-          </router-link>
+        <div v-else class="flex items-center space-x-4">
+          <router-link :to="{ name: 'UserLogin' }" class="button"
+            >로그인</router-link
+          >
+          <router-link :to="{ name: 'UserJoin' }" class="button"
+            >회원가입</router-link
+          >
         </div>
-      </ul>
+      </div>
     </div>
   </header>
 </template>
-
 <style scoped>
+.header {
+  background-color: rgba(0, 0, 0, 0.3); /* 반투명 검은색 배경 */
+  transition: background-color 0.3s;
+}
+
+.header:hover {
+  /* background-color: rgba(255, 255, 255, 0.5); 호버 시 하얀색 반투명 배경 */
+}
+
 a {
-  color: inherit; /* 부모 요소의 색상 상속 */
-  text-decoration: none; /* 밑줄 제거 */
-  transition: color 0.3s; /* 호버 시 색상 변화를 부드럽게 만들기 위한 transition 속성 추가 */
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s, background-color 0.3s;
 }
 
 a:hover {
-  color: #4a5568; /* 호버 시 색상 변경 */
+  color: black; /* 호버 시 텍스트 색상 변경 */
 }
 
-button:hover {
-  background-color: #cbd5e0; /* 호버 시 배경색 변경 */
-  color: #4a5568; /* 호버 시 텍스트 색상 변경 */
+.button {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.3); /* 버튼 배경 반투명 검은색 */
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button:hover {
+  background-color: #cbd5e0; /* 호버 시 버튼 배경 색상 변경 */
+  color: black; /* 호버 시 텍스트 색상 변경 */
+}
+
+.dropdown-menu {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 200px;
+  z-index: 1000;
+}
+
+.relative:hover .dropdown-menu {
+  display: block; /* 부모 요소가 호버될 때 드롭다운 메뉴 표시 */
+}
+
+.dropdown-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dropdown-link:hover {
+  background-color: #f1f1f1;
+  color: black; /* 호버 시 텍스트 색상 변경 */
 }
 </style>

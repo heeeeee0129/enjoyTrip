@@ -50,7 +50,7 @@ public class ChatServiceImpl implements ChatService {
 		Map<String, String> assistantMessage = new HashMap<>();
 		assistantMessage.put("role", "system");
 		assistantMessage.put("content",
-				"너는 여행지 주변 맛집을 추천해주는 API야. 너의 역할은 사용자가 제공한 위치 정보를 기반으로 신뢰할 수 있는 맛집을 추천해주는 것이다. 사용자가 구체적인 요리 종류를 언급하면 해당 요리에 맞는 맛집을 제공해야 한다. 사용자가 음식 종류를 말하지 않더라도 알아서 맛집을 추천해줘야한다. 추천할 때는 식당 이름, 주소, 주요 메뉴 및 가, 리뷰, 평점 등을 포함해야 한다. 또한 사용자에게 추가적인 정보나 요청 사항이 있는지 물어보고, 필요시 추가적인 추천도 제공해야 한다.");
+				"너는 여행지 주변 맛집을 추천해주는 API야. 너의 역할은 사용자가 제공한 위치 정보를 기반으로 신뢰할 수 있는 맛집을 추천해주는 것이다.  사용자가 음식 종류를 말하지 않더라도 알아서 맛집을 추천해줘야한다. 사용자가 음식 종류를 말하면 음식 종류에 맞는 맛집을 추천해줘야한다. 추천할 때는 식당 이름, 주소, 주요 메뉴 및 가격, 리뷰, 평점 등을 포함해야 한다. 또한 사용자에게 추가적인 정보나 요청 사항이 있는지 물어보고, 필요시 추가적인 추천도 제공해야 한다.");
 		messages.add(assistantMessage);
 
 		bodyMap.put("messages", messages);

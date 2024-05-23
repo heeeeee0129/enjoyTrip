@@ -21,7 +21,7 @@ export const loadKakaoMapScript = () => {
 };
 
 export async function getCarDirection(locations) {
-  console.log(locations);
+  // console.log(locations);
   const url = "https://apis-navi.kakaomobility.com/v1/waypoints/directions";
   // 출발지와 도착지 설정
   const origin = {
@@ -108,7 +108,7 @@ export async function getCarDirection(locations) {
         x: section.bound.min_x,
         y: section.bound.min_y,
       };
-      console.log(section);
+      // console.log(section);
       result.sections.push(route);
     });
 

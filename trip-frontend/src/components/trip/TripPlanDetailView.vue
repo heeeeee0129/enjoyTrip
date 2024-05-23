@@ -167,10 +167,10 @@ onMounted(async () => {
 
   displayMarker();
   result.value = await getCarDirection(trip.value.tripLocations);
-  console.log(result);
+  // console.log(result);
 
   result.value.sections.forEach((route) => {
-    console.log("Route:", route);
+    // console.log("Route:", route);
     route.polyline.setMap(map);
 
     // Check if route.x and route.y are valid numbers
@@ -205,12 +205,12 @@ onMounted(async () => {
     marker.setMap(map);
 
     // Debug logs for infowindow and marker
-    console.log("Infowindow position:", infowindow.getPosition());
-    console.log("Marker position:", marker.getPosition());
+    // console.log("Infowindow position:", infowindow.getPosition());
+    // console.log("Marker position:", marker.getPosition());
 
     // Add mouseover event listener
     window.kakao.maps.event.addListener(route.polyline, "mouseover", () => {
-      console.log("Mouseover event on route:", route);
+      // console.log("Mouseover event on route:", route);
 
       // Remove existing infowindow if it exists
       if (window.currentInfowindow) {
@@ -249,9 +249,9 @@ onMounted(async () => {
       newInfowindow.open(map, newMarker);
 
       // Log the new infowindow content to debug
-      console.log("New Infowindow content:", newIwcontent.innerHTML);
-      console.log("New Infowindow position:", newInfowindow.getPosition());
-      console.log("New Marker position:", newMarker.getPosition());
+      // console.log("New Infowindow content:", newIwcontent.innerHTML);
+      // console.log("New Infowindow position:", newInfowindow.getPosition());
+      // console.log("New Marker position:", newMarker.getPosition());
     });
   });
 
@@ -285,7 +285,7 @@ const openDetailModal = async (trip) => {
     );
   });
   selectedTrip.value.memo = trip.memo;
-  console.log(selectedTrip.value, isModalOpen.value);
+  // console.log(selectedTrip.value, isModalOpen.value);
 };
 const closeModal = () => {
   isModalOpen.value = false;

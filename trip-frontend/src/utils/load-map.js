@@ -1,4 +1,6 @@
 const { VITE_KAKAO_API_KEY, VITE_KAKAO_REST_API_KEY } = import.meta.env;
+import { formatDuration, formatNumber } from "@/utils/convert-time";
+
 export const loadKakaoMapScript = () => {
   return new Promise((resolve, reject) => {
     if (typeof window.kakao !== "undefined") {
@@ -73,9 +75,10 @@ export async function getCarDirection(locations) {
     result.duration = data.routes[0].summary.duration;
     result.fare = data.routes[0].summary.fare;
 
-    const linePath = [];
+    result.sections = [];
 
-    data.routes[0].sections.forEach((section) => {
+    data.routes[0].sections.forEach((section, idx) => {
+      const linePath = [];
       section.roads.forEach((road) => {
         const vertex = road.vertexes;
         for (let i = 0; i < vertex.length; i += 2) {
@@ -86,14 +89,27 @@ export async function getCarDirection(locations) {
           }
         }
       });
-    });
-
-    result.polyline = new window.kakao.maps.Polyline({
-      path: linePath,
-      strokeWeight: 6,
-      strokeColor: "red",
-      strokeOpacity: 0.7,
-      strokeStyle: "solid",
+      const polyline = new window.kakao.maps.Polyline({
+        path: linePath,
+        strokeWeight: 6,
+        strokeColor: "red",
+        strokeOpacity: 0.7,
+        strokeStyle: "solid",
+      });
+      const route = {
+        idx: idx,
+        polyline: polyline,
+        distance: formatNumber(section.distance / 1000),
+        duration: formatDuration(section.duration),
+        // fare: {
+        //   taxi: formatNumber(section.fare.taxi),
+        //   toll: formatNumber(section.fare.toll),
+        // },
+        x: section.bound.min_x,
+        y: section.bound.min_y,
+      };
+      console.log(section);
+      result.sections.push(route);
     });
 
     return result;

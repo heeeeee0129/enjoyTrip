@@ -89,9 +89,9 @@ onMounted(async () => {
 const detailAttraction = async () => {
   const success = (response) => {
     attraction.value = response.data;
-    console.log("response", attraction.value);
+    // console.log("response", attraction.value);
   };
-  console.log("Selected", props.selectedContentId);
+  // console.log("Selected", props.selectedContentId);
   if (props.selectedContentId) {
     await getAttraction(props.selectedContentId.value, success, fail);
   }

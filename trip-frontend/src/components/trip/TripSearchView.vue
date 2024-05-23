@@ -85,10 +85,10 @@ const handleSearch = async (queryString) => {
       updateMapMarkers(attractions.value);
       // console.log(attractions.value);
     } else {
-      console.error("Unexpected response structure:", response);
+      // console.error("Unexpected response structure:", response);
     }
   } catch (error) {
-    console.error("Error during search:", error);
+    // console.error("Error during search:", error);
   }
 };
 
@@ -208,7 +208,9 @@ const displayMarker = () => {
       </span>
     `;
     // 오버레이에 클릭 이벤트를 추가합니다
-    content.addEventListener("click", () => openDetailModal(position.contentId));
+    content.addEventListener("click", () =>
+      openDetailModal(position.contentId)
+    );
     // 오버레이설정
     const customoverlay = new window.kakao.maps.CustomOverlay({
       position: position.latlng,
@@ -233,7 +235,10 @@ const displayMarker = () => {
       </div>
       <searchBar @search="handleSearch" class="mb-6" />
 
-      <div id="map" class="mt-3 rounded shadow-sm p-10" style="width: 100%; height: 550px"></div>
+      <div
+        id="map"
+        class="mt-3 rounded shadow-sm p-10"
+        style="width: 100%; height: 550px"></div>
       <!-- //map 영역 위에까지 -->
       <div class="row mt-5">
         <div class="col">
@@ -252,16 +257,16 @@ const displayMarker = () => {
                 v-for="attraction in attractions"
                 :key="attraction.contentId"
                 @click="goToTripDetail(attraction.contentId)"
-                style="cursor: pointer"
-              >
+                style="cursor: pointer">
                 <td>
                   <img
                     :src="attraction.firstImage || image"
-                    class="object-fill w-24 h-18 rounded-md"
-                  />
+                    class="object-fill w-24 h-18 rounded-md" />
                 </td>
                 <td class="align-middle">{{ attraction.title }}</td>
-                <td class="align-middle">{{ attraction.addr1 }} {{ attraction.addr2 }}</td>
+                <td class="align-middle">
+                  {{ attraction.addr1 }} {{ attraction.addr2 }}
+                </td>
                 <td class="align-middle">
                   {{ getContentTypeName(attraction.contentTypeId) }}
                 </td>
@@ -275,19 +280,22 @@ const displayMarker = () => {
   </div>
   <div v-if="isModalOpen" class="fixed z-10 inset-0 overflow-y-auto">
     <div
-      class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-    >
-      <div class="fixed inset-0 transition-opacity" aria-hidden="true" @click="closeModal">
+      class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div
+        class="fixed inset-0 transition-opacity"
+        aria-hidden="true"
+        @click="closeModal">
         <div class="absolute inset-0 bg-gray-500 opacity-30"></div>
       </div>
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true"
+      <span
+        class="hidden sm:inline-block sm:align-middle sm:h-screen"
+        aria-hidden="true"
         >&#8203;</span
       >
       <div
         data-aos="fade-up"
         data-aos-duration="500"
-        class="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
-      >
+        class="inline-block align-center bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
         <div class="bg-white px-6 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div class="sm:flex sm:items-start">
             <div class="text-center sm:mt-0 sm:text-left">
@@ -299,16 +307,25 @@ const displayMarker = () => {
                   주소: {{ selectedAttraction.addr1 }}
                   {{ selectedAttraction.addr2 }}
                 </p>
-                <p v-if="selectedAttraction.tel" class="text-sm text-gray-500 px-5">
+                <p
+                  v-if="selectedAttraction.tel"
+                  class="text-sm text-gray-500 px-5">
                   전화번호: {{ selectedAttraction.tel }}
                 </p>
-                <p class="text-sm text-gray-500 px-5">우편번호: {{ selectedAttraction.zipcode }}</p>
-                <p class="text-sm text-gray-500 px-5">설명: {{ selectedAttraction.overview }}</p>
+                <p class="text-sm text-gray-500 px-5">
+                  우편번호: {{ selectedAttraction.zipcode }}
+                </p>
+                <p class="text-sm text-gray-500 px-5">
+                  설명: {{ selectedAttraction.overview }}
+                </p>
                 <img
-                  :src="selectedAttraction.firstImage ? selectedAttraction.firstImage : image"
+                  :src="
+                    selectedAttraction.firstImage
+                      ? selectedAttraction.firstImage
+                      : image
+                  "
                   alt="Image"
-                  class="w-full h-64 object-cover mt-4"
-                />
+                  class="w-full h-64 object-cover mt-4" />
               </div>
             </div>
           </div>
@@ -316,14 +333,12 @@ const displayMarker = () => {
         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
           <button
             @click="changeModal"
-            class="w-full inline-flex justify-center rounded-md border border-blue-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm ml-2"
-          >
+            class="w-full inline-flex justify-center rounded-md border border-blue-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm ml-2">
             날씨보기
           </button>
           <button
             @click="closeModal"
-            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-          >
+            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
             닫기
           </button>
         </div>
@@ -333,8 +348,7 @@ const displayMarker = () => {
   <Modal
     v-if="isShowWeather"
     @close="isShowWeather = false"
-    class="fixed z-10 inset-0 overflow-y-auto"
-  >
+    class="fixed z-10 inset-0 overflow-y-auto">
     <WeatherDetail :weather="weather" @change-modal="changeModal" />
   </Modal>
 </template>
@@ -390,7 +404,8 @@ const displayMarker = () => {
   font-weight: bold;
   overflow: hidden;
   background: #d95050;
-  background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
     no-repeat right 14px center;
 }
 #customoverlay .title {

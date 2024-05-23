@@ -8,7 +8,7 @@ export const getAttractions = async (queryString) => {
     const res = await axios.get(`${BASE_URL}/list?${queryString}`);
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -20,7 +20,10 @@ export const getAttraction = async (contentId, success, fail) => {
 
 // user 해당하는 추천 관광지 정보를 반환하는 함수입니다.
 export const suggestAttraction = async (user, success, fail) => {
-  await axios.post(`${BASE_URL}/suggest`, JSON.stringify(user)).then(success).catch(fail);
+  await axios
+    .post(`${BASE_URL}/suggest`, JSON.stringify(user))
+    .then(success)
+    .catch(fail);
 };
 
 export const getTripAttraction = async (contentId) => {

@@ -156,7 +156,7 @@ onMounted(async () => {
 
   const mapContainer = document.getElementById("map");
   if (!mapContainer) {
-    console.error("Map container not found");
+    // console.error("Map container not found");
     return;
   }
 
@@ -175,7 +175,7 @@ onMounted(async () => {
 
     // Check if route.x and route.y are valid numbers
     if (isNaN(route.x) || isNaN(route.y)) {
-      console.error("Invalid coordinates for route:", route);
+      // console.error("Invalid coordinates for route:", route);
       return;
     }
 
@@ -263,7 +263,7 @@ onMounted(async () => {
       )
     );
   } else {
-    console.error("Trip locations are empty");
+    // console.error("Trip locations are empty");
   }
 });
 

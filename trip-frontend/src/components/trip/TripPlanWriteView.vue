@@ -51,19 +51,19 @@ const submitForm = async () => {
   try {
     await writeTripPlan(
       tripPlan,
-      (response) => {
-        console.log("Trip plan created successfully:", response);
+      () => {
+        // console.log("Trip plan created successfully:", response);
         // 성공 시 페이지를 다른 곳으로 이동하거나 알림을 표시할 수 있습니다.
         alert("여행 계획이 성공적으로 등록되었습니다.");
         router.push({ name: "plan" }); // 예: 여행 계획 목록 페이지로 이동
       },
-      (error) => {
-        console.error("Failed to create trip plan:", error);
+      () => {
+        // console.error("Failed to create trip plan:", error);
         alert("여행 계획 등록에 실패했습니다.");
       }
     );
   } catch (error) {
-    console.error("Error during trip plan submission:", error);
+    // console.error("Error during trip plan submission:", error);
     alert("여행 계획 등록 중 오류가 발생했습니다.");
   }
 };
@@ -83,20 +83,20 @@ const handleSearch = async () => {
 
   try {
     const response = await getAttractions(queryString);
-    console.log("Response Data: ", response);
+    // console.log("Response Data: ", response);
 
     if (response) {
       attractions.value = response;
       updateMapMarkers(attractions.value);
     } else {
-      console.error("Unexpected response structure:", response);
+      // console.error("Unexpected response structure:", response);
     }
   } catch (error) {
-    console.error("Error during search:", error);
+    // console.error("Error during search:", error);
   }
 };
 const updateMapMarkers = (trips) => {
-  console.log("trips", trips);
+  // console.log("trips", trips);
   positions.value = trips.map((trip) => ({
     title: trip.title,
     addr: `${trip.addr1} ${trip.addr2}`,

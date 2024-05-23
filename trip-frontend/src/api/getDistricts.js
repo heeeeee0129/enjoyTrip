@@ -6,7 +6,7 @@ export const fetchSidos = async () => {
     const res = await axios.get("userapi/user/sido");
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -16,7 +16,7 @@ export const fetchGuguns = async (sido) => {
     const res = await axios.get(`districtapi/gugun/${sido}`);
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return [];
   }
 };
@@ -27,7 +27,7 @@ export const getSidoName = async (sidoCode) => {
     const res = await axios.get(`districtapi/sido/name/${sidoCode}`);
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return "";
   }
 };
@@ -38,7 +38,7 @@ export const getGugunName = async (address) => {
     const res = await axios.post(`districtapi/gugun/name`, address);
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return "";
   }
 };

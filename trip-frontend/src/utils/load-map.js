@@ -114,6 +114,6 @@ export async function getCarDirection(locations) {
 
     return result;
   } catch (error) {
-    console.error("Error:", error);
+    // console.error("Error:", error);
   }
 }
